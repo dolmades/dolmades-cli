@@ -16,17 +16,11 @@ __date__ = "2018"
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 
-class UDocker(object):
-   repoDir="~/.udocker"
-   udockerDir=START_PATH + "/udocker"
-   def __init__(self):
-       print "init"
-
-   def run(self):
-       status = subprocess.call("sleep 5", shell=True, close_fds=True)
-
-
-class Main(object):
+class Dolmade(object):
+    repoDir="~/.udocker"
+    udocker=START_PATH + "/udocker"
+    def __init__(self):
+        print "init"
 
     def dumpComment(self, cmdp):
         if (False):
@@ -47,6 +41,7 @@ class Main(object):
     def run(self, cmdp):
         print("Running as user...")
         print(cmdp)
+        status = subprocess.call("sleep 5", shell=True, close_fds=True)
 
     def runRoot(self, cmdp):
         print("Running as root...")
@@ -55,29 +50,27 @@ class Main(object):
     def icon(self, cmdp):
         print("Selecting icon...")
 
-    def cleanup(self):
-        UDocker().run()
-        print("Deleting all temporary files...")
-
     def finalize(self):
         print("Installing the sucessfully built dolmade...")
 
+class Main(object):
+    dolmade = Dolmade()
+
     def execute(self):
         """all supported dolmade commands"""
-        cmds = { '#': self.dumpComment,
-                 'DOLMADE': self.setupDolmade, 
-                 'BASE': self.setupBase,
-                 'INGREDIENT': self.setupIngredient,
-                 'RUN': self.run,
-                 'RUNROOT': self.runRoot,
-                 'ICON': self.icon }
+        cmds = { '#': self.dolmade.dumpComment,
+                 'DOLMADE': self.dolmade.setupDolmade, 
+                 'BASE': self.dolmade.setupBase,
+                 'INGREDIENT': self.dolmade.setupIngredient,
+                 'RUN': self.dolmade.run,
+                 'RUNROOT': self.dolmade.runRoot,
+                 'ICON': self.dolmade.icon }
         if (len(sys.argv)==1):
             inputFileName = os.getcwd() + "/Dolmadefile"
         else:
             inputFileName = sys.argv[1];
 
         try:
-
             with open(inputFileName, "r") as dolmadeFile:
                 cmdarg = ""
                 token = list()
@@ -112,6 +105,10 @@ class Main(object):
         else:
             self.cleanup()
             return exit_status
+
+    def cleanup(self):
+        print("Deleting all temporary files...")
+
 
 if __name__ == "__main__":
     sys.exit(Main().start())
