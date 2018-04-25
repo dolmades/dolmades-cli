@@ -3,7 +3,8 @@
 import sys
 import subprocess
 import os
-import PIL
+from PIL import Image
+import pycurl
 
 __author__ = "stefan.kombrink@gmail.com"
 __credits__ = ["UDocker https://github.com/indigo-dc/udocker",
@@ -17,9 +18,44 @@ __date__ = "2018"
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 
+class Ingredient(object):
+    displayName = None
+    fileName = None
+    sha256hash = None
+    urls = []
+
+    def __init__(self, h, dn, fn, u):
+        sha256hash = h
+        displayName = dn
+        fileName = fn
+        self.urls.append(u)
+        print "INGR: " + h + ":" + dn + ":" + fn + ":" + u
+
+    def addUrl(self, u):
+        print(u)
+        self.urls.append(u)
+
+    def retrieve(self):
+        for u in urls:
+            with open('out.html', 'wb') as f:
+                c = pycurl.Curl()
+                c.setopt(c.URL, 'http://pycurl.io/')
+                c.setopt(c.WRITEDATA, f)
+                c.perform()
+                c.close()
+        return tarball_file
+
+
 class Dolmade(object):
-    repoDir="~/.udocker"
-    udocker=START_PATH + "/udocker"
+
+    repoDir='$HOME/.dolmades/repo'
+    udocker=START_PATH + '/udocker'
+    iconfn = None
+    installDir='INSTALLER'
+    name = None
+    ingredients = []
+    runs = []
+
     def __init__(self):
         print "init"
 
@@ -28,30 +64,58 @@ class Dolmade(object):
             print(cmdp)
 
     def setupDolmade(self, cmdp):
-        print("Setting the Dolmade Name to ")
-        print(cmdp)
+        self.name = ' '.join(cmdp)
+        print("Setting the Dolmade Name to " + self.name)
 
     def setupBase(self, cmdp):
-        print("Setting the Base Docker Image to ")
-        print(cmdp)
+        self.baseImg = ''.join(cmdp)
+        print("Setting the Base Docker Image to " + self.baseImg)
 
     def setupIngredient(self, cmdp):
-        print("Setting up ingredient ")
-        print(cmdp)
+        h = cmdp[0]
+        fn = cmdp[1]
+        j = None
+        for i in range(2,len(cmdp)):
+            for url_pf in ['http://', 'https://', 'ftp://', 'file://']:
+                if (cmdp[i].startswith(url_pf)): 
+                    j=i
+                    break
+            if (j==i): break
+
+        dn = ' '.join(cmdp[2:j-1])
+        u = cmdp[j]
+        print(h+":"+fn+":"+dn)
+        print("Default URL:"+u)
+        print(cmdp[j-1])
+        ingr = Ingredient(h,fn,dn,u)
+        
+        for i in range(j,len(cmdp)):
+            ingr.addUrl(cmdp[i])
+
+        self.ingredients.append(ingr)
 
     def run(self, cmdp):
-        print("Running as user...")
-        print(cmdp)
-        status = subprocess.call("sleep 5", shell=True, close_fds=True)
+        print("Running as user..." + ' '.join(cmdp))
+        self.runs.append(('user',cmdp))
+        #status = subprocess.call("sleep 1", shell=True, close_fds=True)
 
     def runRoot(self, cmdp):
-        print("Running as root...")
-        print(cmdp)
+        print("Running as root..." + ' '.join(cmdp))
+        self.runs.append(('root',cmdp))
 
     def icon(self, cmdp):
-        print("Selecting icon...")
+        self.iconfn = ''.join(cmdp)
+        print("Selecting icon " + self.iconfn)
 
-    def finalize(self):
+    def build(self):
+        print("Performing the dolmade build...")
+        cmd = self.udocker + " mkrepo " + self.repoDir
+        print cmd
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udocker + " --repo=" + self.repoDir + " pull " + self.baseImg
+        print cmd
+        subprocess.call(cmd, shell=True, close_fds=True)
         print("Installing the sucessfully built dolmade...")
 
 class Main(object):
@@ -83,12 +147,14 @@ class Main(object):
                     if line: token += (line.split(' '))
                     if (len(token)>=1):
                         instr = token[0]
-                        cmdarg = token[0:len(token)]
+                        cmdarg = token[1:len(token)]
                         if (instr in cmds):
                             cmds[instr](cmdarg)
                         else:
                             raise Exception('Unknown instruction ' + instr + ":" + cmdarg)
                     token = list()
+
+            self.dolmade.build()
 
         except (IOError, OSError):
             print("ERROR: Cannot open " + inputFileName)
