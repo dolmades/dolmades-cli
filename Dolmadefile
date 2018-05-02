@@ -1,10 +1,15 @@
-# Name of the dolmade
-DOLMADE Broken Sword 2.5
+# Name of the dolmade (very restricted by udocker)
+DOLMADE Broken_Sword
 
 # Docker image to use as a base
 BASE katakombi/dolmades-winestable:latest
 
 # Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT a4d3ad655a5cb2b0b06e93048ba0a92d0019dc4f4b1b7f5c8eb59d634e255ee3 \
+           rnnlm.zip \
+           Recurrent Neural Networks \
+           https://github.com/katakombi/rnnlm/archive/v0.4d.zip 
+
 INGREDIENT 110026b9c1f4eaa0ed4f7dfc59519a4df8e1a3eff4616b10b59da4ba04abe4ed \
            bs25setup.zip \
            Broken Sword 2.5 Setup \

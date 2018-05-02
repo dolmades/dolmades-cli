@@ -3,6 +3,7 @@
 import sys
 import subprocess
 import os
+import hashlib
 from PIL import Image
 import pycurl
 
@@ -23,11 +24,12 @@ class Ingredient(object):
     fileName = None
     sha256hash = None
     urls = []
+    local = False
 
-    def __init__(self, h, dn, fn, u):
-        sha256hash = h
-        displayName = dn
-        fileName = fn
+    def __init__(self, h, fn, dn, u):
+        self.sha256hash = h
+        self.displayName = dn
+        self.fileName = fn
         self.urls.append(u)
         print "INGR: " + h + ":" + dn + ":" + fn + ":" + u
 
@@ -35,15 +37,71 @@ class Ingredient(object):
         print(u)
         self.urls.append(u)
 
+    def downloadProgress(self, download_t, download_d, upload_t, upload_d):
+        try:
+            frac = float(download_d)/float(download_t)
+        except:
+            frac = 0
+        sys.stdout.write("\r%s %3i%%" % ("Download:", frac*100)  )
+
     def retrieve(self):
-        for u in urls:
-            with open('out.html', 'wb') as f:
-                c = pycurl.Curl()
-                c.setopt(c.URL, 'http://pycurl.io/')
-                c.setopt(c.WRITEDATA, f)
-                c.perform()
-                c.close()
-        return tarball_file
+        # try to use local copy of the ingredient if available
+        print(self.urls)
+        for u in self.urls:
+            print u
+            print self.fileName
+            return
+
+            try:
+                if (u.startswith('file://')):
+                    os.symlink(u.remove('file://'),self.fileName)
+                    with open(self.fileName, 'rb') as f:
+                        for block in iter(lambda: f.read(block_size), b''):
+                            sha256.update(block)
+                    if (sha256.hexdigest() != self.sha256hash): 
+                        print(self.sha256hash)
+                        print(sha256.hexdigest())
+                        raise Exception('invalid hash sum for ingredient')
+                    return
+
+            except Exception as error:
+                print('Caught: ' + repr(error))
+                continue
+
+        # try to retrieve ingredient from remote locations
+        for u in self.urls:
+            try:
+                print("Retrieving " + self.fileName + " from " + u)
+                with open(self.fileName, 'wb') as f:
+                    c = pycurl.Curl()
+                    c.setopt(pycurl.FOLLOWLOCATION, 1)
+                    c.setopt(pycurl.MAXREDIRS, 5)
+                    c.setopt(pycurl.CONNECTTIMEOUT, 30)
+                    c.setopt(pycurl.TIMEOUT, 300)
+                    c.setopt(pycurl.NOSIGNAL, 1)
+                    c.setopt(pycurl.NOPROGRESS, 0)
+                    c.setopt(pycurl.PROGRESSFUNCTION, self.downloadProgress)
+                    c.setopt(c.URL, u)
+                    c.setopt(c.WRITEDATA, f)
+                    c.perform()
+                    c.close()
+               
+                block_size=65536
+                sha256 = hashlib.sha256()
+                with open(self.fileName, 'rb') as f:
+                    for block in iter(lambda: f.read(block_size), b''):
+                        sha256.update(block)
+                if (sha256.hexdigest() != self.sha256hash): 
+                    print(self.sha256hash)
+                    print(sha256.hexdigest())
+                    raise Exception('invalid hash sum for ingredient')
+                break
+            except Exception as error:
+                print('Caught: ' + repr(error))
+                return
+                continue
+        self.local = True
+        return 
 
 
 class Dolmade(object):
@@ -90,6 +148,7 @@ class Dolmade(object):
         ingr = Ingredient(h,fn,dn,u)
         
         for i in range(j,len(cmdp)):
+            print("ADDING URL "+cmdp[i])
             ingr.addUrl(cmdp[i])
 
         self.ingredients.append(ingr)
@@ -109,15 +168,20 @@ class Dolmade(object):
 
     def build(self):
         print("Performing the dolmade build...")
-        cmd = self.udocker + " mkrepo " + self.repoDir
+        for i in self.ingredients: 
+            i.retrieve()
+        """cmd = self.udocker + " mkrepo " + self.repoDir
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = self.udocker + " --repo=" + self.repoDir + " pull " + self.baseImg
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
-        print("Installing the sucessfully built dolmade...")
 
+        cmd = self.udocker + " --repo=" + self.repoDir + " create " + self.baseImg
+        print("Installing the sucessfully built dolmade...")
+        subprocess.call(['/usr/bin/mate-terminal','-t', 'building dolmade', '-e', cmd], close_fds=True)
+"""
 class Main(object):
     dolmade = Dolmade()
 
