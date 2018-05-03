@@ -20,22 +20,23 @@ PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 
 class Ingredient(object):
-    displayName = None
-    fileName = None
-    sha256hash = None
-    urls = []
-    local = False
 
     def __init__(self, h, fn, dn, u):
         self.sha256hash = h
         self.displayName = dn
         self.fileName = fn
-        self.urls.append(u)
+        self.urls = list()
+        self.local_urls = list()
+        self.addUrl(u)
         print "INGR: " + h + ":" + dn + ":" + fn + ":" + u
 
     def addUrl(self, u):
         print(u)
-        self.urls.append(u)
+        if (u.startswith('file://')):
+            self.local_urls.append(u)
+        else:
+            self.urls.append(u)
+
 
     def downloadProgress(self, download_t, download_d, upload_t, upload_d):
         try:
@@ -46,23 +47,19 @@ class Ingredient(object):
 
     def retrieve(self):
         # try to use local copy of the ingredient if available
-        print(self.urls)
-        for u in self.urls:
-            print u
-            print self.fileName
-            return
-
+        print(self.local_urls)
+        for u in self.local_urls:
             try:
-                if (u.startswith('file://')):
-                    os.symlink(u.remove('file://'),self.fileName)
-                    with open(self.fileName, 'rb') as f:
-                        for block in iter(lambda: f.read(block_size), b''):
-                            sha256.update(block)
-                    if (sha256.hexdigest() != self.sha256hash): 
-                        print(self.sha256hash)
-                        print(sha256.hexdigest())
-                        raise Exception('invalid hash sum for ingredient')
-                    return
+                print("Using local copy of " + self.fileName + " from " + u)
+                os.symlink(u.remove('file://'),self.fileName)
+                with open(self.fileName, 'rb') as f:
+                    for block in iter(lambda: f.read(block_size), b''):
+                        sha256.update(block)
+                if (sha256.hexdigest() != self.sha256hash): 
+                    print(self.sha256hash)
+                    print(sha256.hexdigest())
+                    raise Exception('invalid hash sum for ingredient')
+                return
 
             except Exception as error:
                 print('Caught: ' + repr(error))
