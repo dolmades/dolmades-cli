@@ -28,7 +28,7 @@ class Ingredient(object):
         self.urls = list()
         self.local_urls = list()
         self.addUrl(u)
-        print "INGR: " + h + ":" + dn + ":" + fn + ":" + u
+        print("INGR: " + h + ":" + dn + ":" + fn + ":" + u)
 
     def addUrl(self, u):
         print(u)
@@ -45,24 +45,33 @@ class Ingredient(object):
             frac = 0
         sys.stdout.write("\r%s %3i%%" % ("Download:", frac*100)  )
 
+    def checklocal(self):
+        try:
+            sha256 = hashlib.sha256()
+            block_size=65536
+            with open(self.fileName, 'rb') as f:
+                for block in iter(lambda: f.read(block_size), b''):
+                    sha256.update(block)
+            if (sha256.hexdigest() != self.sha256hash):
+                raise Exception('invalid hash sum for ingredient')
+            else:
+                print('Good: hash sum correct!')
+                return True
+        except Exception as error:
+            print("Caught " + repr(error))
+            return False
+
     def retrieve(self):
         # try to use local copy of the ingredient if available
-        print(self.local_urls)
         for u in self.local_urls:
             try:
                 print("Using local copy of " + self.fileName + " from " + u)
                 os.symlink(u.remove('file://'),self.fileName)
-                with open(self.fileName, 'rb') as f:
-                    for block in iter(lambda: f.read(block_size), b''):
-                        sha256.update(block)
-                if (sha256.hexdigest() != self.sha256hash): 
-                    print(self.sha256hash)
-                    print(sha256.hexdigest())
-                    raise Exception('invalid hash sum for ingredient')
-                return
-
+                if (self.checklocal()):
+                    return True
+                else:
+                    continue
             except Exception as error:
-                print('Caught: ' + repr(error))
                 continue
 
         # try to retrieve ingredient from remote locations
@@ -82,23 +91,15 @@ class Ingredient(object):
                     c.setopt(c.WRITEDATA, f)
                     c.perform()
                     c.close()
-               
-                block_size=65536
-                sha256 = hashlib.sha256()
-                with open(self.fileName, 'rb') as f:
-                    for block in iter(lambda: f.read(block_size), b''):
-                        sha256.update(block)
-                if (sha256.hexdigest() != self.sha256hash): 
-                    print(self.sha256hash)
-                    print(sha256.hexdigest())
-                    raise Exception('invalid hash sum for ingredient')
-                break
+                if (self.checklocal()):
+                    return True   
+                else:
+                    continue
             except Exception as error:
-                print('Caught: ' + repr(error))
-                return
+                #print('Caught: ' + repr(error))
                 continue
-        self.local = True
-        return 
+
+        return False
 
 
 class Dolmade(object):
@@ -112,7 +113,7 @@ class Dolmade(object):
     runs = []
 
     def __init__(self):
-        print "init"
+        pass
 
     def dumpComment(self, cmdp):
         if (False):
@@ -144,7 +145,7 @@ class Dolmade(object):
         print(cmdp[j-1])
         ingr = Ingredient(h,fn,dn,u)
         
-        for i in range(j,len(cmdp)):
+        for i in range(j+1,len(cmdp)):
             print("ADDING URL "+cmdp[i])
             ingr.addUrl(cmdp[i])
 
@@ -166,7 +167,11 @@ class Dolmade(object):
     def build(self):
         print("Performing the dolmade build...")
         for i in self.ingredients: 
-            i.retrieve()
+            if (i.checklocal()):
+                print("Ingredient already prepared")
+            else:
+                i.retrieve()
+
         """cmd = self.udocker + " mkrepo " + self.repoDir
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
