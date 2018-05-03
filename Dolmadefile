@@ -13,13 +13,13 @@ INGREDIENT a4d3ad655a5cb2b0b06e93048ba0a92d0019dc4f4b1b7f5c8eb59d634e255ee3 \
 INGREDIENT 110026b9c1f4eaa0ed4f7dfc59519a4df8e1a3eff4616b10b59da4ba04abe4ed \
            bs25setup.zip \
            Broken Sword 2.5 Setup \
-           http://baphometsfluch25.de/downloads/sonstiges/BS25_patch000_multilingual.zip
+           http://bf25.digital-extremes.com/bs25setup.zip \
+           http://server.c-otto.de/baphometsfluch/bs25setup.zip
 
 INGREDIENT 84934b495a5847244b9be221d96cff12212c72704afdfefff843892b3ae608d4 \
            BS25_patch000_multilingual.zip \
            Broken Sword 2.5 MultiLingual Patch \
-           http://bf25.digital-extremes.com/bs25setup.zip \
-           http://server.c-otto.de/baphometsfluch/bs25setup.zip
+           http://baphometsfluch25.de/downloads/sonstiges/BS25_patch000_multilingual.zip
 
 # Run a command inside the dolmade
 # PWD is the install folder
