@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import stat
+import getpass
 import sys
 import subprocess
 import os
@@ -107,7 +109,7 @@ class Ingredient(object):
 
 class Dolmade(object):
 
-    repoDir='$HOME/.dolmades/repo'
+    repoDir=os.path.expanduser('~')+'/.dolmades/repo'
     udocker=START_PATH + '/udocker'
     iconfn = None
     installDir='install'
@@ -208,7 +210,7 @@ class Dolmade(object):
         for r in self.runs:
             (u,c) = r
             if (u == 'user'):
-                cmd = self.udocker + " --repo=" + self.repoDir + " run --volume=$PWD/" + self.installDir + ":/install --user=$USER --volume=$HOME/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                cmd = self.udocker + " --repo=" + self.repoDir + " run --volume=$PWD/" + self.installDir + ":/install --user="+getpass.getuser()+" --volume=$HOME/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'setTarget'):
@@ -222,6 +224,19 @@ class Dolmade(object):
                 self.target = ''.join(outp.split('/')[-1])
                 self.targetPath = '/'.join(outp.split('/')[:-1])
                 print("Target is "+self.target+", target path is "+self.targetPath)
+
+        im = Image.open(self.installDir+"/"+self.iconfn)
+        im.save(os.path.expanduser("~")+"/.dolmades/icons/"+self.name+".png")
+        with open(os.path.expanduser("~") + "/Desktop/" + self.name + ".desktop", "w") as text_file:
+            text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
+            text_file.write("Name="+self.name+"\nGeneric Name="+self.name+"\nComment=" + self.name+"\n")
+            text_file.write("Icon="+os.path.expanduser("~")+"/.dolmades/icons/"+self.name+".png"+"\n")
+            text_file.write("Exec="+self.udocker+" --repo="+self.repoDir + " run --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c '"+'cd "'+self.targetPath+'" && wine "'+self.target+'"'+"'\n")
+            text_file.write("Category=Game;\n")
+            text_file.write("Path="+os.path.expanduser("~")+"\n")
+
+        st = os.stat(os.path.expanduser("~") + "/Desktop/" + self.name + ".desktop")
+        os.chmod(os.path.expanduser("~") + "/Desktop/" + self.name + ".desktop", st.st_mode | stat.S_IEXEC)
 
 class Main(object):
     dolmade = Dolmade()
