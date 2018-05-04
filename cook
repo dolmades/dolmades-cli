@@ -25,6 +25,8 @@ class Ingredient(object):
         self.sha256hash = h
         self.displayName = dn
         self.fileName = fn
+        self.installDir = "install"
+        #if (not os.path.exists(self.installDir)): os.mkdir(self.installDir, 0755)
         self.urls = list()
         self.local_urls = list()
         self.addUrl(u)
@@ -49,7 +51,7 @@ class Ingredient(object):
         try:
             sha256 = hashlib.sha256()
             block_size=65536
-            with open(self.fileName, 'rb') as f:
+            with open(self.installDir + "/" + self.fileName, 'rb') as f:
                 for block in iter(lambda: f.read(block_size), b''):
                     sha256.update(block)
             if (sha256.hexdigest() != self.sha256hash):
@@ -66,7 +68,7 @@ class Ingredient(object):
         for u in self.local_urls:
             try:
                 print("Using local copy of " + self.fileName + " from " + u)
-                os.symlink(u.remove('file://'),self.fileName)
+                os.symlink(u.remove('file://'), self.installDir + "/" + self.fileName)
                 if (self.checklocal()):
                     return True
                 else:
@@ -78,7 +80,7 @@ class Ingredient(object):
         for u in self.urls:
             try:
                 print("Retrieving " + self.fileName + " from " + u)
-                with open(self.fileName, 'wb') as f:
+                with open(self.installDir + "/" + self.fileName, 'wb') as f:
                     c = pycurl.Curl()
                     c.setopt(pycurl.FOLLOWLOCATION, 1)
                     c.setopt(pycurl.MAXREDIRS, 5)
@@ -107,7 +109,7 @@ class Dolmade(object):
     repoDir='$HOME/.dolmades/repo'
     udocker=START_PATH + '/udocker'
     iconfn = None
-    installDir='INSTALLER'
+    installDir='install'
     name = None
     ingredients = []
     runs = []
@@ -201,7 +203,7 @@ class Dolmade(object):
         for r in self.runs:
             (u,c) = r
             if (u == 'user'):
-                cmd = self.udocker + " --repo=" + self.repoDir + " run --volume=$PWD:/install --user=$USER --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                cmd = self.udocker + " --repo=" + self.repoDir + " run --volume=$PWD/" + self.installDir + ":/install --user=$USER --bindhome --hostauth --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
 

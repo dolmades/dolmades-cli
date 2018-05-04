@@ -23,9 +23,10 @@ INGREDIENT 84934b495a5847244b9be221d96cff12212c72704afdfefff843892b3ae608d4 \
 
 # Run a command inside the dolmade
 # PWD is the install folder
-RUN unzip bs25setup.zip && unzip BS25_patch000_multilingual.zip
+RUN unzip -o bs25setup.zip
 RUN wine bs25-setup.exe
-RUN unzip dvd-cover.zip DVD_Label/English/label_bs25.jpg
+RUN cd "`dirname "$(find /wineprefix/ -name bsengine.exe)"`" && unzip -o /install/BS25_patch000_multilingual.zip
+RUN unzip -o dvd-cover.zip DVD_Label/English/label_bs25.jpg
 
 # Run a command inside the dolmade as root
 #RUNROOT apt-get update && apt-get -y install imagemagick && apt-cache clean && rm -rf 
