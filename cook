@@ -220,7 +220,7 @@ class Dolmade(object):
                     print("ERROR: could not determine target path!")
                 outp = outp.strip()
                 self.target = ''.join(outp.split('/')[-1])
-                self.targetPath = ''.join(outp.split('/')[:-1])
+                self.targetPath = '/'.join(outp.split('/')[:-1])
                 print("Target is "+self.target+", target path is "+self.targetPath)
 
 class Main(object):
