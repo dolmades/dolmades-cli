@@ -151,10 +151,13 @@ class Dolmade(object):
 
         self.ingredients.append(ingr)
 
+    def detectInstallation(self):
+        pass
+        # find /wineprefix -name *.lnk -exec python /wineprefix/dumplnk.py {} \;
+
     def run(self, cmdp):
         print("Running as user..." + ' '.join(cmdp))
         self.runs.append(('user',cmdp))
-        #status = subprocess.call("sleep 1", shell=True, close_fds=True)
 
     def runRoot(self, cmdp):
         print("Running as root..." + ' '.join(cmdp))
@@ -172,9 +175,12 @@ class Dolmade(object):
             else:
                 i.retrieve()
 
-        """cmd = self.udocker + " mkrepo " + self.repoDir
+        cmd = self.udocker + " mkrepo " + self.repoDir
         print cmd
-        subprocess.call(cmd, shell=True, close_fds=True)
+        try:
+            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+        except:
+            print("Repo exists already")
 
         cmd = self.udocker + " --repo=" + self.repoDir + " pull " + self.baseImg
         print cmd
@@ -182,8 +188,23 @@ class Dolmade(object):
 
         cmd = self.udocker + " --repo=" + self.repoDir + " create " + self.baseImg
         print("Installing the sucessfully built dolmade...")
-        subprocess.call(['/usr/bin/mate-terminal','-t', 'building dolmade', '-e', cmd], close_fds=True)
-"""
+        sha256 = subprocess.check_output(cmd, shell=True, close_fds=True)
+
+        cmd = self.udocker + " --repo=" + self.repoDir + " rm " + self.name
+        print(cmd)
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udocker + " --repo=" + self.repoDir + " name " + sha256.strip() + " " + self.name
+        print(cmd)
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        for r in self.runs:
+            (u,c) = r
+            if (u == 'user'):
+                cmd = self.udocker + " --repo=" + self.repoDir + " run --volume=$PWD:/install --user=$USER --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                print(cmd)
+                subprocess.call(cmd, shell=True, close_fds=True)
+
 class Main(object):
     dolmade = Dolmade()
 
