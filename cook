@@ -229,10 +229,10 @@ class Dolmade(object):
         im.save(os.path.expanduser("~")+"/.dolmades/icons/"+self.name+".png")
         with open(os.path.expanduser("~") + "/Desktop/" + self.name + ".desktop", "w") as text_file:
             text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
-            text_file.write("Name="+self.name+"\nGeneric Name="+self.name+"\nComment=" + self.name+"\n")
+            text_file.write("Name="+self.name+"\nGenericName="+self.name+"\nComment=" + self.name+"\n")
             text_file.write("Icon="+os.path.expanduser("~")+"/.dolmades/icons/"+self.name+".png"+"\n")
             text_file.write("Exec="+self.udocker+" --repo="+self.repoDir + " run --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c '"+'cd "'+self.targetPath+'" && wine "'+self.target+'"'+"'\n")
-            text_file.write("Category=Game;\n")
+            text_file.write("Categories=Game;\n")
             text_file.write("Path="+os.path.expanduser("~")+"\n")
 
         st = os.stat(os.path.expanduser("~") + "/Desktop/" + self.name + ".desktop")
