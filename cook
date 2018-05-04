@@ -3,6 +3,7 @@
 import sys
 import subprocess
 import os
+import re
 import hashlib
 from PIL import Image
 import pycurl
@@ -169,6 +170,10 @@ class Dolmade(object):
         self.iconfn = ''.join(cmdp)
         print("Selecting icon " + self.iconfn)
 
+    def setTarget(self, cmdp):
+        self.runs.append(('setTarget', cmdp))
+        print("Determine target path by " + ' '.join(cmdp))
+        
     def build(self):
         print("Performing the dolmade build...")
         for i in self.ingredients: 
@@ -203,9 +208,20 @@ class Dolmade(object):
         for r in self.runs:
             (u,c) = r
             if (u == 'user'):
-                cmd = self.udocker + " --repo=" + self.repoDir + " run --volume=$PWD/" + self.installDir + ":/install --user=$USER --bindhome --hostauth --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                cmd = self.udocker + " --repo=" + self.repoDir + " run --volume=$PWD/" + self.installDir + ":/install --user=$USER --volume=$HOME/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
+            if (u == 'setTarget'):
+                cmd = self.udocker + " --quiet --repo=" + self.repoDir + " run --user=$USER --hostenv " + self.name + " bash -c '" + ' '.join(c) + "'"
+                print(cmd)
+                try:
+                    outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+                except:
+                    print("ERROR: could not determine target path!")
+                outp = outp.strip()
+                self.target = ''.join(outp.split('/')[-1])
+                self.targetPath = ''.join(outp.split('/')[:-1])
+                print("Target is "+self.target+", target path is "+self.targetPath)
 
 class Main(object):
     dolmade = Dolmade()
@@ -218,7 +234,8 @@ class Main(object):
                  'INGREDIENT': self.dolmade.setupIngredient,
                  'RUN': self.dolmade.run,
                  'RUNROOT': self.dolmade.runRoot,
-                 'ICON': self.dolmade.icon }
+                 'ICON': self.dolmade.icon,
+                 'SETTARGET': self.dolmade.setTarget }
         if (len(sys.argv)==1):
             inputFileName = os.getcwd() + "/Dolmadefile"
         else:
