@@ -25,7 +25,6 @@ INGREDIENT 84934b495a5847244b9be221d96cff12212c72704afdfefff843892b3ae608d4 \
 # PWD is the install folder
 RUN unzip bs25setup.zip && unzip BS25_patch000_multilingual.zip
 RUN wine bs25-setup.exe
-RUN wine bsengine.exe
 RUN unzip dvd-cover.zip DVD_Label/English/label_bs25.jpg
 
 # Run a command inside the dolmade as root
