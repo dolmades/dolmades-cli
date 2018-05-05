@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import shutil
 import stat
 import getpass
 import sys
@@ -71,7 +72,7 @@ class Ingredient(object):
         for u in self.local_urls:
             try:
                 print("Using local copy of " + self.fileName + " from " + u)
-                os.symlink(u.remove('file://'), self.installDir + "/" + self.fileName)
+                shutil.copy(u.replace('file://',''), self.installDir + "/" + self.fileName)
                 if (self.checklocal()):
                     return True
                 else:
