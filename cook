@@ -30,7 +30,7 @@ class Ingredient(object):
         self.displayName = dn
         self.fileName = fn
         self.installDir = "install"
-        #if (not os.path.exists(self.installDir)): os.mkdir(self.installDir, 0755)
+        if (not os.path.exists(self.installDir)): os.mkdir(self.installDir, 0755)
         self.urls = list()
         self.local_urls = list()
         self.addUrl(u)
