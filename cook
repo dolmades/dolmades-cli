@@ -31,6 +31,7 @@ class Ingredient(object):
         self.fileName = fn
         self.installDir = "install"
         if (not os.path.exists(self.installDir)): os.mkdir(self.installDir, 0755)
+        if (not os.path.exists(os.path.expanduser('~')+'/.dolmades/icons')): os.mkdir(os.path.expanduser('~')+'/.dolmades/icons', 0755)
         self.urls = list()
         self.local_urls = list()
         self.addUrl(u)
