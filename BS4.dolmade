@@ -1,0 +1,28 @@
+# Name of the dolmade (very restricted by udocker)
+DOLMADE BS4
+
+# Docker image to use as a base
+BASE katakombi/dolmades-winestable:latest
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT 845c94ca53d9d5db930bb7d11c655d5a904388159bedd20e69372e2b8958de1c \
+           setup_broken_sword_4_german_1.1_(15751).exe \
+           Broken Sword 4 Setup 1 of 2 \
+           file:///tmp/dolmades-cli/bs4/setup_broken_sword_4_german_1.1_(15751).exe
+
+INGREDIENT ed79ab704a50d39fb47c1c5f1383a641ecf1c9406c267547651291bdee23a452 \
+           setup_broken_sword_4_german_1.1_(15751)-1.bin \
+           Broken Sword 4 Setup 2 of 2 \
+           file:///tmp/dolmades-cli/bs4/setup_broken_sword_4_german_1.1_(15751)-1.bin
+
+# Run a command inside the dolmade
+# PWD is the install folder
+RUN wine "setup_broken_sword_4_german_1.1_(15751).exe"
+RUN cp "`dirname "$(find /wineprefix/ -name bs4pc.exe)"`"/goggame-1207658973.ico /install/BS4.ico
+
+# Run a command inside the dolmade as root
+#RUNROOT apt-get update && apt-get -y install imagemagick && apt-cache clean && rm -rf 
+#RUN convert -resize 128x128 DVD_Label/English/label_bs25.jpg /installer/icon.png
+
+ICON BS4.ico
+SETTARGET echo "$(find /wineprefix/ -name bs4pc.exe)"
