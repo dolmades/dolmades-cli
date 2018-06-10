@@ -17,6 +17,8 @@ INGREDIENT ed79ab704a50d39fb47c1c5f1383a641ecf1c9406c267547651291bdee23a452 \
 
 # Run a command inside the dolmade
 # PWD is the install folder
+RUN winetricks d3dx9
+RUN winetricks binkw32
 RUN wine "setup_broken_sword_4_german_1.1_(15751).exe"
 RUN cp "`dirname "$(find /wineprefix/ -name bs4pc.exe)"`"/goggame-1207658973.ico /install/BS4.ico
 
