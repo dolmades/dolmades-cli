@@ -8,15 +8,18 @@ BASE katakombi/dolmades-winestable:latest
 INGREDIENT 845c94ca53d9d5db930bb7d11c655d5a904388159bedd20e69372e2b8958de1c \
            setup_broken_sword_4_german_1.1_(15751).exe \
            Broken Sword 4 Setup 1 of 2 \
-           file:///tmp/dolmades-cli/bs4/setup_broken_sword_4_german_1.1_(15751).exe
+           file:///home/stefan/Project/dolmades-cli/bs4/setup_broken_sword_4_german_1.1_(15751).exe
 
 INGREDIENT ed79ab704a50d39fb47c1c5f1383a641ecf1c9406c267547651291bdee23a452 \
            setup_broken_sword_4_german_1.1_(15751)-1.bin \
            Broken Sword 4 Setup 2 of 2 \
-           file:///tmp/dolmades-cli/bs4/setup_broken_sword_4_german_1.1_(15751)-1.bin
+           file:///home/stefan/Project/dolmades-cli/bs4/setup_broken_sword_4_german_1.1_(15751)-1.bin
 
 # Run a command inside the dolmade
 # PWD is the install folder
+RUN winetricks --self-update
+RUN winetricks d3dx9
+RUN winetricks binkw32
 RUN wine "setup_broken_sword_4_german_1.1_(15751).exe"
 RUN cp "`dirname "$(find /wineprefix/ -name bs4pc.exe)"`"/goggame-1207658973.ico /install/BS4.ico
 
