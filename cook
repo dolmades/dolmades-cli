@@ -243,8 +243,8 @@ class Dolmade(object):
             text_file.write("Categories=Game;\n")
             text_file.write("Path="+os.path.expanduser("~")+"\n")
 
-        st = os.stat(os.path.expanduser("~") + "/Desktop/" + self.name + ".desktop")
-        os.chmod(os.path.expanduser("~") + "/Desktop/" + self.name + ".desktop", st.st_mode | stat.S_IEXEC)
+        st = os.stat(desktopdir + "/" + self.name + ".desktop")
+        os.chmod(desktopdir + "/" + self.name + ".desktop", st.st_mode | stat.S_IEXEC)
 
 class Main(object):
     dolmade = Dolmade()
