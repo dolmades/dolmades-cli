@@ -36,8 +36,12 @@ except:
 def createDirectories():
     if (not os.path.exists(DOLMADES_PATH)):
         os.mkdir(DOLMADES_PATH, 0755)
-    if (not os.path.exists(REPO_PATH)):
-        os.mkdir(REPO_PATH, 0755)
+    try:
+        if (os.path.exists(REPO_PATH)):
+            os.rmdir(REPO_PATH)
+    except:
+        print(REPO_PATH+" not empty, do not delete...")
+
     if (not os.path.exists(ICON_PATH)):
         os.mkdir(ICON_PATH, 0755)
     if (not os.path.exists(INST_PATH)):
