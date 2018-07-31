@@ -41,7 +41,6 @@ def createDirectories():
             os.rmdir(REPO_PATH)
     except:
         print(REPO_PATH+" not empty, do not delete...")
-
     if (not os.path.exists(ICON_PATH)):
         os.mkdir(ICON_PATH, 0755)
     if (not os.path.exists(INST_PATH)):
@@ -114,6 +113,8 @@ class Ingredient(object):
                 print("Retrieving " + self.fileName + " from " + u)
                 with open(INST_PATH + "/" + self.fileName, 'wb') as f:
                     c = pycurl.Curl()
+                    c.setopt(c.VERBOSE, True)
+                    c.setopt(pycurl.HEADER, 1)
                     c.setopt(pycurl.FOLLOWLOCATION, 1)
                     c.setopt(pycurl.MAXREDIRS, 5)
                     c.setopt(pycurl.CONNECTTIMEOUT, 30)
@@ -236,6 +237,8 @@ class Dolmade(object):
 
         for r in self.runs:
             (u,c) = r
+            if (u == 'root'):
+                cmd = self.udocker + " --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user=root --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
             if (u == 'user'):
                 cmd = self.udocker + " --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
