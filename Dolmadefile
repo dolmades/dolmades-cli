@@ -25,23 +25,15 @@ INGREDIENT
 # Run a command inside the dolmade
 # PWD is the install folder
 RUNUSER
-    unzip -o bs25setup.zip
-
-RUNUSER
-    wine bs25-setup.exe
-
-RUNUSER
-    cd "`dirname "$(find /wineprefix/ -name bsengine.exe)"`" && unzip -o /install/BS25_patch000_multilingual.zip
+    unzip -o bs25setup.zip &&
+    wine bs25-setup.exe &&
+    cd "`dirname "$(find /wineprefix/ -name bsengine.exe)"`" && 
+    unzip -o /install/BS25_patch000_multilingual.zip
 
 RUNUSER
     unzip -o dvd-cover.zip DVD_Label/English/label_bs25.jpg
 
-# Run a command inside the dolmade as root
-#RUNROOT 
-#    apt-get update && apt-get -y install imagemagick && apt-cache clean && rm -rf 
-#RUNUSER 
-#    convert -resize 128x128 DVD_Label/English/label_bs25.jpg /installer/icon.png
-
+# Set icon for the Desktop shortcut
 ICON
     DVD_Label/English/label_bs25.jpg
 
