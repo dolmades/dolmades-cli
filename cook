@@ -105,6 +105,7 @@ class Ingredient(object):
                 else:
                     continue
             except Exception as error:
+                print(error)
                 continue
 
         # try to retrieve ingredient from remote locations
@@ -113,7 +114,7 @@ class Ingredient(object):
                 print("Retrieving " + self.fileName + " from " + u)
                 with open(INST_PATH + "/" + self.fileName, 'wb') as f:
                     c = pycurl.Curl()
-                    c.setopt(c.VERBOSE, True)
+                    c.setopt(c.VERBOSE, False)
                     c.setopt(pycurl.HEADER, 1)
                     c.setopt(pycurl.FOLLOWLOCATION, 1)
                     c.setopt(pycurl.MAXREDIRS, 5)
