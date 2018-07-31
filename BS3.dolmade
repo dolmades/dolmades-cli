@@ -8,13 +8,13 @@ BASE
 
 # Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
 INGREDIENT 
- abe54cba129a5b40ab9d01b6198a236fc4a0dbe0a367dd15947e826486c70a03
+ e597defd1d1eaf827c6e38675bfbd89070de980515f5f5d24fad16025d07cb97
  setup_broken_sword_3_-_the_sleeping_dragon_de-de_1.0_(19115).exe
  Broken Sword Setup EXE
  file:///home/stefan/Downloads/gog/broken_sword_3__the_sleeping_dragon/setup_broken_sword_3_-_the_sleeping_dragon_1.0_(19115).exe
 
 INGREDIENT 
- fdaedac516f8d5bd83b8905c7e59015b780c3a587ff511ae1c31bbdb59a9c962
+ 41779852713480d168bce7fa8b426afcaa5ca457dacc0e610098e6469accffb1
  setup_broken_sword_3_-_the_sleeping_dragon_de-de_1.0_(19115)-1.bin
  Broken Sword Setup BIN
  file:///home/stefan/Downloads/gog/broken_sword_3__the_sleeping_dragon/setup_broken_sword_3_-_the_sleeping_dragon_1.0_(19115)-1.bin
