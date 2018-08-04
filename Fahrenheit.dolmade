@@ -1,0 +1,32 @@
+# Name of the dolmade (very restricted by udocker)
+DOLMADE 
+ Fahrenheit
+
+# Docker image to use as a base
+BASE 
+ dolmades/dolmades-docker:winestable
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT 
+ 67f2fde92b36a34c9d0b81cc14e6738f9ea2e9ff3822d4d0d8dbac5d904909af
+ setup_fahrenheit_(indigo_prophecy)_1.0_(21469).exe
+ Fahrenheit - Indigo Prophecy - Setup EXE
+ file:///home/stefan/Downloads/gog/fahrenheit_indigo_prophecy/setup_fahrenheit_(indigo_prophecy)_1.0_(21469).exe
+
+INGREDIENT 
+ 0042d1d6167952251f77509a3e0c8d09326cfb5d6025e8d386f25efdf1e8b488
+ setup_fahrenheit_(indigo_prophecy)_1.0_(21469)-1.bin
+ Fahrenheit - Indigo Prophecy - Setup BIN
+ file:///home/stefan/Downloads/gog/fahrenheit_indigo_prophecy/setup_fahrenheit_(indigo_prophecy)_1.0_(21469)-1.bin
+
+# Run a command inside the dolmade
+# PWD is the install folder
+RUNUSER 
+ wine "setup_fahrenheit_(indigo_prophecy)_1.0_(21469).exe" &&
+ cp "`dirname "$(find /wineprefix/ -name Fahrenheit.exe)"`"/goggame-1207658979.ico /install/Fahrenheit.ico
+
+ICON 
+ Fahrenheit.ico
+
+SETTARGET 
+ echo "$(find /wineprefix/ -name Fahrenheit.exe)"
