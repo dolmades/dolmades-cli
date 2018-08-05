@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+
+import shutil
+import stat
+import getpass
+import sys
+import subprocess
+import os
+import re
+import hashlib
+
+START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
+DOLMADES_PATH = os.path.expanduser('~')+'/.dolmades'
+
+REPO_PATH = DOLMADES_PATH + "/repo"
+ICON_PATH = DOLMADES_PATH + "/icons"
+INST_PATH = DOLMADES_PATH + "/install"
+
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
+
+def printb(str):
+    print(color.BOLD + str + color.END)
+
+class Main(object):
+    udockerCmd =  START_PATH + "/udocker --quiet --repo="+REPO_PATH
+    def prepareDirectories(self):
+        untouched = True
+        if (not os.path.exists(DOLMADES_PATH)):
+            os.mkdir(DOLMADES_PATH, 0755)
+            untouched = False
+        try:
+            if (os.path.exists(REPO_PATH)):
+                os.rmdir(REPO_PATH)
+                untouched = False
+        except:
+            pass
+        if (not os.path.exists(ICON_PATH)):
+            os.mkdir(ICON_PATH, 0755)
+            untouched = False
+        if (not os.path.exists(INST_PATH)):
+            os.mkdir(INST_PATH, 0755)
+            untouched = False
+        if (untouched):
+            printb("Found dolmade repo under " + REPO_PATH)
+        else:
+            printb("Initialized dolmade repo under " + REPO_PATH)
+
+
+    def setGameTitle(self, title):
+        gameTitle=title
+
+    def downloadIngredients(self):
+        printb("downloading ingredients for "+gameTitle)
+
+    def updateGameList(self):
+        printb("Fetching detailed info about games from GOG...")
+
+        cmd = self.udockerCmd+" pull dolmades/dolmades-docker:runtime"
+        print("Pulling dolmades runtime container...")
+        subprocess.call(cmd, shell=True, close_fds=True)
+        
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l > "+DOLMADES_PATH+"/gog.l.lst"
+        print("Retrieving detailed linux game list...")
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l,w > "+DOLMADES_PATH+"/gog.lw.lst"
+        print("Retrieving detailed linux/windows game list...")
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l,w > "+DOLMADES_PATH+"/gog.w.lst"
+        print("Retrieving detailed windows game list...")
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        printb("done!")
+
+    def readGameList(self):
+        self.winGames = []
+        winGames = subprocess.check_output(["grep", 'title: ',DOLMADES_PATH+"/gog.w.lst"]).split("\n")
+        for winGame in winGames:
+            self.winGames.append(winGame.replace("title: ",""))
+        self.linGames = []
+        linGames = subprocess.check_output(["grep", 'title: ',DOLMADES_PATH+"/gog.l.lst"]).split("\n")
+        for linGame in linGames:
+            self.linGames.append(linGame.replace("title: ",""))
+
+    def showAvailableGames(self):
+        printb("Windows games available on this account (bold: windows-only)")
+        for winGame in self.winGames:
+            if not winGame in self.linGames:
+                printb(winGame)
+            else:
+                print(winGame)
+    
+    def start(self):
+        self.prepareDirectories()
+        #self.updateGameList()
+        self.readGameList()
+        if len(sys.argv)==2:
+            self.setGameTitle(sys.argv)
+            self.downloadIngredients()
+            self.generateDolmadefile()
+        else:
+            self.showAvailableGames()
+
+
+
+if __name__ == "__main__":
+    sys.exit(Main().start())
