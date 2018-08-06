@@ -85,21 +85,29 @@ class Main(object):
 
     def readGameList(self):
         self.winGames = []
-        winGames = subprocess.check_output(["grep", 'title: ',DOLMADES_PATH+"/gog.w.lst"]).split("\n")
+        winGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.w.lst"]).split("\n")
         for winGame in winGames:
-            self.winGames.append(winGame.replace("title: ",""))
+            self.winGames.append(winGame.replace("gamename: ",""))
         self.linGames = []
-        linGames = subprocess.check_output(["grep", 'title: ',DOLMADES_PATH+"/gog.l.lst"]).split("\n")
+        linGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.l.lst"]).split("\n")
         for linGame in linGames:
-            self.linGames.append(linGame.replace("title: ",""))
+            self.linGames.append(linGame.replace("gamename: ",""))
 
     def showAvailableGames(self):
-        printb("Windows games available on this account (bold: windows-only)")
+        printb("Windows games available on this account (bold: no linux installer)")
         for winGame in self.winGames:
             if not winGame in self.linGames:
                 printb(winGame)
             else:
                 print(winGame)
+
+    def downloadIngredients(self):
+        cmd = "curl -o "+ICON_PATH+"/"+self.gameTitle+".png " + iconUrl
+        pass
+
+    def generateDolmadefile(self):
+        pass
+        
     
     def start(self):
         self.prepareDirectories()
@@ -111,7 +119,6 @@ class Main(object):
             self.generateDolmadefile()
         else:
             self.showAvailableGames()
-
 
 
 if __name__ == "__main__":
