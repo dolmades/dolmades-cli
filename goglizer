@@ -32,13 +32,13 @@ def printb(str):
     print(color.BOLD + str + color.END)
 
 class GameElement(object):
-    def GameElement(self, elemId, name, path, size, updated, language):
-        self.elemId = elemId
-        self.name = name
-        self.path = path
-        self.size = size
-        self.updated = updated
-        self.language = language
+    def __init__(self):
+        self.elemId = ""
+        self.name = ""
+        self.path = ""
+        self.size = ""
+        self.updated = "" 
+        self.language = ""
 
 class GameEntry(object):
 
@@ -51,12 +51,12 @@ class GameEntry(object):
 
     def exists(self, elemId):
         for element in self.elements:
-            if (elemet.elemId == elemId):
+            if (element.elemId == elemId):
                 return True
         return False
 
     def add(self, gameElement):
-        if exists(gameElement.elemId):
+        if self.exists(gameElement.elemId):
             print("Game Element exists already, not adding it")
         else:
             self.elements.append(gameElement)
@@ -93,7 +93,7 @@ class GameList(object):
         return True
 
     def addElement(self, gameElement):
-        self.games[self.selectedGame].elements.add(gameElement)
+        self.games[self.selectedGame].add(gameElement)
 
     def getSelectedGame(self):
         return self.games[self.selectedGame]
@@ -101,10 +101,15 @@ class GameList(object):
     def readList(self, fn):
         with open(fn) as f:
             gameEntry = GameEntry()
+            gameElem = GameElement()
             while True:
                 line = f.readline()
+
                 if not line:
                     break
+
+                line = line.strip()
+
                 if line.startswith("gamename: "):
                     gameEntry.gamename = line.replace("gamename: ","")
                 if line.startswith("product id: "):
@@ -115,6 +120,21 @@ class GameList(object):
                     gameEntry.icon = line.replace("icon: ", "")
                     self.add(gameEntry)
                     gameEntry = GameEntry()
+
+                if line.startswith("id: "):
+                    gameElem.elemId = line.replace("id: ","")
+                if line.startswith("name: "):
+                    gameElem.name= line.replace("name: ","")
+                if line.startswith("path: "):
+                    gameElem.path = line.replace("path: ","")
+                if line.startswith("size: "):
+                    gameElem.size = line.replace("size: ","")
+                if line.startswith("updated: "):
+                    gameElem.updated = line.replace("updated: ","")
+                if line.startswith("language: "):
+                    gameElem.language = line.replace("language: ","")
+                    self.addElement(gameElem)
+                    gameElem = GameElement()
 
 
 class Main(object):
@@ -184,7 +204,9 @@ class Main(object):
         winGames = GameList()
         winGames.readList(DOLMADES_PATH+"/gog.lw.lst")
         for winGame in winGames.games:
-            printb(winGame.productId + " - " + winGame.title)
+            printb(winGame.title)
+            for elem in winGame.elements:
+                printb( "=> "+elem.elemId+ ":"+elem.path+":"+elem.name)
         return
         for winGame in self.winGames:
             if not winGame in self.linGames:
