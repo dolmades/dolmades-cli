@@ -31,6 +31,92 @@ class color:
 def printb(str):
     print(color.BOLD + str + color.END)
 
+class GameElement(object):
+    def GameElement(self, elemId, name, path, size, updated, language):
+        self.elemId = elemId
+        self.name = name
+        self.path = path
+        self.size = size
+        self.updated = updated
+        self.language = language
+
+class GameEntry(object):
+
+    def __init__(self):
+        self.gamename = ""
+        self.productId = ""
+        self.title = ""
+        self.icon = ""
+        self.elements = []
+
+    def exists(self, elemId):
+        for element in self.elements:
+            if (elemet.elemId == elemId):
+                return True
+        return False
+
+    def add(self, gameElement):
+        if exists(gameElement.elemId):
+            print("Game Element exists already, not adding it")
+        else:
+            self.elements.append(gameElement)
+
+class GameList(object):
+
+    def __init__(self):
+        self.games = []
+
+    def exists(self, productId):
+        for game in self.games:
+            if (game.productId == productId):
+                return True
+        return False
+
+    def select(self, productId):
+        if self.exists(productId):
+            i = 0
+            for game in self.games:
+                if (game.productId == productId):
+                    self.selectedGame = i;
+                    return True
+                i = i+1
+        return False
+
+    def add(self, gameEntry):
+        if self.exists(gameEntry.productId):
+            print("Game exist already, not adding it")
+            return False
+
+        self.games.append(gameEntry)
+        # select the most recently added game
+        self.select(gameEntry.productId)
+        return True
+
+    def addElement(self, gameElement):
+        self.games[self.selectedGame].elements.add(gameElement)
+
+    def getSelectedGame(self):
+        return self.games[self.selectedGame]
+
+    def readList(self, fn):
+        with open(fn) as f:
+            gameEntry = GameEntry()
+            while True:
+                line = f.readline()
+                if not line:
+                    break
+                if line.startswith("gamename: "):
+                    gameEntry.gamename = line.replace("gamename: ","")
+                if line.startswith("product id: "):
+                    gameEntry.productId = line.replace("productId: ", "")
+                if line.startswith("title: "):
+                    gameEntry.title = line.replace("title: ", "")
+                if line.startswith("icon: "):
+                    gameEntry.icon = line.replace("icon: ", "")
+                    self.add(gameEntry)
+                    gameEntry = GameEntry()
+
+
 class Main(object):
     udockerCmd =  START_PATH + "/udocker --quiet --repo="+REPO_PATH
     def prepareDirectories(self):
@@ -85,7 +171,7 @@ class Main(object):
 
     def readGameList(self):
         self.winGames = []
-        winGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.w.lst"]).split("\n")
+        winGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.lw.lst"]).split("\n")
         for winGame in winGames:
             self.winGames.append(winGame.replace("gamename: ",""))
         self.linGames = []
@@ -95,11 +181,16 @@ class Main(object):
 
     def showAvailableGames(self):
         printb("Windows games available on this account (bold: no linux installer)")
+        winGames = GameList()
+        winGames.readList(DOLMADES_PATH+"/gog.lw.lst")
+        for winGame in winGames.games:
+            printb(winGame.productId + " - " + winGame.title)
+        return
         for winGame in self.winGames:
             if not winGame in self.linGames:
-                printb(winGame)
+                printb(" " + winGame)
             else:
-                print(winGame)
+                print(" " + winGame)
 
     def downloadIngredients(self):
         cmd = "curl -o "+ICON_PATH+"/"+self.gameTitle+".png " + iconUrl
