@@ -164,9 +164,9 @@ class Main(object):
             os.mkdir(INST_PATH, 0755)
             untouched = False
         if (untouched):
-            printb("Found dolmade repo under " + REPO_PATH)
+            printit("Found dolmade repo under " + REPO_PATH)
         else:
-            printb("Initialized dolmade repo under " + REPO_PATH)
+            printit("Initialized dolmade repo under " + REPO_PATH)
 
 
     def setGameTitle(self, title):
@@ -208,9 +208,9 @@ class Main(object):
 
     def showAvailableGames(self):
         if (self.showLinuxGames):
-            printb("Windows games available on this account (bold: no linux installer available)")
+            printit("Windows games available on this account (bold: no linux installer available)")
         else:
-            printb("Windows games available on this account which have no linux installer available")
+            printit("Windows games available on this account which have no linux installer available")
 
         winGames = GameList()
         winGames.readList(DOLMADES_PATH+"/gog.lw.lst")
@@ -219,11 +219,11 @@ class Main(object):
         for winGame in winGames.games:
             if (linGames.exists(winGame.productId)):
                 if (self.showLinuxGames):
-                    printu(winGame.gamename)
+                    print(winGame.gamename)
             else:
-                print(color.UNDERLINE + color.BOLD + winGame.gamename + color.END)
-            for elem in winGame.elements:
-                printit( " "+elem.elemId+ " - "+elem.path+" - "+elem.name)
+                print(color.BOLD + winGame.gamename + color.END)
+            #for elem in winGame.elements:
+            #    printit( " "+elem.elemId+ " - "+elem.path+" - "+elem.name)
 
     def downloadIngredients(self):
         cmd = "curl -o "+ICON_PATH+"/"+self.gameTitle+".png " + iconUrl
