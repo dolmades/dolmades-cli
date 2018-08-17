@@ -225,17 +225,24 @@ class Main(object):
             #for elem in winGame.elements:
             #    printit( " "+elem.elemId+ " - "+elem.path+" - "+elem.name)
 
-    def downloadIngredients(self):
-        cmd = "curl -o "+ICON_PATH+"/"+self.gameTitle+".png " + iconUrl
-        pass
+    def printHelp(self):
+        printu("Usage:")
+        print(" no arguments:" + color.ITALIC + " show all available win-only games" + color.END)
+        print(" -l:" + color.ITALIC + " show also games that have a linux installer" + color.END)
+        print(" -h:" + color.ITALIC + " print this help" + color.END)
+        print(" -u:" + color.ITALIC + " update the GOG game list" + color.END)
+        print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
 
-    def generateDolmadefile(self):
-        pass
+    def downloadIngredients(self, gamename):
+        print("Downloading ingredients for "+gamename)
+        cmd = "curl -o "+ICON_PATH+"/"+self.gameTitle+".png " + iconUrl
+
+    def generateDolmadefile(self, gamename):
+        print("Generating Dolmadefile for "+gamename)
         
     
     def start(self):
         self.prepareDirectories()
-        #self.updateGameList()
         self.readGameList()
         self.showLinuxGames = False
         for arg in sys.argv:
@@ -243,6 +250,14 @@ class Main(object):
                 self.updateGameList()
             if (arg == '-l'):
                 self.showLinuxGames = True
+            if (arg == '-h'):
+                self.printHelp()
+                return
+            if (arg.startswith('-d=')):
+                gamename = arg.replace('-d=','')
+                self.generateDolmadefile(gamename)
+                self.downloadIngredients(gamename)
+                return
 
         self.showAvailableGames()
 
