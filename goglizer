@@ -73,17 +73,17 @@ class GameList(object):
     def __init__(self):
         self.games = []
 
-    def exists(self, productId):
+    def exists(self, pId_or_gn):
         for game in self.games:
-            if (game.productId == productId):
+            if (game.productId == pId_or_gn) or (game.gamename == pId_or_gn):
                 return True
         return False
 
-    def select(self, productId):
-        if self.exists(productId):
+    def select(self, pId_or_gn):
+        if self.exists(pId_or_gn):
             i = 0
             for game in self.games:
-                if (game.productId == productId):
+                if (game.productId == pId_or_gn) or (game.gamename == pId_or_gn):
                     self.selectedGame = i;
                     return True
                 i = i+1
@@ -120,7 +120,7 @@ class GameList(object):
                 if line.startswith("gamename: "):
                     gameEntry.gamename = line.replace("gamename: ","")
                 if line.startswith("product id: "):
-                    gameEntry.productId = line.replace("productId: ", "")
+                    gameEntry.productId = line.replace("product id: ", "")
                 if line.startswith("title: "):
                     gameEntry.title = line.replace("title: ", "")
                 if line.startswith("icon: "):
@@ -133,7 +133,7 @@ class GameList(object):
                 if line.startswith("name: "):
                     gameElem.name= line.replace("name: ","")
                 if line.startswith("path: "):
-                    gameElem.path = line.replace("path: ","")
+                    gameElem.path = line.replace("path: ","").split("/")[-1]
                 if line.startswith("size: "):
                     gameElem.size = line.replace("size: ","")
                 if line.startswith("updated: "):
@@ -182,15 +182,15 @@ class Main(object):
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
         
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l > "+DOLMADES_PATH+"/gog.l.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l --exclude c,d,e > "+DOLMADES_PATH+"/gog.l.lst"
         print("Retrieving detailed linux game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l,w > "+DOLMADES_PATH+"/gog.lw.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l,w --exclude c,d,e > "+DOLMADES_PATH+"/gog.lw.lst"
         print("Retrieving detailed linux/windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform w > "+DOLMADES_PATH+"/gog.w.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform w --exclude c,d,e > "+DOLMADES_PATH+"/gog.w.lst"
         print("Retrieving detailed windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -233,14 +233,74 @@ class Main(object):
         print(" -u:" + color.ITALIC + " update the GOG game list" + color.END)
         print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
 
-    def downloadIngredients(self, gamename):
-        print("Downloading ingredients for "+gamename)
-        cmd = "curl -o "+ICON_PATH+"/"+self.gameTitle+".png " + iconUrl
+    def downloadIngredients(self, i):
+        print("Downloading "+i+"...")
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --download-file "+i+" --directory "+INST_PATH
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+    def computeChecksum(self, filename):
+        cmd = "sh -c 'sha256sum \""+filename+"\"|cut -f 1 -d \" \"'"
+        chksum = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+        return chksum
 
     def generateDolmadefile(self, gamename):
+        games = GameList()
+        games.readList(DOLMADES_PATH+"/gog.lw.lst")
+
+        if not games.select(gamename):
+            print(gamename+" not found, stopping")
+            return False
+
+        game = games.getSelectedGame()
+
         print("Generating Dolmadefile for "+gamename)
+                
+        dolmadefile = open(game.gamename+".dolmade","w")
+        dolmadefile.write("# Name of the Dolmade\n")
+        dolmadefile.write("DOLMADE\n")
+        dolmadefile.write("    "+game.title+"\n\n")
         
-    
+        dolmadefile.write("# Docker image used as a base\n")
+        dolmadefile.write("BASE\n")
+        dolmadefile.write("    dolmades/dolmades-docker:winestable\n\n")
+
+        dolmadefile.write("# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...\n")
+        dolmadefile.write("INGREDIENT\n")
+        cmd = "sh -c 'curl -s "+game.icon+"|sha256sum|cut -f 1 -d \" \"'"
+        chksum = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+        dolmadefile.write("    "+chksum)
+        icon_fn = game.icon.split("/")[-1]
+        dolmadefile.write("    "+icon_fn+"\n")
+        dolmadefile.write("    Game Icon\n")
+        dolmadefile.write("    "+game.icon+"\n\n")
+
+        ingredients=None
+        for elem in game.elements:
+            if ingredients:
+                ingredients=ingredients+","+game.gamename+"/"+elem.elemId
+            else:
+                ingredients=game.gamename+"/"+elem.elemId
+
+        self.downloadIngredients(ingredients)
+
+        for elem in game.elements:
+            dolmadefile.write("INGREDIENT\n")
+            ingredient=game.gamename+"/"+elem.elemId
+            chksum=self.computeChecksum(INST_PATH+"/"+elem.path)
+            dolmadefile.write("    "+chksum)
+            dolmadefile.write("    "+elem.path+"\n")
+            dolmadefile.write("    "+elem.name+"\n")
+            dolmadefile.write("    file://"+elem.path+"\n\n")
+
+        dolmadefile.write("# Set icon for the Desktop shortcut\n")
+        dolmadefile.write("ICON\n")
+        dolmadefile.write("    "+icon_fn+"\n\n")
+
+        dolmadefile.write("# Set the executable\n")
+        dolmadefile.write("SETTARGET\n")
+        dolmadefile.write("    echo \"$(find /wineprefix/ -name bsengine.exe)\"\n")
+        return True
+
     def start(self):
         self.prepareDirectories()
         self.readGameList()
@@ -256,7 +316,6 @@ class Main(object):
             if (arg.startswith('-d=')):
                 gamename = arg.replace('-d=','')
                 self.generateDolmadefile(gamename)
-                self.downloadIngredients(gamename)
                 return
 
         self.showAvailableGames()
