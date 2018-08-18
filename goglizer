@@ -146,6 +146,11 @@ class GameList(object):
 
 class Main(object):
     udockerCmd =  START_PATH + "/udocker --quiet --repo="+REPO_PATH
+
+    def __init__(self):
+        self.prepareDirectories()
+        #self.prepareRuntime()
+
     def prepareDirectories(self):
         untouched = True
         if (not os.path.exists(DOLMADES_PATH)):
@@ -168,6 +173,17 @@ class Main(object):
         else:
             printit("Initialized dolmade repo under " + REPO_PATH)
 
+    def prepareRuntime(self):
+        cmd = self.udockerCmd+" pull dolmades/dolmades-docker:runtime"
+        print("Pulling dolmades runtime container...")
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udockerCmd + " rm dolmades-runtime"
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/dolmades-docker:runtime"
+        subprocess.call(cmd, shell=True, close_fds=True)
+        print("done")
 
     def setGameTitle(self, title):
         gameTitle=title
@@ -178,25 +194,24 @@ class Main(object):
     def updateGameList(self):
         printb("Fetching detailed info about games from GOG...")
 
-        cmd = self.udockerCmd+" pull dolmades/dolmades-docker:runtime"
-        print("Pulling dolmades runtime container...")
-        subprocess.call(cmd, shell=True, close_fds=True)
-        
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l --exclude c,d,e > "+DOLMADES_PATH+"/gog.l.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l --exclude c,d,e > "+DOLMADES_PATH+"/gog.l.lst"
         print("Retrieving detailed linux game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform l,w --exclude c,d,e > "+DOLMADES_PATH+"/gog.lw.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l,w --exclude c,d,e > "+DOLMADES_PATH+"/gog.lw.lst"
         print("Retrieving detailed linux/windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --list-detail --platform w --exclude c,d,e > "+DOLMADES_PATH+"/gog.w.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform w --exclude c,d,e > "+DOLMADES_PATH+"/gog.w.lst"
         print("Retrieving detailed windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
+
+        self.readGameList()
 
         printb("done!")
 
     def readGameList(self):
+        # FIXME check that game list files exist, if not call updateGameList() beforehand
         self.winGames = []
         winGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.lw.lst"]).split("\n")
         for winGame in winGames:
@@ -230,18 +245,27 @@ class Main(object):
         print(" no arguments:" + color.ITALIC + " show all available win-only games" + color.END)
         print(" -l:" + color.ITALIC + " show also games that have a linux installer" + color.END)
         print(" -h:" + color.ITALIC + " print this help" + color.END)
-        print(" -u:" + color.ITALIC + " update the GOG game list" + color.END)
+        print(" -u:" + color.ITALIC + " update the dolmade runtime container and the GOG game list" + color.END)
         print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
 
     def downloadIngredients(self, i):
         print("Downloading "+i+"...")
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades/dolmades-docker:runtime lgogdownloader --download-file "+i+" --directory "+INST_PATH
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --download-file "+i+" --directory "+INST_PATH
         subprocess.call(cmd, shell=True, close_fds=True)
 
     def computeChecksum(self, filename):
         cmd = "sh -c 'sha256sum \""+filename+"\"|cut -f 1 -d \" \"'"
         chksum = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
         return chksum
+
+    def findInstaller(self, elems):
+        for elem in elems:
+            # FIXME dont know if this is a valid assumption...
+            if elem.elemId == "en1installer0":
+                return elem.path.split("/")[-1]
+        printb("Bad! No installer found")
+        return None
+
 
     def generateDolmadefile(self, gamename):
         games = GameList()
@@ -258,7 +282,7 @@ class Main(object):
         dolmadefile = open(game.gamename+".dolmade","w")
         dolmadefile.write("# Name of the Dolmade\n")
         dolmadefile.write("DOLMADE\n")
-        dolmadefile.write("    "+game.title+"\n\n")
+        dolmadefile.write("    "+game.title.replace(' ','_')+"\n\n")
         
         dolmadefile.write("# Docker image used as a base\n")
         dolmadefile.write("BASE\n")
@@ -290,7 +314,15 @@ class Main(object):
             dolmadefile.write("    "+chksum)
             dolmadefile.write("    "+elem.path+"\n")
             dolmadefile.write("    "+elem.name+"\n")
-            dolmadefile.write("    file://"+elem.path+"\n\n")
+            dolmadefile.write("    gog://"+game.gamename+"/"+elem.elemId+"\n\n")
+
+        dolmadefile.write("# Post-install custom packages like so\n")
+        dolmadefile.write("#RUNROOT\n")
+        dolmadefile.write("#    apt-get update && apt-get -y install custompkg && && apt-get clean && rm -rf /var/lib/apt/lists/*\n\n")
+
+        dolmadefile.write("# Perform installation\n")
+        dolmadefile.write("RUNUSER\n")
+        dolmadefile.write("    wine \""+self.findInstaller(game.elements)+"\"\n\n")
 
         dolmadefile.write("# Set icon for the Desktop shortcut\n")
         dolmadefile.write("ICON\n")
@@ -302,11 +334,10 @@ class Main(object):
         return True
 
     def start(self):
-        self.prepareDirectories()
-        self.readGameList()
         self.showLinuxGames = False
         for arg in sys.argv:
             if (arg == '-u'):
+                self.prepareRuntime()
                 self.updateGameList()
             if (arg == '-l'):
                 self.showLinuxGames = True
