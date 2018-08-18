@@ -17,7 +17,7 @@ Right after cooking the windows application will be available as icon on your de
 * udocker
 * tar version ???
 
-## Usage
+## Basic Use
 
 To cook a dolmade use the very simple example:
 
@@ -25,6 +25,8 @@ To cook a dolmade use the very simple example:
 ./cook Dolmadefile
 ```
 This will install the free game Broken Sword 2.5 on your desktop.
+
+## Usage with GOG account
 
 To cook your favourite GOG win-only game:
 
