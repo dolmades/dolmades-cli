@@ -17,8 +17,6 @@ Right after cooking the windows application will be available as icon on your de
 * udocker
 * tar version ???
 
-Will be reduced to "python only" as soon as the dolmade-runtime container is fully functional.
-
 ## Usage
 
 To cook a dolmade use the very simple example:
