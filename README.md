@@ -88,17 +88,20 @@ After successful completion you will find a clickable icon on your desktop :)
 
 ## Fixing issues
 
-As of now the installation procedure fails or the final game won't work properly for many GOG games.
-The idea of dolmades is to make it easy to find and apply fixes and include them into the generated dolmade file.
+As of now for many games the installation procedure fails or the installled game won't work properly.
+The goal of dolmades is to make it easy to find and apply fixes. 
+Those can be made available by including them into the generated dolmade file.
 
-First we need to figure out interactively what needs to be done
+First we need to figure out interactively what needs to be done:
 ```
 ./udocker --repo=$HOME/.dolmades/repo run --user=$(whoami) --bindhome --hostenv --hostauth Broken_Sword_3:_The_Sleeping_Dragon bash
 ```
-In rare cases you might want to install a missing package. You can do this if you run as fake root.
+In rare cases you might need to install a missing package. You can do this if you run as fake root:
 ```
 ./udocker --repo=$HOME/.dolmades/repo run --user=root --bindhome --hostenv --hostauth Broken_Sword_3:_The_Sleeping_Dragon bash
 ```
+TODO write an example howto
+
 ## Deinstallation
  
  This is easy:
