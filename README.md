@@ -76,10 +76,34 @@ Now choose a game of your liking and tell `goglizer` to download the ingredients
 ./goglizer -d=broken_sword_3__the_sleeping_dragon
 ```
 download its ingredients and prepare a Dolmadefile for installation
+```
 ./goglizer -d=broken_sword_3__the_sleeping_dragon
+```
 
-echo FIXME explain how to fix target and installation in the dolmade file...
-
-echo now cook the dolmade
+Now install the dolmade
+```
 ./cook broken_sword_3__the_sleeping_dragon.dolmade
 ```
+After successful completion you will find a clickable icon on your desktop :)
+
+## Fixing issues
+
+As of now the installation procedure fails or the final game won't work properly for many GOG games.
+The idea of dolmades is to make it easy to find and apply fixes and include them into the generated dolmade file.
+
+First we need to figure out interactively what needs to be done
+```
+./udocker --repo=$HOME/.dolmades/repo run --user=$(whoami) --bindhome --hostenv --hostauth Broken_Sword_3:_The_Sleeping_Dragon bash
+```
+In rare cases you might want to install a missing package. You can do this if you run as fake root.
+```
+./udocker --repo=$HOME/.dolmades/repo run --user=root --bindhome --hostenv --hostauth Broken_Sword_3:_The_Sleeping_Dragon bash
+```
+## Deinstallation
+ 
+ This is easy:
+ * delete the icon on your desktop
+ * delete the dolmade
+ ```
+ ./udocker --repo=$HOME/.dolmades/repo rm Broken_Sword_3:_The_Sleeping_Dragon
+ ```
