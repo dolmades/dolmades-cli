@@ -162,6 +162,13 @@ class Main(object):
                 untouched = False
         except:
             pass
+
+        if (not os.path.exists(REPO_PATH)):
+            cmd = START_PATH + "/udocker mkrepo "+REPO_PATH
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+            untouched = False
+        
         if (not os.path.exists(ICON_PATH)):
             os.mkdir(ICON_PATH, 0755)
             untouched = False
@@ -227,10 +234,15 @@ class Main(object):
         else:
             printit("Windows games available on this account which have no linux installer available")
 
-        winGames = GameList()
-        winGames.readList(DOLMADES_PATH+"/gog.lw.lst")
-        linGames = GameList()
-        linGames.readList(DOLMADES_PATH+"/gog.l.lst")
+        try:
+            winGames = GameList()
+            winGames.readList(DOLMADES_PATH+"/gog.lw.lst")
+            linGames = GameList()
+            linGames.readList(DOLMADES_PATH+"/gog.l.lst")
+        except:
+            printb("ERROR could not read game lists, run with -u")
+            return
+
         for winGame in winGames.games:
             if (linGames.exists(winGame.productId)):
                 if (self.showLinuxGames):
@@ -268,8 +280,11 @@ class Main(object):
 
 
     def generateDolmadefile(self, gamename):
-        games = GameList()
-        games.readList(DOLMADES_PATH+"/gog.lw.lst")
+        try:
+            games = GameList()
+            games.readList(DOLMADES_PATH+"/gog.lw.lst")
+        except:
+            printb("ERROR could not read game lists, try to run with -u")
 
         if not games.select(gamename):
             print(gamename+" not found, stopping")
