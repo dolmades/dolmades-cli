@@ -328,9 +328,9 @@ class Main(object):
         dolmadefile.write("ICON\n")
         dolmadefile.write("    "+icon_fn+"\n\n")
 
-        dolmadefile.write("# Set the executable\n")
-        dolmadefile.write("SETTARGET\n")
-        dolmadefile.write("    echo \"$(find /wineprefix/ -name bsengine.exe)\"\n")
+        dolmadefile.write("# Set the executable if you know its name. If omitted automatic detection will be performed\n")
+        dolmadefile.write("#SETTARGET\n")
+        dolmadefile.write("#    echo \"$(find /wineprefix/ -name BSTSD.exe)\"\n")
         return True
 
     def start(self):

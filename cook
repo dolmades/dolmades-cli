@@ -160,6 +160,7 @@ class Dolmade(object):
     iconfn = None
     installDir=START_PATH + '/install'
     name = None
+    sha256 = None
     ingredients = []
     runs = []
 
@@ -252,6 +253,10 @@ class Dolmade(object):
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
+        self.target = None
+        self.targetPath = None
+        self.sha256 = sha256.strip()
+
         for r in self.runs:
             (u,c) = r
             if (u == 'root'):
@@ -265,12 +270,26 @@ class Dolmade(object):
                 print(cmd)
                 try:
                     outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+                    outp = outp.strip()
+                    self.target = ''.join(outp.split('/')[-1])
+                    self.targetPath = '/'.join(outp.split('/')[:-1])
                 except:
                     print("ERROR: could not determine target path!")
+
+        if (self.target):
+            print("Predefined target is "+self.target+", target path is "+self.targetPath)
+        else:
+            print("Trying to autodetect target...")
+            cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" --volume=" + REPO_PATH+ "/containers/" + self.sha256 + "/ROOT/wineprefix:/wineprefix --hostenv dolmades-runtime /usr/local/bin/findGOGtarget.sh"
+            try:
+                print(cmd)
+                outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
                 outp = outp.strip()
                 self.target = ''.join(outp.split('/')[-1])
                 self.targetPath = '/'.join(outp.split('/')[:-1])
-                print("Target is "+self.target+", target path is "+self.targetPath)
+                print("Autodetected target is "+self.target+", target path is "+self.targetPath)
+            except:
+                print("ERROR: could not determine target path!")
 
         im = Image.open(INST_PATH+"/"+self.iconfn)
         im.save(ICON_PATH+"/"+self.name+".png")
