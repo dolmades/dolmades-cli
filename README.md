@@ -14,8 +14,8 @@ Right after cooking the windows application will be available as clickable icon 
 ## Requirements
 
 * Python 2.7 or 3.5
-* udocker
-* tar version ???
+* PIL
+* pycurl
 
 ## Basic Use
 
