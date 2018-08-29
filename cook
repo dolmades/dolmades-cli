@@ -261,6 +261,7 @@ class Dolmade(object):
             (u,c) = r
             if (u == 'root'):
                 cmd = self.udocker + " --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user=root --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
                 cmd = self.udocker + " --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
