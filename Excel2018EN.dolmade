@@ -28,6 +28,7 @@ RUNROOT
 RUNUSER 
  7z x Office_Pro_Plus_2013-x86-en.iso &&
  wine setup.exe &&
+ winetricks corefonts &&
  cp /wineprefix/drive_c/ProgramData/Microsoft/OFFICE/DocumentRepository.ico /install/msoffice13.ico
 
 ICON 
