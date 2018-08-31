@@ -2,9 +2,8 @@
 
 ## Introduction
 
-Dolmades are intended as a tool to ease installation of windows programs to the utmost extent.
-This collection of command line tools is the first implementation of the concept behind dolmades.
-Right now there are two python scripts
+Dolmades are intended as a mean to ease installation and distribution of windows programs in Linux environments to the utmost extent. This collection of command line tools represent the first implementation of the underlying concept.
+As of now there are two python scripts
 
 * goglizer - prepares win-only GOG games to be cooked (GOG account required)
 * cook - cooks a dolmade given a Dolmadefile (specification) and its ingredients (files)
@@ -24,7 +23,7 @@ To cook a dolmade use the very simple example:
 ```
 ./cook Dolmadefile
 ```
-This will install the free game Broken Sword 2.5 on your desktop.
+Click straight through the installation process. This will install the free game Broken Sword 2.5 on your desktop.
 
 ## Usage with GOG account
 
@@ -88,9 +87,8 @@ After successful completion you will find a clickable icon on your desktop :)
 
 ## Fixing issues
 
-As of now for many games the installation procedure fails or the installled game won't work properly.
-The goal of dolmades is to make it easy to find and apply fixes. 
-Those can be made available by including them into the generated dolmade file.
+As of now for many games the installation procedure fails or the installed game won't work properly.
+The goal of dolmades is to make it easy to find and apply fixes to the generated Dolmadefile in such cases. 
 
 First we need to figure out interactively what needs to be done:
 ```
@@ -100,13 +98,10 @@ In rare cases you might need to install a missing package. You can do this if yo
 ```
 ./udocker --repo=$HOME/.dolmades/repo run --user=root --bindhome --hostenv --hostauth Broken_Sword_3:_The_Sleeping_Dragon bash
 ```
-TODO write an example howto
+TODO add an example fix
 
 ## Deinstallation
  
  This is easy:
  * delete the icon on your desktop
- * delete the dolmade
- ```
- ./udocker --repo=$HOME/.dolmades/repo rm Broken_Sword_3:_The_Sleeping_Dragon
- ```
+ * delete the dolmade: `./udocker --repo=$HOME/.dolmades/repo rm Broken_Sword_3:_The_Sleeping_Dragon`
