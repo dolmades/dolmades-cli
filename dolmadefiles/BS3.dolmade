@@ -1,0 +1,32 @@
+# Name of the dolmade (very restricted by udocker)
+DOLMADE 
+ BrokenSword3
+
+# Docker image to use as a base
+BASE 
+ dolmades/dolmades-docker:winestable
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT 
+ e597defd1d1eaf827c6e38675bfbd89070de980515f5f5d24fad16025d07cb97
+ setup_broken_sword_3_-_the_sleeping_dragon_de-de_1.0_(19115).exe
+ Broken Sword Setup EXE
+ file:///home/stefan/Downloads/gog/broken_sword_3__the_sleeping_dragon/setup_broken_sword_3_-_the_sleeping_dragon_1.0_(19115).exe
+
+INGREDIENT 
+ 41779852713480d168bce7fa8b426afcaa5ca457dacc0e610098e6469accffb1
+ setup_broken_sword_3_-_the_sleeping_dragon_de-de_1.0_(19115)-1.bin
+ Broken Sword Setup BIN
+ file:///home/stefan/Downloads/gog/broken_sword_3__the_sleeping_dragon/setup_broken_sword_3_-_the_sleeping_dragon_1.0_(19115)-1.bin
+
+# Run a command inside the dolmade
+# PWD is the install folder
+RUNUSER 
+ wine "setup_broken_sword_3_-_the_sleeping_dragon_de-de_1.0_(19115).exe" &&
+ cp "`dirname "$(find /wineprefix/ -name BSTSD.exe)"`"/goggame-1207658708.ico /install/BrokenSword3.ico
+
+ICON 
+ BrokenSword3.ico
+
+SETTARGET 
+ echo "$(find /wineprefix/ -name BSTSD.exe)"
