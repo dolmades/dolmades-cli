@@ -1,4 +1,13 @@
 # Name of the dolmade (very restricted by udocker)
+# This is meant for the use of the timekeeping spread sheet
+# for Ulm University staff. 
+# You can use the MS Office 2013 template, current state:
+#
+# - crashes on PDF export
+# - saving works
+# - direct printing works
+#
+
 DOLMADE 
  Excel2013EN
 
@@ -11,13 +20,13 @@ INGREDIENT
  dbd8a244999754401349bc81ef091e6b75918cb5ab6a638c21a2b8a4934fe93a
  Office_Pro_Plus_2013-x86-en.iso
  MS Office 13 EN Main Install CD
- file:///home/stefan/OldHome/MSOffice-2013/Office_Pro_Plus_2013-x86-en.iso
+ file:///home/stefan/MSOffice/Office_Pro_Plus_2013-x86-en.iso
 
-INGREDIENT 
- e1ac8b0b5ba0d74a9852cdcd494c6b69d463404bb98472831de20227a5e5298a
- Office_Multi_Lang_Pack_2013-x86-en.iso
- MS Office 13 EN Main Multi-Lang CD
- file:///home/stefan/OldHome/MSOffice-2013/Office_Multi_Lang_Pack_2013-x86-en.iso
+#INGREDIENT 
+# e1ac8b0b5ba0d74a9852cdcd494c6b69d463404bb98472831de20227a5e5298a
+# Office_Multi_Lang_Pack_2013-x86-en.iso
+# MS Office 13 EN Main Multi-Lang CD
+# file:///home/stefan/MSOffice/Office_Multi_Lang_Pack_2013-x86-en.iso
 
 # We need 7z to extract the ISO file
 RUNROOT
