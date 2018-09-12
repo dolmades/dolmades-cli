@@ -201,15 +201,20 @@ class Main(object):
     def updateGameList(self):
         printb("Fetching detailed info about games from GOG...")
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l --exclude c,d,e > "+DOLMADES_PATH+"/gog.l.lst"
+        if (self.languageSwitch):
+            lang = "--language "+self.languageSwitch
+        else:
+            lang = ""
+
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l  "+lang+" --exclude c,d,e > "+DOLMADES_PATH+"/gog.l.lst"
         print("Retrieving detailed linux game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l,w --exclude c,d,e > "+DOLMADES_PATH+"/gog.lw.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l,w "+lang+" --exclude c,d,e > "+DOLMADES_PATH+"/gog.lw.lst"
         print("Retrieving detailed linux/windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform w --exclude c,d,e > "+DOLMADES_PATH+"/gog.w.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform w  "+lang+" --exclude c,d,e > "+DOLMADES_PATH+"/gog.w.lst"
         print("Retrieving detailed windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -255,9 +260,10 @@ class Main(object):
     def printHelp(self):
         printu("Usage:")
         print(" no arguments:" + color.ITALIC + " show all available win-only games" + color.END)
-        print(" -l:" + color.ITALIC + " show also games that have a linux installer" + color.END)
+        print(" -a:" + color.ITALIC + " show all windows games (also those that have a linux installer)" + color.END)
         print(" -h:" + color.ITALIC + " print this help" + color.END)
         print(" -u:" + color.ITALIC + " update the dolmade runtime container and the GOG game list" + color.END)
+        print(" -l=preferredLanguage,fallbackLanguage:" + color.ITALIC + " use in combination with -u, when omitted installers will default to English (en)" + color.END)
         print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
 
     def downloadIngredients(self, i):
@@ -273,7 +279,7 @@ class Main(object):
     def findInstaller(self, elems):
         for elem in elems:
             # FIXME dont know if this is a valid assumption...
-            if elem.elemId == "en1installer0":
+            if elem.elemId == "en1installer2":
                 return elem.path.split("/")[-1]
         printb("Bad! No installer found")
         return None
@@ -349,23 +355,40 @@ class Main(object):
         return True
 
     def start(self):
+        self.showHelp = False
+        self.showGameMetadata = True
         self.showLinuxGames = False
+        self.updateGameMetadata = False
+        self.languageSwitch = None
+        self.generateDolmade = None
+
         for arg in sys.argv:
             if (arg == '-u'):
-                self.prepareRuntime()
-                self.updateGameList()
-            if (arg == '-l'):
+                self.updateGameMetadata = True
+            if (arg == '-a'):
                 self.showLinuxGames = True
+            if (arg.startswith('-l=')):
+                self.languageSwitch = arg.replace("-l=","")
             if (arg == '-h'):
-                self.printHelp()
-                return
+                self.showHelp = True
             if (arg.startswith('-d=')):
-                gamename = arg.replace('-d=','')
-                self.generateDolmadefile(gamename)
-                return
+                self.showGameMetadata = False
 
-        self.showAvailableGames()
+        if (self.showHelp):
+            self.printHelp()
+            return
 
+        if (self.updateGameMetadata):
+            self.prepareRuntime()
+            self.updateGameList()
+
+        if (self.showGameMetadata):
+            self.showAvailableGames()
+            return
+
+        if (self.generateDolmade):
+            self.generateDolmadefile(self.generateDolmade)
+            return
 
 if __name__ == "__main__":
     sys.exit(Main().start())
