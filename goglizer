@@ -303,7 +303,7 @@ class Main(object):
         dolmadefile = open(game.gamename+".dolmade","w")
         dolmadefile.write("# Name of the Dolmade\n")
         dolmadefile.write("DOLMADE\n")
-        dolmadefile.write("    "+game.title.replace(' ','_')+"\n\n")
+        dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+"\n\n")
         
         dolmadefile.write("# Docker image used as a base\n")
         dolmadefile.write("BASE\n")
@@ -373,6 +373,7 @@ class Main(object):
                 self.showHelp = True
             if (arg.startswith('-d=')):
                 self.showGameMetadata = False
+                self.generateDolmade = arg.replace("-d=","")
 
         if (self.showHelp):
             self.printHelp()
