@@ -343,7 +343,7 @@ class Main(object):
 
         dolmadefile.write("# Perform installation\n")
         dolmadefile.write("RUNUSER\n")
-        dolmadefile.write("    wine \""+self.findInstaller(game.elements)+"\"\n\n")
+        dolmadefile.write("    wine start \""+self.findInstaller(game.elements)+"\"\n\n")
 
         dolmadefile.write("# Set icon for the Desktop shortcut\n")
         dolmadefile.write("ICON\n")
