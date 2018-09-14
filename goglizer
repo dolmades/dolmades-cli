@@ -9,6 +9,8 @@ import os
 import re
 import hashlib
 
+if sys.version[0]=="3": raw_input=input
+
 START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 DOLMADES_PATH = os.path.expanduser('~')+'/.dolmades'
 
@@ -149,6 +151,8 @@ class Main(object):
 
     def __init__(self):
         self.prepareDirectories()
+        self.lgDict = { 'en':'English', 'de':'German', 'fr':'French', 'it':'Italian', 'es':'Spanish', 'pl':'Polish', 'ru':'Russian' }
+
         #self.prepareRuntime()
 
     def prepareDirectories(self):
@@ -200,11 +204,8 @@ class Main(object):
 
     def updateGameList(self):
         printb("Fetching detailed info about games from GOG...")
-
-        if (self.languageSwitch):
-            lang = "--language "+self.languageSwitch
-        else:
-            lang = ""
+        #lang = "--language "+self.languageSwitch
+        lang = "--language all"
 
         cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l  "+lang+" --exclude c,d,e > "+DOLMADES_PATH+"/gog.l.lst"
         print("Retrieving detailed linux game list...")
@@ -277,12 +278,52 @@ class Main(object):
         return chksum
 
     def findInstaller(self, elems):
-        for elem in elems:
-            # FIXME dont know if this is a valid assumption...
-            if elem.elemId == "en1installer2":
-                return elem.path.split("/")[-1]
-        printb("Bad! No installer found")
-        return None
+        installers = []
+        lgs = self.languageSwitch.split(",")
+        #longLg = { 'en':'English', 'de':'German', 'fr':'French', 'it':'Italian', 'es':'Spanish', 'pl':'Polish', 'ru':'Russian' }
+
+        # iterate over all desired languages in order of preference
+        for lg in lgs:
+            # select those game elements which are installers of the current language
+            for elem in elems:
+                if "installer" in elem.elemId:
+                    if (self.lgDict[lg] in elem.language):
+                        if (elem not in installers) and (elem.path.endswith('.exe')):
+                            installers.append(elem)
+
+        # if none found add just any despite language settings
+        if (len(installers)==0):
+            printb("No installer for the currently set language switch was found: "+self.languageSwitch)
+            printb("Adding just any installer disregarding language settings")
+            for elem in elems:
+                if "installer" in elem.elemId:
+                    if (elem not in installers) and (elem.path.endswith('.exe')):
+                        installers.append(elem)
+
+        # let user choose if needed
+        if (len(installers)>1):
+            printb("Please select the installer which should be used")
+            n=1;
+            for i in installers:
+                print("("+str(n)+") "+i.language+" // "+i.path+" // "+i.elemId)
+                n=n+1
+
+            selection = 0
+            while (selection<1) or (selection>n):
+                try:
+                    selection = int(raw_input('Choose a number: '))
+                except ValueError:
+                    print("Invalid selection")
+
+            return installers[selection-1]
+
+        if (len(installers)==1):
+            printb("Just one installer found... going to use it!")
+            return installers[0]
+
+        if (len(installers)==0):
+            printb("Bad! No installer found")
+            return None
 
 
     def generateDolmadefile(self, gamename):
@@ -303,7 +344,10 @@ class Main(object):
         dolmadefile = open(game.gamename+".dolmade","w")
         dolmadefile.write("# Name of the Dolmade\n")
         dolmadefile.write("DOLMADE\n")
-        dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+"\n\n")
+        # FIXME this string should rather match the whatsoever being selected installer language
+        #       but this is going to happen later and thus needs refactoring the code of this entire routine!
+        preferredLg=self.languageSwitch.replace("-l=","").split(",")[0]
+        dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+"["+preferredLg+"]\n\n")
         
         dolmadefile.write("# Docker image used as a base\n")
         dolmadefile.write("BASE\n")
@@ -321,12 +365,20 @@ class Main(object):
 
         ingredients=None
         for elem in game.elements:
-            if ingredients:
-                ingredients=ingredients+","+game.gamename+"/"+elem.elemId
-            else:
-                ingredients=game.gamename+"/"+elem.elemId
+            if (elem.language == "") or (self.lgDict[preferredLg] in elem.language):
+                if ingredients:
+                    ingredients=ingredients+","+game.gamename+"/"+elem.elemId
+                else:
+                    ingredients=game.gamename+"/"+elem.elemId
 
         self.downloadIngredients(ingredients)
+
+        try:
+            myInstaller = self.findInstaller(game.elements)
+            myInstallerFN = myInstaller.path.split("/")[-1]
+        except:
+            return False
+
 
         for elem in game.elements:
             dolmadefile.write("INGREDIENT\n")
@@ -343,7 +395,7 @@ class Main(object):
 
         dolmadefile.write("# Perform installation\n")
         dolmadefile.write("RUNUSER\n")
-        dolmadefile.write("    wine start \""+self.findInstaller(game.elements)+"\"\n\n")
+        dolmadefile.write("    wine start \""+myInstallerFN+"\"\n\n")
 
         dolmadefile.write("# Set icon for the Desktop shortcut\n")
         dolmadefile.write("ICON\n")
@@ -359,7 +411,7 @@ class Main(object):
         self.showGameMetadata = True
         self.showLinuxGames = False
         self.updateGameMetadata = False
-        self.languageSwitch = None
+        self.languageSwitch = "en"
         self.generateDolmade = None
 
         for arg in sys.argv:
@@ -388,7 +440,10 @@ class Main(object):
             return
 
         if (self.generateDolmade):
-            self.generateDolmadefile(self.generateDolmade)
+            if (self.generateDolmadefile(self.generateDolmade)):
+                printb("Dolmadefile successfully generated!")
+            else:
+                printb("Dolmadefile could not be generated!")
             return
 
 if __name__ == "__main__":
