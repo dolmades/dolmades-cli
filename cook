@@ -156,6 +156,7 @@ class Ingredient(object):
 class Dolmade(object):
 
     udocker=START_PATH + '/udocker'
+    udockerCmd=udocker + " --repo=" + REPO_PATH
     iconfn = None
     installDir=START_PATH + '/install'
     name = None
@@ -164,7 +165,27 @@ class Dolmade(object):
     runs = []
 
     def __init__(self):
-        pass
+        cmd = self.udockerCmd+" inspect dolmades-runtime"
+        try:
+            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+            if (outp != ""):
+                print("Dolmades Runtime found")
+        except:
+            self.prepareRuntime()
+
+    def prepareRuntime(self):
+        print("Preparing Dolmades Runtime...")
+        cmd = self.udockerCmd+" pull dolmades/dolmades-docker:runtime"
+        print("Pulling dolmades runtime container...")
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udockerCmd + " rm dolmades-runtime"
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/dolmades-docker:runtime"
+        subprocess.call(cmd, shell=True, close_fds=True)
+        print("done")
+
 
     def dumpComment(self, cmdp):
         if (False):

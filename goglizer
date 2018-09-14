@@ -182,7 +182,15 @@ class Main(object):
 
     def __init__(self):
         self.prepareDirectories()
-        #self.prepareRuntime()
+
+        cmd = self.udockerCmd+" inspect dolmades-runtime"
+        try:
+            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+            if (outp != ""):
+                print("Dolmade Runtime found")
+                return
+        except:
+            self.prepareRuntime()
 
     def prepareDirectories(self):
         untouched = True
@@ -214,6 +222,7 @@ class Main(object):
             printit("Initialized dolmade repo under " + REPO_PATH)
 
     def prepareRuntime(self):
+        print("Preparing Dolmades Runtime...")
         cmd = self.udockerCmd+" pull dolmades/dolmades-docker:runtime"
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
