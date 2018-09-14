@@ -42,12 +42,31 @@ def printu(str):
 
 class GameElement(object):
     def __init__(self):
+        self.lgDict = { 
+            'en':'English', 'de':'German', 'fr':'French', 'it':'Italian', 'es':'Spanish', 'pl':'Polish', 'ru':'Russian', 'cz':'Czech', 
+            'cn':'Chinese', 'hu':'Hungarian', 'jp':'Japanese', 'tr':'Turkish', 'ko':'Korean', 'nl':'Dutch', 'sv':'Swedish', 
+            'no':'Norwegian', 'sv':'Swedish', 'fi':'Finnish', 'da':'Danish', 'br':'Brasilian', 'pt':'Portuguese', 'sk':'Slovak' 
+            }
         self.elemId = ""
         self.name = ""
         self.path = ""
         self.size = ""
         self.updated = "" 
         self.language = ""
+
+    def supportsLanguage(self, lg):
+        if lg not in self.lgDict:
+            return False
+
+        return lg in self.supportedLanguages()
+
+    def supportedLanguages(self):
+        languages = []
+        for l,L in self.lgDict.items():
+            if L in self.language:
+                languages.append(l)
+        return languages
+
 
 class GameEntry(object):
 
@@ -69,6 +88,18 @@ class GameEntry(object):
             print("Game Element exists already, not adding it")
         else:
             self.elements.append(gameElement)
+
+    def supportsLanguage(self, lg):
+        if lg not in self.lgDict:
+            return False
+
+        return lg in self.supportedLanguages()
+
+    def supportedLanguages(self):
+        supportedLanguages = []
+        for elem in self.elements:
+            supportedLanguages = set(elem.supportedLanguages() + list(supportedLanguages))
+        return supportedLanguages
 
 class GameList(object):
 
@@ -226,7 +257,7 @@ class Main(object):
     def readGameList(self):
         # FIXME check that game list files exist, if not call updateGameList() beforehand
         self.winGames = []
-        winGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.lw.lst"]).split("\n")
+        winGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.w.lst"]).split("\n")
         for winGame in winGames:
             self.winGames.append(winGame.replace("gamename: ",""))
         self.linGames = []
@@ -252,11 +283,9 @@ class Main(object):
         for winGame in winGames.games:
             if (linGames.exists(winGame.productId)):
                 if (self.showLinuxGames):
-                    print(winGame.gamename)
+                    print(winGame.gamename + " in " + color.ITALIC + ",".join(winGame.supportedLanguages()) + color.END)
             else:
-                print(color.BOLD + winGame.gamename + color.END)
-            #for elem in winGame.elements:
-            #    printit( " "+elem.elemId+ " - "+elem.path+" - "+elem.name)
+                print(color.BOLD + winGame.gamename + color.END + " in " + color.ITALIC + ",".join(winGame.supportedLanguages()) + color.END)
 
     def printHelp(self):
         printu("Usage:")
@@ -330,7 +359,7 @@ class Main(object):
     def generateDolmadefile(self, gamename):
         try:
             games = GameList()
-            games.readList(DOLMADES_PATH+"/gog.lw.lst")
+            games.readList(DOLMADES_PATH+"/gog.w.lst")
         except:
             printb("ERROR could not read game lists, try to run with -u")
 
