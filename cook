@@ -8,8 +8,7 @@ import subprocess
 import os
 import re
 import hashlib
-from PIL import Image
-import pycurl
+import pycurl         # FIXME get rid of this dependency
 
 __author__ = "stefan.kombrink@gmail.com"
 __credits__ = ["UDocker https://github.com/indigo-dc/udocker",
@@ -201,10 +200,6 @@ class Dolmade(object):
         self.ingredients.append(ingr)
         print("")
 
-    def detectInstallation(self):
-        pass
-        # find /wineprefix -name *.lnk -exec python /wineprefix/dumplnk.py {} \;
-
     def run(self, cmdp):
         print("Running as User:" + ' '.join(cmdp))
         self.runs.append(('user',cmdp))
@@ -280,26 +275,20 @@ class Dolmade(object):
         if (self.target):
             print("Predefined target is "+self.target+", target path is "+self.targetPath)
         else:
-            print("Trying to autodetect target...")
-            cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" --volume=" + REPO_PATH+ "/containers/" + self.sha256 + "/ROOT/wineprefix:/wineprefix --hostenv dolmades-runtime /usr/local/bin/findGOGtarget.sh"
-            try:
-                print(cmd)
-                outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
-                outp = outp.strip()
-                self.target = ''.join(outp.split('/')[-1])
-                self.targetPath = '/'.join(outp.split('/')[:-1])
-                print("Autodetected target is "+self.target+", target path is "+self.targetPath)
-            except:
-                print("ERROR: could not determine target path!")
+            print("No target predefined. Target launcher will be used.")
+            self.target="targetLauncher"
+            self.targetPath="/usr/local/bin"
 
-        im = Image.open(INST_PATH+"/"+self.iconfn)
-        im.save(ICON_PATH+"/"+self.name+".png")
-        #shutil.copy(INST_PATH+"/"+self.iconfn,ICON_PATH+"/"+self.name+".png")
+        iconInContainer = REPO_PATH+"/containers/"+self.sha256+"/ROOT/wineprefix/icon.png"
+        open(iconInContainer, 'w+')
+        cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+" -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert /"+self.iconfn + " " + "/wineprefix/icon.png'"
+        print(cmd)
+        subprocess.call(cmd, shell=True, close_fds=True)
 
         with open(DESK_PATH + "/" + self.name + ".desktop", "w") as text_file:
             text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
             text_file.write("Name="+self.name.replace('_',' ')+"\nGenericName="+self.name.replace('_',' ')+"\nComment=" + self.name.replace('_',' ')+"\n")
-            text_file.write("Icon="+os.path.expanduser("~")+"/.dolmades/icons/"+self.name+".png"+"\n")
+            text_file.write("Icon="+REPO_PATH+"/containers/"+self.name+"/ROOT/wineprefix/icon.png"+"\n")
             text_file.write("Exec="+self.udocker+" --repo="+REPO_PATH + " run --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c '"+'cd "'+self.targetPath+'" && wine "'+self.target+'"'+"'\n")
             text_file.write("Categories=Game;\n")
             text_file.write("Path="+os.path.expanduser("~")+"\n")
