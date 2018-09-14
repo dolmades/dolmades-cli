@@ -264,7 +264,7 @@ class Main(object):
         print(" -a:" + color.ITALIC + " show all windows games (also those that have a linux installer)" + color.END)
         print(" -h:" + color.ITALIC + " print this help" + color.END)
         print(" -u:" + color.ITALIC + " update the dolmade runtime container and the GOG game list" + color.END)
-        print(" -l=preferredLanguage,fallbackLanguage:" + color.ITALIC + " use in combination with -u, when omitted installers will default to English (en)" + color.END)
+        print(" -l=preferredLanguage,fallbackLanguage1,fallbackLanguage2,...:" + color.ITALIC + " use in combination with -d, when omitted installers will default to English (en)" + color.END)
         print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
 
     def downloadIngredients(self, i):
@@ -291,14 +291,15 @@ class Main(object):
                         if (elem not in installers) and (elem.path.endswith('.exe')):
                             installers.append(elem)
 
-        # if none found add just any despite language settings
+        # if none found add just those with 'en' language settings
         if (len(installers)==0):
             printb("No installer for the currently set language switch was found: "+self.languageSwitch)
-            printb("Adding just any installer disregarding language settings")
+            printb("Adding just English installer")
             for elem in elems:
                 if "installer" in elem.elemId:
-                    if (elem not in installers) and (elem.path.endswith('.exe')):
-                        installers.append(elem)
+                    if (self.lgDict["en"] in elem.language):
+                        if (elem not in installers) and (elem.path.endswith('.exe')):
+                            installers.append(elem)
 
         # let user choose if needed
         if (len(installers)>1):
@@ -371,6 +372,15 @@ class Main(object):
                 else:
                     ingredients=game.gamename+"/"+elem.elemId
 
+	# no ingredients found at all, fall back to 'en' ...
+	if not ingredients:
+	    for elem in game.elements:
+		if (elem.language == "") or (self.lgDict["en"] in elem.language):
+		    if ingredients:
+			ingredients=ingredients+","+game.gamename+"/"+elem.elemId
+		    else:
+		    	ingredients=game.gamename+"/"+elem.elemId
+
         self.downloadIngredients(ingredients)
 
         try:
@@ -381,13 +391,14 @@ class Main(object):
 
 
         for elem in game.elements:
-            dolmadefile.write("INGREDIENT\n")
-            ingredient=game.gamename+"/"+elem.elemId
-            chksum=self.computeChecksum(INST_PATH+"/"+elem.path)
-            dolmadefile.write("    "+chksum)
-            dolmadefile.write("    "+elem.path+"\n")
-            dolmadefile.write("    "+elem.name+"\n")
-            dolmadefile.write("    gog://"+game.gamename+"/"+elem.elemId+"\n\n")
+            if elem.elemId in ingredients:
+                dolmadefile.write("INGREDIENT\n")
+                ingredient=game.gamename+"/"+elem.elemId
+                chksum=self.computeChecksum(INST_PATH+"/"+elem.path)
+                dolmadefile.write("    "+chksum)
+                dolmadefile.write("    "+elem.path+"\n")
+                dolmadefile.write("    "+elem.name+"\n")
+                dolmadefile.write("    gog://"+game.gamename+"/"+elem.elemId+"\n\n")
 
         dolmadefile.write("# Post-install custom packages like so\n")
         dolmadefile.write("#RUNROOT\n")
