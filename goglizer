@@ -182,8 +182,6 @@ class Main(object):
 
     def __init__(self):
         self.prepareDirectories()
-        self.lgDict = { 'en':'English', 'de':'German', 'fr':'French', 'it':'Italian', 'es':'Spanish', 'pl':'Polish', 'ru':'Russian', 'cz':'Czech', 'cn':'Chinese', 'hu':'Hungarian', 'jp':'Japanese', 'tr':'Turkish', 'ko':'Korean', 'nl':'Dutch', 'sv':'Swedish', 'no':'Norwegian', 'sv':'Swedish', 'fi':'Finnish', 'da':'Danish', 'br':'Brasilian', 'pt':'Portuguese', 'sk':'Slovak' }
-
         #self.prepareRuntime()
 
     def prepareDirectories(self):
@@ -316,17 +314,18 @@ class Main(object):
             # select those game elements which are installers of the current language
             for elem in elems:
                 if "installer" in elem.elemId:
-                    if (self.lgDict[lg] in elem.language):
+                    if (elem.supportsLanguage(lg)):
                         if (elem not in installers) and (elem.path.endswith('.exe')):
                             installers.append(elem)
 
         # if none found add just those with 'en' language settings
+        # GOG tags multilang installers with 'en', too
         if (len(installers)==0):
             printb("No installer for the currently set language switch was found: "+self.languageSwitch)
             printb("Adding just English installer")
             for elem in elems:
                 if "installer" in elem.elemId:
-                    if (self.lgDict["en"] in elem.language):
+                    if (elem.supportsLanguage(lg)):
                         if (elem not in installers) and (elem.path.endswith('.exe')):
                             installers.append(elem)
 
@@ -395,7 +394,7 @@ class Main(object):
 
         ingredients=None
         for elem in game.elements:
-            if (elem.language == "") or (self.lgDict[preferredLg] in elem.language):
+            if (elem.language == "") or (elem.supportsLanguage(preferredLg)):
                 if ingredients:
                     ingredients=ingredients+","+game.gamename+"/"+elem.elemId
                 else:
@@ -404,7 +403,7 @@ class Main(object):
 	# no ingredients found at all, fall back to 'en' ...
 	if not ingredients:
 	    for elem in game.elements:
-		if (elem.language == "") or (self.lgDict["en"] in elem.language):
+		if (elem.language == "") or (elem.supportedLanguage("en")):
 		    if ingredients:
 			ingredients=ingredients+","+game.gamename+"/"+elem.elemId
 		    else:
