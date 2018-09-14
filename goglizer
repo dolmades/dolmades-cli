@@ -151,7 +151,7 @@ class Main(object):
 
     def __init__(self):
         self.prepareDirectories()
-        self.lgDict = { 'en':'English', 'de':'German', 'fr':'French', 'it':'Italian', 'es':'Spanish', 'pl':'Polish', 'ru':'Russian' }
+        self.lgDict = { 'en':'English', 'de':'German', 'fr':'French', 'it':'Italian', 'es':'Spanish', 'pl':'Polish', 'ru':'Russian', 'cz':'Czech', 'cn':'Chinese', 'hu':'Hungarian', 'jp':'Japanese', 'tr':'Turkish', 'ko':'Korean', 'nl':'Dutch', 'sv':'Swedish', 'no':'Norwegian', 'sv':'Swedish', 'fi':'Finnish', 'da':'Danish', 'br':'Brasilian', 'pt':'Portuguese', 'sk':'Slovak' }
 
         #self.prepareRuntime()
 
@@ -348,7 +348,7 @@ class Main(object):
         # FIXME this string should rather match the whatsoever being selected installer language
         #       but this is going to happen later and thus needs refactoring the code of this entire routine!
         preferredLg=self.languageSwitch.replace("-l=","").split(",")[0]
-        dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+"["+preferredLg+"]\n\n")
+        dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+":"+preferredLg+"\n\n")
         
         dolmadefile.write("# Docker image used as a base\n")
         dolmadefile.write("BASE\n")
@@ -403,6 +403,10 @@ class Main(object):
         dolmadefile.write("# Post-install custom packages like so\n")
         dolmadefile.write("#RUNROOT\n")
         dolmadefile.write("#    apt-get update && apt-get -y install custompkg && && apt-get clean && rm -rf /var/lib/apt/lists/*\n\n")
+
+	dolmadefile.write("# Adapt some presets, for instance when a certain windows version must be enforced\n")
+        dolmadefile.write("#RUNUSER\n")
+	dolmadefile.write("#    winetricks winxp\n\n")
 
         dolmadefile.write("# Perform installation\n")
         dolmadefile.write("RUNUSER\n")
