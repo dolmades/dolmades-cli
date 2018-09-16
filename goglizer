@@ -378,13 +378,14 @@ class Main(object):
         game = games.getSelectedGame()
 
         print("Generating Dolmadefile for "+gamename)
-                
-        dolmadefile = open(game.gamename+".dolmade","w")
-        dolmadefile.write("# Name of the Dolmade\n")
-        dolmadefile.write("DOLMADE\n")
+        
         # FIXME this string should rather match the whatsoever being selected installer language
         #       but this is going to happen later and thus needs refactoring the code of this entire routine!
         preferredLg=self.languageSwitch.replace("-l=","").split(",")[0]
+                
+        dolmadefile = open(game.gamename+":"+preferredLg+".dolmade","w")
+        dolmadefile.write("# Name of the Dolmade\n")
+        dolmadefile.write("DOLMADE\n")
         dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+":"+preferredLg+"\n\n")
         
         dolmadefile.write("# Docker image used as a base\n")
