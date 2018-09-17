@@ -37,5 +37,5 @@ RUNUSER
 ICON
     DVD_Label/English/label_bs25.jpg
 
-SETTARGET
-    echo "$(find /wineprefix/ -name bsengine.exe)"
+#SETTARGET
+#    echo "$(find /wineprefix/ -name bsengine.exe)"
