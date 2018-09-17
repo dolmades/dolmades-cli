@@ -335,7 +335,7 @@ class Dolmade(object):
 
         iconInContainer = REPO_PATH+"/containers/"+self.sha256+"/ROOT/wineprefix/icon.png"
         open(iconInContainer, 'w+')
-        cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+" -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert /"+self.iconfn + " " + "/wineprefix/icon.png'"
+        cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+" -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+self.iconfn + " " + "/wineprefix/icon.png'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
