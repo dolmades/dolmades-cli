@@ -207,14 +207,14 @@ class Dolmade(object):
     def prepareRuntime(self):
         print("Preparing Dolmades Runtime...")
 
-        cmd = self.udockerCmd+" pull dolmades/dolmades-docker:runtime"
+        cmd = self.udockerCmd+" pull dolmades/runtime"
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = self.udockerCmd + " rm dolmades-runtime"
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/dolmades-docker:runtime"
+        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime"
         subprocess.call(cmd, shell=True, close_fds=True)
         print("done")
 

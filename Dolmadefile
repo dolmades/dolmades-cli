@@ -4,7 +4,7 @@ DOLMADE
 
 # Docker image to use as a base
 BASE
-    dolmades/dolmades-docker:winestable
+    dolmades/winestable
 
 # Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
 INGREDIENT
