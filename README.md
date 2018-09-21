@@ -181,7 +181,7 @@ If `name-of-base` is given as argument a temporary dolmade is being created and 
 
 ### Binds
 
-It is possible to make files or directories from the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
+It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
 
 ```
 ./dolmades binds name-of-dolmade
