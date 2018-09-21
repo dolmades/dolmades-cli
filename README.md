@@ -110,23 +110,23 @@ targetSelector
 ```
 The previous changes are now applied permanently to the dolmade but will get lost if it will be cooked another time.
 That is why, secondly, we need to update the corresponing `dolmadefile`.
-Edit `edna_harvey_the_breakout:en.dolmade` and add a section
+Edit `edna_harvey_the_breakout:en.dolmade` and add the following section right before the `RunUser` command which launches the installer using `wine`:
 ```
 RunUser
  winetricks winxp
- 
+
 ```
-right before the `RunUser` command which launches the installer using `wine`
 
+Finally, the dolmade can be cooked once more:
+```
+./cook edna_harvey_the_breakout:en.dolmade
+```
 
-All changes are applied permanently.
-Second, the necessary changes are meant to be integrated into the corresponding `dolmadefile`.
-
-
+This erases the previous dolmade and applies the fix permanently. Now add and commit your `dolmadefile` to your personal github repository.
 
 ## Dolmades Management
 
-Locally available dolmades are managed by `dolmades`
+Your dolmades are managed by `dolmades`
 
 ## Initialization
 
@@ -163,15 +163,30 @@ It is possible to launch a bash inside the container.
 The installation directory will be available under `/install` and installed windows applications under `/wineprefix`.
 Furthermore, the home directory of the calling user is available:
 ```
-./udocker debug name-of-dolmade
+./dolmades debug name-of-dolmade|name-of-based 
 ls -lad $HOME /wineprefix /install
 ```
 In rare cases you might to run as fake root, e.g. to install a missing package:
 ```
-./udocker root-debug 
+./dolmades root-debug name-of-dolmade|name-of-base
 apt-get update && apt-get -y install vim
 ```
+
+If a dolmade name is given as argument the changes are being applied permanently.
+If a dolmade base image name is given as argument a temporary dolmade is being created and destroyed after the shell is being closed.
 
 ### Binds
 
 It is possible to make files or directories from the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
+
+```
+./dolmades binds name-of-dolmade
+# listing the currently configured binds
+```
+
+```
+./dolmades bind name-of-dolmade bind1 bind2 ...
+```
+
+A bind is defined as follows: `/hostdir/hostfile:/dolmadedir/dolmadefile` or `/hostdir/:/dolmadedir/`
+Note, that a bind requires files/directories to exist on the host and within the dolmade!
