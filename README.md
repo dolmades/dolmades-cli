@@ -88,26 +88,90 @@ After successful completion you will find a clickable icon on your desktop :)
 
 As of now for many games the installation procedure fails or the installed game won't work properly.
 The goal of dolmades is to make it easy to find and apply fixes to the generated Dolmadefile in such cases. 
-
-First we need to figure out interactively what needs to be done:
+Let's generate the dolmadefile:
+```
+./goglizer -d=edna_harvey_the_breakout
+```
+Then, we try to cook it:
+```
+./cook edna_harvey_the_breakout:en.dolmade
+```
+The java installation will fail and leave a broken dolmade.
+First, we need to figure out interactively what needs to be done:
 ```
 ./dolmades debug edna_harvey_the_breakout:en.dolmade
 
 # set windows version to WinXP
 winetricks winxp
-# rerun and check that it works now
+# rerun installer and ensure that it works now
 /install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
 # test cooked dolmade
 targetSelector
 ```
-In rare cases you might need to install a missing package. You can do this if you run as fake root:
+The previous changes are now applied permanently to the dolmade but will get lost if it will be cooked another time.
+That is why, secondly, we need to update the corresponing `dolmadefile`.
+Edit `edna_harvey_the_breakout:en.dolmade` and add a section
 ```
-./udocker root-debug Broken_Sword_3:_The_Sleeping_Dragon
+RunUser
+ winetricks winxp
+ 
+```
+right before the `RunUser` command which launches the installer using `wine`
+
+
+All changes are applied permanently.
+Second, the necessary changes are meant to be integrated into the corresponding `dolmadefile`.
+
+
+
+## Dolmades Management
+
+Locally available dolmades are managed by `dolmades`
+
+## Initialization
+
+Initialization does two things:
+* initializing the dolmades directory under `$HOME/.dolmades`
+* downloading the docker runtime container
+
+```
+./dolmades init
+```
+
+### Listing
+Lists the locally available dolmades:
+```
+./dolmades list
+```
+
+### Removal
+
+Removes the given dolmade and frees up the allocated space:
+```
+./dolmades rm name-of-dolmade
+```
+
+### Execution
+
+Executes the targetSelector or the executable defined via `SetTarget` in the `dolmadefile`:
+```
+./dolmades exec name-of-dolmade
+```
+### Debug
+
+It is possible to launch a bash inside the container. 
+The installation directory will be available under `/install` and installed windows applications under `/wineprefix`.
+Furthermore, the home directory of the calling user is available:
+```
+./udocker debug name-of-dolmade
+ls -lad $HOME /wineprefix /install
+```
+In rare cases you might to run as fake root, e.g. to install a missing package:
+```
+./udocker root-debug 
 apt-get update && apt-get -y install vim
 ```
 
-## Management
+### Binds
 
-```
-dolmade rm
-```
+It is possible to make files or directories from the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
