@@ -118,7 +118,10 @@ class Ingredient(object):
         for u in self.gog_urls:
             try:
                 print("Using a valid GOG account to download " + u + " as " + self.fileName)
-                raise NotImplemented
+                cmd = START_PATH + '/udocker' + " --quiet --repo=" + REPO_PATH + " run --user=$(whoami) --bindhome --hostauth -v " + INST_PATH+"/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader --download-file "+u.replace("gog://","")+"'"
+                print(cmd)
+                subprocess.call(cmd, shell=True, close_fds=True)
+                
             except Exception as error:
                 print(error)
                 continue
@@ -156,7 +159,7 @@ class Ingredient(object):
 class Dolmade(object):
 
     udocker=START_PATH + '/udocker'
-    udockerCmd=udocker + " --repo=" + REPO_PATH
+    udockerCmd=udocker + " --quiet --repo=" + REPO_PATH
     iconfn = None
     installDir=START_PATH + '/install'
     name = None
@@ -335,7 +338,7 @@ class Dolmade(object):
 
         iconInContainer = REPO_PATH+"/containers/"+self.sha256+"/ROOT/wineprefix/icon.png"
         open(iconInContainer, 'w+')
-        cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+" -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+self.iconfn + " " + "/wineprefix/icon.png'"
+        cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+" -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+self.iconfn + "[0] " + "/wineprefix/icon.png'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
