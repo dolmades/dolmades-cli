@@ -32,7 +32,7 @@ At first, you will be asked to authorize using your GOG account.
 ./goglizer -u
 ```
 The `-u` parameter tells `goglizer` to retrieve the dolmades runtime container and your personal game list.
-The authorization credentials are being stored in the dolmade runtime container for subsequent usage.
+The authorization credentials are being stored in your home directory for subsequent use.
 After success a list of your games is being shown. 
 
 ```
