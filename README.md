@@ -5,6 +5,7 @@
 Dolmades are intended as a mean to ease installation and distribution of windows programs in Linux environments to the utmost extent. This collection of command line tools represent the first implementation of the underlying concept.
 As of now there are two python scripts
 
+* dolmades - to maintain your installed windows application
 * goglizer - prepares win-only GOG games to be cooked (GOG account required)
 * cook - cooks a dolmade given a Dolmadefile (specification) and its ingredients (files)
 
@@ -13,7 +14,6 @@ Right after cooking the windows application will be available as clickable icon 
 ## Requirements
 
 * Python 2.7 or 3.5
-* pycurl
 
 ## Basic Use
 
@@ -91,16 +91,23 @@ The goal of dolmades is to make it easy to find and apply fixes to the generated
 
 First we need to figure out interactively what needs to be done:
 ```
-./udocker --repo=$HOME/.dolmades/repo run --user=$(whoami) --bindhome --hostenv --hostauth Broken_Sword_3:_The_Sleeping_Dragon bash
+./dolmades debug edna_harvey_the_breakout:en.dolmade
+
+# set windows version to WinXP
+winetricks winxp
+# rerun and check that it works now
+/install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
+# test cooked dolmade
+targetSelector
 ```
 In rare cases you might need to install a missing package. You can do this if you run as fake root:
 ```
-./udocker --repo=$HOME/.dolmades/repo run --user=root --bindhome --hostenv --hostauth Broken_Sword_3:_The_Sleeping_Dragon bash
+./udocker root-debug Broken_Sword_3:_The_Sleeping_Dragon
+apt-get update && apt-get -y install vim
 ```
-TODO add an example fix
 
-## Deinstallation
- 
- This is easy:
- * delete the shortcut on your desktop
- * delete the dolmade: `./udocker --repo=$HOME/.dolmades/repo rm Broken_Sword_3:_The_Sleeping_Dragon`
+## Management
+
+```
+dolmade rm
+```
