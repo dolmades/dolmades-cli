@@ -9,7 +9,7 @@ As of now there are two python scripts
 * goglizer - prepares win-only GOG games to be cooked (GOG account required)
 * cook - cooks a dolmade given a Dolmadefile (specification) and its ingredients (files)
 
-Right after cooking the windows application will be available as clickable icon on your desktop.
+Right after cooking the windows application will be available as clickable shortcut on your desktop.
 
 ## Requirements
 
