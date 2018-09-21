@@ -390,7 +390,7 @@ class Main(object):
         
         dolmadefile.write("# Docker image used as a base\n")
         dolmadefile.write("BASE\n")
-        dolmadefile.write("    dolmades/dolmades-docker:winestable\n\n")
+        dolmadefile.write("    dolmades/winestable\n\n")
 
         dolmadefile.write("# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...\n")
         dolmadefile.write("INGREDIENT\n")
