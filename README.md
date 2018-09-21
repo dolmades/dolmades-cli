@@ -163,17 +163,21 @@ It is possible to launch a bash inside the container.
 The installation directory will be available under `/install` and installed windows applications under `/wineprefix`.
 Furthermore, the home directory of the calling user is available:
 ```
-./dolmades debug name-of-dolmade|name-of-based 
+./dolmades debug name-of-dolmade
 ls -lad $HOME /wineprefix /install
 ```
 In rare cases you might to run as fake root, e.g. to install a missing package:
 ```
-./dolmades root-debug name-of-dolmade|name-of-base
+./dolmades root-debug runtime
 apt-get update && apt-get -y install vim
 ```
 
-If a dolmade name is given as argument the changes are being applied permanently.
-If a dolmade base image name is given as argument a temporary dolmade is being created and destroyed after the shell is being closed.
+If `name-of-dolmade` is given as argument the changes are being applied permanently.
+If `name-of-base` is given as argument a temporary dolmade is being created and destroyed after the shell is being closed. `name-of-base` is used as template and currently can be one of the following:
+* `runtime` - used internally by `dolmades`, `cook` and `goglizer`
+* `base` - Ubuntu 16.04 LTS prepared for the installation of wine
+* `winestable` - `base` with wine stable added and preconfigured
+* `winedevel`- `base` with wine testing added and preconfigured
 
 ### Binds
 
