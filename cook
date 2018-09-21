@@ -24,7 +24,6 @@ START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 DOLMADES_PATH = os.path.expanduser('~')+'/.dolmades'
 
 REPO_PATH = DOLMADES_PATH + "/repo"
-ICON_PATH = DOLMADES_PATH + "/icons"
 INST_PATH = DOLMADES_PATH + "/install"
 
 try:
@@ -40,8 +39,6 @@ def createDirectories():
             os.rmdir(REPO_PATH)
     except:
         print(REPO_PATH+" not empty, do not delete...")
-    if (not os.path.exists(ICON_PATH)):
-        os.mkdir(ICON_PATH, 0755)
     if (not os.path.exists(INST_PATH)):
         os.mkdir(INST_PATH, 0755)
 
@@ -196,9 +193,6 @@ class Dolmade(object):
             subprocess.call(cmd, shell=True, close_fds=True)
             untouched = False
 
-        if (not os.path.exists(ICON_PATH)):
-            os.mkdir(ICON_PATH, 0755)
-            untouched = False
         if (not os.path.exists(INST_PATH)):
             os.mkdir(INST_PATH, 0755)
             untouched = False
