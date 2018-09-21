@@ -102,5 +102,5 @@ TODO add an example fix
 ## Deinstallation
  
  This is easy:
- * delete the icon on your desktop
+ * delete the shortcut on your desktop
  * delete the dolmade: `./udocker --repo=$HOME/.dolmades/repo rm Broken_Sword_3:_The_Sleeping_Dragon`
