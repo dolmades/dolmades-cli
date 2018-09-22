@@ -2,7 +2,11 @@
 DOLMADE
     Broken_Sword
 
-# Docker image to use as a base
+# The version of `cook` that must be used for this dolmade
+VERSION
+    1.0
+
+# Docker image to use as a base with VERSION defining its tag
 BASE
     dolmades/winestable
 
