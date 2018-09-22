@@ -379,7 +379,7 @@ class Main(object):
         #       but this is going to happen later and thus needs refactoring the code of this entire routine!
         preferredLg=self.languageSwitch.replace("-l=","").split(",")[0]
                 
-        dolmadefile = open(game.gamename+":"+preferredLg+".dolmade","w")
+        dolmadefile = open(game.gamename+":"+preferredLg+":"+VERSION+".dolmade","w")
         dolmadefile.write("# Name of the Dolmade\n")
         dolmadefile.write("DOLMADE\n")
         dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+":"+preferredLg+"\n\n")
@@ -388,7 +388,7 @@ class Main(object):
         dolmadefile.write("VERSION\n")
         dolmadefile.write("    "+VERSION+"\n\n")
 
-        dolmadefile.write("# Docker image used as a base\n")
+        dolmadefile.write("# Docker image used as a base with VERSION defining its tag\n")
         dolmadefile.write("BASE\n")
         dolmadefile.write("    dolmades/winestable\n\n")
 
