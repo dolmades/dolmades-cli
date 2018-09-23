@@ -18,6 +18,7 @@ __license__ = "Licensed under the Apache License, Version 2.0"
 __version__ = "0.1"
 __date__ = "2018"
 
+VERSION = "1.0"
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -165,6 +166,7 @@ class Dolmade(object):
     runs = []
 
     def __init__(self):
+        self.version = "latest"
         self.prepareDirectories()
 
         cmd = self.udockerCmd+" inspect dolmades-runtime"
@@ -204,14 +206,14 @@ class Dolmade(object):
     def prepareRuntime(self):
         print("Preparing Dolmades Runtime...")
 
-        cmd = self.udockerCmd+" pull dolmades/runtime"
+        cmd = self.udockerCmd+" pull dolmades/runtime:"+VERSION
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = self.udockerCmd + " rm dolmades-runtime"
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime"
+        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+VERSION
         subprocess.call(cmd, shell=True, close_fds=True)
         print("done")
 
@@ -219,6 +221,14 @@ class Dolmade(object):
     def dumpComment(self, cmdp):
         if (False):
             print(cmdp)
+
+    def checkVersion(self, version):
+        self.version=''.join(version)
+        if self.version == VERSION:
+            print("Good! The dolmadefile and this script both match version "+self.version)
+        else:
+            print("Bad! The dolmadefile is for version "+self.version+", but this script for version "+VERSION)
+            sys.exit(1)
 
     def setupDolmade(self, cmdp):
         self.name = ' '.join(cmdp)
@@ -282,11 +292,11 @@ class Dolmade(object):
         except:
             print("Repo exists already")
 
-        cmd = self.udocker + " --repo=" + REPO_PATH + " pull " + self.baseImg
+        cmd = self.udocker + " --repo=" + REPO_PATH + " pull " + self.baseImg+":"+self.version
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udocker + " --repo=" + REPO_PATH + " create " + self.baseImg
+        cmd = self.udocker + " --repo=" + REPO_PATH + " create " + self.baseImg+":"+self.version
         print("Installing the sucessfully built dolmade...")
         sha256 = subprocess.check_output(cmd, shell=True, close_fds=True)
 
@@ -308,7 +318,7 @@ class Dolmade(object):
                 cmd = self.udocker + " --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user=root --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
-                cmd = self.udocker + " --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'setTarget'):
@@ -358,6 +368,7 @@ class Main(object):
         """all supported commands"""
         cmds = { '': self.dolmade.dumpComment,
                  '#': self.dolmade.dumpComment,
+                 'VERSION': self.dolmade.checkVersion,
                  'DOLMADE': self.dolmade.setupDolmade, 
                  'BASE': self.dolmade.setupBase,
                  'INGREDIENT': self.dolmade.setupIngredient,
