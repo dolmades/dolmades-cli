@@ -392,6 +392,10 @@ class Main(object):
         dolmadefile.write("BASE\n")
         dolmadefile.write("    dolmades/winestable\n\n")
 
+        dolmadefile.write("## A description of the installed software\n")
+        dolmadefile.write("#DESCRIPTION\n")
+        dolmadefile.write("#    TODO: please add a synopsis about the game...\n\n")
+
         dolmadefile.write("# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...\n")
         dolmadefile.write("INGREDIENT\n")
         cmd = "sh -c 'curl -s "+game.icon+"|sha256sum|cut -f 1 -d \" \"'"
