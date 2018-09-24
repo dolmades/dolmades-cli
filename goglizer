@@ -12,7 +12,7 @@ import hashlib
 if sys.version[0]=="3": raw_input=input
 
 VERSION = "1.0"
-START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
+SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 DOLMADES_PATH = os.path.expanduser('~')+'/.dolmades'
 
 REPO_PATH = DOLMADES_PATH + "/repo"
@@ -178,7 +178,7 @@ class GameList(object):
 
 
 class Main(object):
-    udockerCmd =  START_PATH + "/udocker --quiet --repo="+REPO_PATH
+    udockerCmd =  SELF_PATH + "/udocker --quiet --repo="+REPO_PATH
 
     def __init__(self):
         self.prepareDirectories()
@@ -205,7 +205,7 @@ class Main(object):
             pass
 
         if (not os.path.exists(REPO_PATH)):
-            cmd = START_PATH + "/udocker mkrepo "+REPO_PATH
+            cmd = SELF_PATH + "/udocker mkrepo "+REPO_PATH
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
             untouched = False
@@ -392,7 +392,7 @@ class Main(object):
         dolmadefile.write("BASE\n")
         dolmadefile.write("    dolmades/winestable\n\n")
 
-        dolmadefile.write("## A description of the installed software\n")
+        dolmadefile.write("# A description of the installed software\n")
         dolmadefile.write("#DESCRIPTION\n")
         dolmadefile.write("#    TODO: please add a synopsis about the game...\n\n")
 
