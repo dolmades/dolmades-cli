@@ -10,22 +10,16 @@ import re
 import hashlib
 import pycurl         # FIXME get rid of this dependency
 
-__author__ = "stefan.kombrink@gmail.com"
-__credits__ = ["UDocker https://github.com/indigo-dc/udocker",
-               "PRoot http://proot.me",
-               "runC https://runc.io"]
-__license__ = "Licensed under the Apache License, Version 2.0"
-__version__ = "0.1"
-__date__ = "2018"
-
 VERSION = "1.0"
+METADIR = ".dolmades"
+INSTDIR = "install"
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
-START_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
+SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 DOLMADES_PATH = os.path.expanduser('~')+'/.dolmades'
 
 REPO_PATH = DOLMADES_PATH + "/repo"
-INST_PATH = DOLMADES_PATH + "/install"
+INST_PATH = DOLMADES_PATH + "/" + INSTDIR
 
 try:
     DESK_PATH = subprocess.check_output(['xdg-user-dir', 'DESKTOP']).strip()
@@ -116,7 +110,7 @@ class Ingredient(object):
         for u in self.gog_urls:
             try:
                 print("Using a valid GOG account to download " + u + " as " + self.fileName)
-                cmd = START_PATH + '/udocker' + " --quiet --repo=" + REPO_PATH + " run --user=$(whoami) --bindhome --hostauth -v " + INST_PATH+"/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader --download-file "+u.replace("gog://","")+"'"
+                cmd = SELF_PATH + '/udocker' + " --quiet --repo=" + REPO_PATH + " run --user=$(whoami) --bindhome --hostauth -v " + INST_PATH+"/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader --download-file "+u.replace("gog://","")+"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
                 
@@ -156,10 +150,9 @@ class Ingredient(object):
 
 class Dolmade(object):
 
-    udocker=START_PATH + '/udocker'
+    udocker=SELF_PATH + '/udocker'
     udockerCmd=udocker + " --quiet --repo=" + REPO_PATH
     iconfn = None
-    installDir=START_PATH + '/install'
     name = None
     sha256 = None
     ingredients = []
@@ -190,7 +183,7 @@ class Dolmade(object):
             pass
 
         if (not os.path.exists(REPO_PATH)):
-            cmd = START_PATH + "/udocker mkrepo "+REPO_PATH
+            cmd = SELF_PATH + "/udocker mkrepo "+REPO_PATH
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
             untouched = False
@@ -215,6 +208,10 @@ class Dolmade(object):
 
         cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+VERSION
         subprocess.call(cmd, shell=True, close_fds=True)
+
+        if (not os.path.exists(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+METADIR)):
+            os.mkdir(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+METADIR, 0755)
+
         print("done")
 
 
@@ -237,6 +234,10 @@ class Dolmade(object):
     def setupBase(self, cmdp):
         self.baseImg = ''.join(cmdp)
         print("Setting Base Docker Image to " + self.baseImg)
+
+    def setupDescription(self, cmdp):
+        self.description = '\n'.join(cmdp)
+        print("Setting Description to " + self.description)
 
     def setupIngredient(self, cmdp):
         h = cmdp[0]
@@ -280,6 +281,23 @@ class Dolmade(object):
         targetBinds.append(cmdp)
         print("Bind mount for target run:" + join(cmdp))
         
+    def path(self):
+        if self.sha256:
+            return REPO_PATH+"/containers/"+self.sha256+"/ROOT/"
+        else:
+            print("Error: Dolmade has not been created yet!")
+            return None
+
+    def metaPath(self):
+        path = self.path()
+        if path:
+            return self.path()+"/"+METADIR
+        else:
+            return None
+
+    def installPath(self):
+        return self.path()+"/"+INSTDIR
+
     def build(self):
         print("Performing the dolmade build...")
         for i in self.ingredients: 
@@ -292,37 +310,42 @@ class Dolmade(object):
         except:
             print("Repo exists already")
 
-        cmd = self.udocker + " --repo=" + REPO_PATH + " pull " + self.baseImg+":"+self.version
+        cmd = self.udockerCmd+" pull "+self.baseImg+":"+self.version
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udocker + " --repo=" + REPO_PATH + " create " + self.baseImg+":"+self.version
-        print("Installing the sucessfully built dolmade...")
-        sha256 = subprocess.check_output(cmd, shell=True, close_fds=True)
+        cmd = self.udockerCmd+" create "+self.baseImg+":"+self.version
+        self.sha256 = subprocess.check_output(cmd, shell=True, close_fds=True).strip()
 
-        cmd = self.udocker + " --repo=" + REPO_PATH + " rm " + self.name
+        if (not os.path.exists(self.metaPath())):
+            os.mkdir(self.metaPath(), 0755)
+        
+        print("Installing the sucessfully built dolmade...")
+
+        cmd = self.udockerCmd+" rm "+self.name
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udocker + " --repo=" + REPO_PATH + " name " + sha256.strip() + " " + self.name
+        cmd = self.udockerCmd+" name "+self.sha256+" "+self.name
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
         self.target = None
         self.targetPath = None
-        self.sha256 = sha256.strip()
 
         for r in self.runs:
             (u,c) = r
             if (u == 'root'):
-                cmd = self.udocker + " --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user=root --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                cmd = self.udockerCmd+" run --volume="+INST_PATH+":/install --user=root --volume="+os.path.expanduser("~")+\
+                      "/.Xauthority --hostenv --dri "+self.name+" "+"bash -c 'cd /install && "+' '.join(c)+"'"
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
-                cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --volume=" + INST_PATH + ":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                cmd = self.udockerCmd+" run --volume="+INST_PATH+":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+\
+                      "/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'setTarget'):
-                cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" --hostenv " + self.name + " bash -c '" + ' '.join(c) + "'"
+                cmd = self.udockerCmd+" run --user="+getpass.getuser()+" --hostenv "+self.name+" bash -c '"+' '.join(c)+"'"
                 print(cmd)
                 try:
                     outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
@@ -332,6 +355,14 @@ class Dolmade(object):
                 except:
                     print("ERROR: could not determine target path!")
 
+        descInContainer = self.metaPath()+"/description.txt"
+        f = open(descInContainer, 'w')
+        try:
+            f.write(self.description)
+        except:
+            print("No description predefined.")
+        f.close()
+
         if (self.target):
             print("Predefined target is "+self.target+", target path is "+self.targetPath)
             self.target = 'wine start "'+self.target+'"'
@@ -340,26 +371,38 @@ class Dolmade(object):
             self.target="./targetLauncher"
             self.targetPath="/usr/local/bin"
 
-        iconInContainer = REPO_PATH+"/containers/"+self.sha256+"/ROOT/wineprefix/icon.png"
+        iconInContainer = self.metaPath()+"/icon.png"
         open(iconInContainer, 'w+')
-        cmd = self.udocker + " --quiet --repo=" + REPO_PATH + " run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+" -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+self.iconfn + "[0] " + "/wineprefix/icon.png'"
+        cmd = self.udockerCmd+" run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+\
+              " -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+\
+              self.iconfn + "[0] " + "/wineprefix/icon.png'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        namefileInContainer = REPO_PATH+"/containers/"+self.sha256+"/ROOT/wineprefix/dolmadename"
+        namefileInContainer = self.metaPath()+"/dolmadename"
         cleanName=self.name.replace('_',' ').replace('&',"_n_")
         subprocess.call("echo '"+cleanName+"' > "+namefileInContainer, shell=True, close_fds=True)
 
-        with open(DESK_PATH + "/" + self.name + ".desktop", "w") as text_file:
+        deskfileOnHost = DESK_PATH + "/" + self.name + ".desktop"
+        with open(deskfileOnHost, "w") as text_file:
             text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
             text_file.write("Name="+cleanName+"\nGenericName="+cleanName+"\nComment=" +cleanName+"\n")
-            text_file.write("Icon="+REPO_PATH+"/containers/"+self.name+"/ROOT/wineprefix/icon.png"+"\n")
-            text_file.write("Exec="+self.udocker+" --repo="+REPO_PATH + " run --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri " + self.name + " " + "bash -c '"+'cd "'+self.targetPath+'" && '+self.target+"'\n")
+            text_file.write("Icon="+self.metaPath()+"/icon.png"+"\n")
+            text_file.write("Exec="+SELF_PATH+"/dolmades exec '"+self.name+"'\n")
             text_file.write("Categories=Game;\n")
             text_file.write("Path="+os.path.expanduser("~")+"\n")
 
-        st = os.stat(DESK_PATH + "/" + self.name + ".desktop")
-        os.chmod(DESK_PATH + "/" + self.name + ".desktop", st.st_mode | stat.S_IEXEC)
+        runscriptInContainer = self.metaPath()+"/start.sh"
+
+        with open(runscriptInContainer, "w") as text_file:
+            text_file.write("#!/bin/bash\n")
+            text_file.write("cd "+self.targetPath+"\n")
+            text_file.write(self.target+"\n")
+
+        st = os.stat(deskfileOnHost)
+        os.chmod(deskfileOnHost, st.st_mode | stat.S_IEXEC)
+        st = os.stat(runscriptInContainer)
+        os.chmod(runscriptInContainer, st.st_mode | stat.S_IEXEC)
 
 class Main(object):
     dolmade = Dolmade()
@@ -371,6 +414,7 @@ class Main(object):
                  'VERSION': self.dolmade.checkVersion,
                  'DOLMADE': self.dolmade.setupDolmade, 
                  'BASE': self.dolmade.setupBase,
+                 'DESCRIPTION': self.dolmade.setupDescription,
                  'INGREDIENT': self.dolmade.setupIngredient,
                  'RUNUSER': self.dolmade.run,
                  'RUNROOT': self.dolmade.runRoot,
