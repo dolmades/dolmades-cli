@@ -9,14 +9,9 @@ import os
 import re
 import hashlib
 
+import config as cfg
+
 if sys.version[0]=="3": raw_input=input
-
-VERSION = "1.0"
-SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
-DOLMADES_PATH = os.path.expanduser('~')+'/.dolmades'
-
-REPO_PATH = DOLMADES_PATH + "/repo"
-INST_PATH = DOLMADES_PATH + "/install"
 
 class color:
    PURPLE = '\033[95m'
@@ -178,7 +173,7 @@ class GameList(object):
 
 
 class Main(object):
-    udockerCmd =  SELF_PATH + "/udocker --quiet --repo="+REPO_PATH
+    udockerCmd =  cfg.SELF_PATH + "/udocker --quiet --repo="+cfg.REPO_PATH
 
     def __init__(self):
         self.prepareDirectories()
@@ -194,40 +189,40 @@ class Main(object):
 
     def prepareDirectories(self):
         untouched = True
-        if (not os.path.exists(DOLMADES_PATH)):
-            os.mkdir(DOLMADES_PATH, 0755)
+        if (not os.path.exists(cfg.DOLMADES_PATH)):
+            os.mkdir(cfg.DOLMADES_PATH, 0755)
             untouched = False
         try:
-            if (os.path.exists(REPO_PATH)):
-                os.rmdir(REPO_PATH)
+            if (os.path.exists(cfg.REPO_PATH)):
+                os.rmdir(cfg.REPO_PATH)
                 untouched = False
         except:
             pass
 
-        if (not os.path.exists(REPO_PATH)):
-            cmd = SELF_PATH + "/udocker mkrepo "+REPO_PATH
+        if (not os.path.exists(cfg.REPO_PATH)):
+            cmd = cfg.SELF_PATH + "/udocker mkrepo "+cfg.REPO_PATH
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
             untouched = False
         
-        if (not os.path.exists(INST_PATH)):
-            os.mkdir(INST_PATH, 0755)
+        if (not os.path.exists(cfg.INST_PATH)):
+            os.mkdir(cfg.INST_PATH, 0755)
             untouched = False
         if (untouched):
-            printit("Found dolmade repo under " + REPO_PATH)
+            printit("Found dolmade repo under " + cfg.REPO_PATH)
         else:
-            printit("Initialized dolmade repo under " + REPO_PATH)
+            printit("Initialized dolmade repo under " + cfg.REPO_PATH)
 
     def prepareRuntime(self):
         print("Preparing Dolmades Runtime...")
-        cmd = self.udockerCmd+" pull dolmades/runtime:"+VERSION
+        cmd = self.udockerCmd+" pull dolmades/runtime:"+cfg.VERSION
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = self.udockerCmd + " rm dolmades-runtime"
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+VERSION
+        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+cfg.VERSION
         subprocess.call(cmd, shell=True, close_fds=True)
         print("done")
 
@@ -241,15 +236,18 @@ class Main(object):
         printb("Fetching detailed info about games from GOG...")
         lang = "--language all"
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l  "+lang+" --exclude c,d,e > "+DOLMADES_PATH+"/gog.l.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail \
+              --platform l  "+lang+" --exclude c,d,e > "+cfg.DOLMADES_PATH+"/gog.l.lst"
         print("Retrieving detailed linux game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform l,w "+lang+" --exclude c,d,e > "+DOLMADES_PATH+"/gog.lw.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail \
+              --platform l,w "+lang+" --exclude c,d,e > "+cfg.DOLMADES_PATH+"/gog.lw.lst"
         print("Retrieving detailed linux/windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail --platform w  "+lang+" --exclude c,d,e > "+DOLMADES_PATH+"/gog.w.lst"
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --list-detail \
+              --platform w  "+lang+" --exclude c,d,e > "+cfg.DOLMADES_PATH+"/gog.w.lst"
         print("Retrieving detailed windows game list...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -260,11 +258,11 @@ class Main(object):
     def readGameList(self):
         # FIXME check that game list files exist, if not call updateGameList() beforehand
         self.winGames = []
-        winGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.w.lst"]).split("\n")
+        winGames = subprocess.check_output(["grep", 'gamename: ',cfg.DOLMADES_PATH+"/gog.w.lst"]).split("\n")
         for winGame in winGames:
             self.winGames.append(winGame.replace("gamename: ",""))
         self.linGames = []
-        linGames = subprocess.check_output(["grep", 'gamename: ',DOLMADES_PATH+"/gog.l.lst"]).split("\n")
+        linGames = subprocess.check_output(["grep", 'gamename: ',cfg.DOLMADES_PATH+"/gog.l.lst"]).split("\n")
         for linGame in linGames:
             self.linGames.append(linGame.replace("gamename: ",""))
 
@@ -276,9 +274,9 @@ class Main(object):
 
         try:
             winGames = GameList()
-            winGames.readList(DOLMADES_PATH+"/gog.lw.lst")
+            winGames.readList(cfg.DOLMADES_PATH+"/gog.lw.lst")
             linGames = GameList()
-            linGames.readList(DOLMADES_PATH+"/gog.l.lst")
+            linGames.readList(cfg.DOLMADES_PATH+"/gog.l.lst")
         except:
             printb("ERROR could not read game lists, run with -u")
             return
@@ -296,12 +294,13 @@ class Main(object):
         print(" -a:" + color.ITALIC + " show all windows games (also those that have a linux installer)" + color.END)
         print(" -h:" + color.ITALIC + " print this help" + color.END)
         print(" -u:" + color.ITALIC + " update the dolmade runtime container and the GOG game list" + color.END)
-        print(" -l=preferredLanguage,fallbackLanguage1,fallbackLanguage2,...:" + color.ITALIC + " use in combination with -d, when omitted installers will default to English (en)" + color.END)
+        print(" -l=preferredLanguage,fallbackLanguage1,fallbackLanguage2,...:" + color.ITALIC + \
+              " use in combination with -d, when omitted installers will default to English (en)" + color.END)
         print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
 
     def downloadIngredients(self, i):
         print("Downloading "+i+"...")
-        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --download-file "+i+" --directory "+INST_PATH
+        cmd = self.udockerCmd+" run -i -t --user=$(whoami) --bindhome --hostauth dolmades-runtime lgogdownloader --download-file "+i+" --directory "+cfg.INST_PATH
         subprocess.call(cmd, shell=True, close_fds=True)
 
     def computeChecksum(self, filename):
@@ -312,7 +311,6 @@ class Main(object):
     def findInstaller(self, elems):
         installers = []
         lgs = self.languageSwitch.split(",")
-        #longLg = { 'en':'English', 'de':'German', 'fr':'French', 'it':'Italian', 'es':'Spanish', 'pl':'Polish', 'ru':'Russian' }
 
         # iterate over all desired languages in order of preference
         for lg in lgs:
@@ -363,7 +361,7 @@ class Main(object):
     def generateDolmadefile(self, gamename):
         try:
             games = GameList()
-            games.readList(DOLMADES_PATH+"/gog.w.lst")
+            games.readList(cfg.DOLMADES_PATH+"/gog.w.lst")
         except:
             printb("ERROR could not read game lists, try to run with -u")
 
@@ -379,14 +377,14 @@ class Main(object):
         #       but this is going to happen later and thus needs refactoring the code of this entire routine!
         preferredLg=self.languageSwitch.replace("-l=","").split(",")[0]
                 
-        dolmadefile = open(game.gamename+":"+preferredLg+":"+VERSION+".dolmade","w")
+        dolmadefile = open(game.gamename+":"+preferredLg+":"+cfg.VERSION+".dolmade","w")
         dolmadefile.write("# Name of the Dolmade\n")
         dolmadefile.write("DOLMADE\n")
         dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+":"+preferredLg+"\n\n")
         
         dolmadefile.write("# The version of `cook` that must be used to build this dolmade\n")
         dolmadefile.write("VERSION\n")
-        dolmadefile.write("    "+VERSION+"\n\n")
+        dolmadefile.write("    "+cfg.VERSION+"\n\n")
 
         dolmadefile.write("# Docker image used as a base with VERSION defining its tag\n")
         dolmadefile.write("BASE\n")
@@ -436,7 +434,7 @@ class Main(object):
             if elem.elemId in ingredients:
                 dolmadefile.write("INGREDIENT\n")
                 ingredient=game.gamename+"/"+elem.elemId
-                chksum=self.computeChecksum(INST_PATH+"/"+elem.path)
+                chksum=self.computeChecksum(cfg.INST_PATH+"/"+elem.path)
                 dolmadefile.write("    "+chksum)
                 dolmadefile.write("    "+elem.path+"\n")
                 dolmadefile.write("    "+elem.name+"\n")
