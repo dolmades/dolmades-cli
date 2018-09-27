@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+import shutil
+import stat
+import getpass
+import sys
+import subprocess
+import os
+import re
+import hashlib
+
+import config as cfg
+
+
+class Main(object):
+
+    def __init__(self):
+        pass
+
+    def start(self):
+        if (sys.argv[1]=='launch'):
+            cmd=cfg.SELF_PATH+"/udocker --repo="+cfg.REPO_PATH+" run --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri '"+sys.argv[2]+"' /.dolmades/start.sh"
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+
+if __name__ == "__main__":
+    sys.exit(Main().start())
