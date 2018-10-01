@@ -134,8 +134,8 @@ Your dolmades are managed by `dolmades`
 ## Initialization
 
 Initialization does two things:
-* initializing the dolmades directory under `$HOME/.dolmades`
-* downloading the docker runtime container
+* if it doesn't exist yet: initializing the dolmades directory under `$HOME/.dolmades`
+* downloading the docker runtime container with the matching version and (re)create it
 
 ```
 ./dolmades init
