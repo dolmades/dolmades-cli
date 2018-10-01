@@ -13,7 +13,8 @@ Right after cooking the windows application will be available as clickable short
 
 ## Requirements
 
-* Python 2.7 or 3.5
+* `udocker` requires Python 2.7 and will hopefully receive Python3 support (see https://github.com/indigo-dc/udocker/issues/77)
+* the rest is supposed to work with either Python 2.7 or 3.5
 
 ## Basic Use
 
