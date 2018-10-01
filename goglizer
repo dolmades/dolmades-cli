@@ -173,7 +173,7 @@ class GameList(object):
 
 
 class Main(object):
-    udockerCmd =  cfg.SELF_PATH + "/udocker --quiet --repo="+cfg.REPO_PATH
+    udockerCmd = cfg.SELF_PATH+"/udocker --quiet --repo="+cfg.REPO_PATH
 
     def __init__(self):
         self.prepareDirectories()
@@ -201,7 +201,7 @@ class Main(object):
 
         if (not os.path.exists(cfg.REPO_PATH)):
             cmd = cfg.SELF_PATH + "/udocker mkrepo "+cfg.REPO_PATH
-            print(cmd)
+            printit(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
             untouched = False
         
@@ -216,13 +216,16 @@ class Main(object):
     def prepareRuntime(self):
         print("Preparing Dolmades Runtime...")
         cmd = self.udockerCmd+" pull dolmades/runtime:"+cfg.VERSION
+        printit(cmd)
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = self.udockerCmd + " rm dolmades-runtime"
+        printit(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+cfg.VERSION
+        printit(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
         print("done")
 
