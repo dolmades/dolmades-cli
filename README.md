@@ -72,7 +72,7 @@ broken_sword_3__the_sleeping_dragon
 ...
 ```
 
-Now choose a game of your liking and tell `goglizer` to download the ingredients and create a dolmade file using the `-d` parameter.
+Now choose a game of your liking and instruct `goglizer` to download the ingredients and create a corresponding dolmade file using the `-d` parameter.
 ```
 ./goglizer -d=broken_sword_3__the_sleeping_dragon
 ```
