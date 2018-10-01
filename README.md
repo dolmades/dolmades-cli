@@ -12,9 +12,11 @@ As of now there are two python scripts
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 
 ## Requirements
+As of now: Python 2.7
 
-* `udocker` requires Python 2.7 and will hopefully receive Python3 support (see https://github.com/indigo-dc/udocker/issues/77)
-* the rest is supposed to work with either Python 2.7 or 3.5
+Notes
+* `udocker` requires Python 2.7 and will hopefully receive Python3 support: https://github.com/indigo-dc/udocker/issues/77
+* `dolmades` will be written to support either Python 2.7 or 3.5 if that is feasible
 
 ## Basic Use
 
