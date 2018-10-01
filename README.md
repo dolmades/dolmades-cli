@@ -18,7 +18,7 @@ Notes
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
 * `dolmades` will be written to support either Python 2.7 or 3.5 given that it is feasible
 
-## Basic Use
+## First Use
 
 To cook a dolmade use the very simple example:
 
