@@ -66,10 +66,10 @@ class Ingredient(object):
                 for block in iter(lambda: f.read(block_size), b''):
                     sha256.update(block)
             if (sha256.hexdigest() != self.sha256hash):
-                print('Error: invalid hash sum for ingredient')
+                print('Error: '+self.fileName+' invalid hash sum for ingredient')
                 return False
             else:
-                print('Good: hash sum correct!')
+                print('Good: '+self.fileName+' hash sum correct!')
                 return True
         except Exception as error:
             print("Caught " + repr(error))
@@ -112,9 +112,9 @@ class Ingredient(object):
             try:
                 print("Retrieving " + self.fileName + " from " + u)
                 cmd = cfg.SELF_PATH+'/udocker'+" --quiet --repo="+cfg.REPO_PATH+\
-                      " run --user=$(whoami) --volume=" ":"+cfg.INST_DIR+" dolmades-runtime 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" \""+u"\"'"
+                      " run --user=$(whoami) --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+" dolmades-runtime sh -c 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" \""+u+"\"'"
                 print(cmd)
-                subprocess.call(cmd)
+                subprocess.call(cmd, shell=True, close_fds=True)
 
                 if self.checklocal():
                     return True   
