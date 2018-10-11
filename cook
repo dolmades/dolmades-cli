@@ -118,6 +118,8 @@ class Ingredient(object):
                 print(error)
                 continue
 
+        udockerCmd=SELF_PATH+'/udocker'+" --quiet --repo="+REPO_PATH
+
         # try to retrieve ingredient from remote locations
         for u in self.urls:
             try:
@@ -137,6 +139,7 @@ class Ingredient(object):
                     c.setopt(c.WRITEDATA, f)
                     c.perform()
                     c.close()
+                cmd = udockerCmd+" run --user=$(whoami) --volume=" ":"+INSTDIR+" dolmades-runtime"
                 if self.checklocal():
                     return True   
                 else:
@@ -365,7 +368,7 @@ class Dolmade(object):
 
         if (self.target):
             print("Predefined target is "+self.target+", target path is "+self.targetPath)
-            self.target = 'wine start "'+self.target+'"'
+            self.target = 'wine "'+self.target+'"'
         else:
             print("No target predefined. Target launcher will be used.")
             self.target="./targetLauncher"
@@ -388,7 +391,7 @@ class Dolmade(object):
             text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
             text_file.write("Name="+cleanName+"\nGenericName="+cleanName+"\nComment=" +cleanName+"\n")
             text_file.write("Icon="+self.metaPath()+"/icon.png"+"\n")
-            text_file.write("Exec="+SELF_PATH+"/dolmades exec '"+self.name+"'\n")
+            text_file.write("Exec="+SELF_PATH+"/dolmades launch '"+self.name+"'\n")
             text_file.write("Categories=Game;\n")
             text_file.write("Path="+os.path.expanduser("~")+"\n")
 
@@ -396,7 +399,7 @@ class Dolmade(object):
 
         with open(runscriptInContainer, "w") as text_file:
             text_file.write("#!/bin/bash\n")
-            text_file.write("cd "+self.targetPath+"\n")
+            text_file.write('cd "'+self.targetPath+'"\n')
             text_file.write(self.target+"\n")
 
         st = os.stat(deskfileOnHost)
