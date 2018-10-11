@@ -16,7 +16,7 @@ As of now: Python 2.7
 
 Notes
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
-* `dolmades` will be written to support either Python 2.7 or 3.5 given that it is feasible
+* `dolmades` will be written to support either Python 2.7 and bearing in mind python 3 compatibility for later when udocker supports it, too
 
 ## First Use
 
