@@ -10,32 +10,18 @@ import re
 import hashlib
 import pycurl         # FIXME get rid of this dependency
 
-VERSION = "1.0"
-METADIR = ".dolmades"
-INSTDIR = "install"
-# Python version major.minor
-PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
-SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
-DOLMADES_PATH = os.path.expanduser('~')+'/.dolmades'
-
-REPO_PATH = DOLMADES_PATH + "/repo"
-INST_PATH = DOLMADES_PATH + "/" + INSTDIR
-
-try:
-    DESK_PATH = subprocess.check_output(['xdg-user-dir', 'DESKTOP']).strip()
-except:
-    DESK_PATH = os.path.expanduser("~/Desktop")
+import config as cfg
 
 def createDirectories():
-    if (not os.path.exists(DOLMADES_PATH)):
-        os.mkdir(DOLMADES_PATH, 0755)
+    if (not os.path.exists(cfg.DOLMADES_PATH)):
+        os.mkdir(cfg.DOLMADES_PATH, 0755)
     try:
-        if (os.path.exists(REPO_PATH)):
-            os.rmdir(REPO_PATH)
+        if (os.path.exists(cfg.REPO_PATH)):
+            os.rmdir(cfg.REPO_PATH)
     except:
-        print(REPO_PATH+" not empty, do not delete...")
-    if (not os.path.exists(INST_PATH)):
-        os.mkdir(INST_PATH, 0755)
+        print(cfg.REPO_PATH+" not empty, do not delete...")
+    if (not os.path.exists(cfg.INST_PATH)):
+        os.mkdir(cfg.INST_PATH, 0755)
 
 class Ingredient(object):
 
@@ -73,10 +59,10 @@ class Ingredient(object):
         try:
             sha256 = hashlib.sha256()
             block_size=65536
-            if not os.path.isfile(INST_PATH + "/" + self.fileName):
+            if not os.path.isfile(cfg.INST_PATH + "/" + self.fileName):
                 print('File has yet to be retrieved!')
                 return False
-            with open(INST_PATH + "/" + self.fileName, 'rb') as f:
+            with open(cfg.INST_PATH + "/" + self.fileName, 'rb') as f:
                 for block in iter(lambda: f.read(block_size), b''):
                     sha256.update(block)
             if (sha256.hexdigest() != self.sha256hash):
@@ -97,7 +83,7 @@ class Ingredient(object):
         for u in self.local_urls:
             try:
                 print("Using local copy of " + self.fileName + " from " + u)
-                shutil.copy(u.replace('file://',''), INST_PATH + "/" + self.fileName)
+                shutil.copy(u.replace('file://',''), cfg.INST_PATH + "/" + self.fileName)
                 if self.checklocal():
                     return True
                 else:
@@ -110,7 +96,10 @@ class Ingredient(object):
         for u in self.gog_urls:
             try:
                 print("Using a valid GOG account to download " + u + " as " + self.fileName)
-                cmd = SELF_PATH + '/udocker' + " --quiet --repo=" + REPO_PATH + " run --user=$(whoami) --bindhome --hostauth -v " + INST_PATH+"/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader --download-file "+u.replace("gog://","")+"'"
+                cmd = cfg.SELF_PATH + '/udocker' + " --quiet --repo=" + cfg.REPO_PATH+\
+                      " run --user=$(whoami) --bindhome --hostauth -v " + cfg.INST_PATH+\
+                      "/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader --download-file "+\
+                      u.replace("gog://","")+"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
                 
@@ -118,28 +107,15 @@ class Ingredient(object):
                 print(error)
                 continue
 
-        udockerCmd=SELF_PATH+'/udocker'+" --quiet --repo="+REPO_PATH
-
         # try to retrieve ingredient from remote locations
         for u in self.urls:
             try:
                 print("Retrieving " + self.fileName + " from " + u)
-                with open(INST_PATH + "/" + self.fileName, 'wb') as f:
-                    c = pycurl.Curl()
-                    c.setopt(c.VERBOSE, False)
-                    c.setopt(pycurl.HEADER, 0)
-                    c.setopt(pycurl.FOLLOWLOCATION, 1)
-                    c.setopt(pycurl.MAXREDIRS, 5)
-                    c.setopt(pycurl.CONNECTTIMEOUT, 30)
-                    c.setopt(pycurl.TIMEOUT, 300)
-                    c.setopt(pycurl.NOSIGNAL, 1)
-                    c.setopt(pycurl.NOPROGRESS, 0)
-                    c.setopt(pycurl.PROGRESSFUNCTION, self.downloadProgress)
-                    c.setopt(c.URL, u)
-                    c.setopt(c.WRITEDATA, f)
-                    c.perform()
-                    c.close()
-                cmd = udockerCmd+" run --user=$(whoami) --volume=" ":"+INSTDIR+" dolmades-runtime"
+                cmd = cfg.SELF_PATH+'/udocker'+" --quiet --repo="+cfg.REPO_PATH+\
+                      " run --user=$(whoami) --volume=" ":"+cfg.INST_DIR+" dolmades-runtime 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" \""+u"\"'"
+                print(cmd)
+                subprocess.call(cmd)
+
                 if self.checklocal():
                     return True   
                 else:
@@ -153,8 +129,8 @@ class Ingredient(object):
 
 class Dolmade(object):
 
-    udocker=SELF_PATH + '/udocker'
-    udockerCmd=udocker + " --quiet --repo=" + REPO_PATH
+    udocker=cfg.SELF_PATH + '/udocker'
+    udockerCmd=udocker+" --quiet --repo="+cfg.REPO_PATH
     iconfn = None
     name = None
     sha256 = None
@@ -175,45 +151,45 @@ class Dolmade(object):
 
     def prepareDirectories(self):
         untouched = True
-        if (not os.path.exists(DOLMADES_PATH)):
-            os.mkdir(DOLMADES_PATH, 0755)
+        if (not os.path.exists(cfg.DOLMADES_PATH)):
+            os.mkdir(cfg.DOLMADES_PATH, 0755)
             untouched = False
         try:
-            if (os.path.exists(REPO_PATH)):
-                os.rmdir(REPO_PATH)
+            if (os.path.exists(cfg.REPO_PATH)):
+                os.rmdir(cfg.REPO_PATH)
                 untouched = False
         except:
             pass
 
-        if (not os.path.exists(REPO_PATH)):
-            cmd = SELF_PATH + "/udocker mkrepo "+REPO_PATH
+        if (not os.path.exists(cfg.REPO_PATH)):
+            cmd = cfg.SELF_PATH + "/udocker mkrepo "+cfg.REPO_PATH
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
             untouched = False
 
-        if (not os.path.exists(INST_PATH)):
-            os.mkdir(INST_PATH, 0755)
+        if (not os.path.exists(cfg.INST_PATH)):
+            os.mkdir(cfg.INST_PATH, 0755)
             untouched = False
         if (untouched):
-            print("Found dolmade repo under " + REPO_PATH)
+            print("Found dolmade repo under " + cfg.REPO_PATH)
         else:
-            print("Initialized dolmade repo under " + REPO_PATH)
+            print("Initialized dolmade repo under " + cfg.REPO_PATH)
 
     def prepareRuntime(self):
         print("Preparing Dolmades Runtime...")
 
-        cmd = self.udockerCmd+" pull dolmades/runtime:"+VERSION
+        cmd = self.udockerCmd+" pull dolmades/runtime:"+cfg.VERSION
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = self.udockerCmd + " rm dolmades-runtime"
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+VERSION
+        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+cfg.VERSION
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        if (not os.path.exists(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+METADIR)):
-            os.mkdir(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+METADIR, 0755)
+        if (not os.path.exists(cfg.REPO_PATH+"/containers/dolmades-runtime/ROOT/"+cfg.META_DIR)):
+            os.mkdir(cfg.REPO_PATH+"/containers/dolmades-runtime/ROOT/"+cfg.META_DIR, 0755)
 
         print("done")
 
@@ -224,10 +200,10 @@ class Dolmade(object):
 
     def checkVersion(self, version):
         self.version=''.join(version)
-        if self.version == VERSION:
+        if self.version == cfg.VERSION:
             print("Good! The dolmadefile and this script both match version "+self.version)
         else:
-            print("Bad! The dolmadefile is for version "+self.version+", but this script for version "+VERSION)
+            print("Bad! The dolmadefile is for version "+self.version+", but this script for version "+cfg.VERSION)
             sys.exit(1)
 
     def setupDolmade(self, cmdp):
@@ -286,7 +262,7 @@ class Dolmade(object):
         
     def path(self):
         if self.sha256:
-            return REPO_PATH+"/containers/"+self.sha256+"/ROOT/"
+            return cfg.REPO_PATH+"/containers/"+self.sha256+"/ROOT/"
         else:
             print("Error: Dolmade has not been created yet!")
             return None
@@ -294,19 +270,19 @@ class Dolmade(object):
     def metaPath(self):
         path = self.path()
         if path:
-            return self.path()+"/"+METADIR
+            return self.path()+"/"+cfg.META_DIR
         else:
             return None
 
     def installPath(self):
-        return self.path()+"/"+INSTDIR
+        return self.path()+"/"+cfg.INST_DIR
 
     def build(self):
         print("Performing the dolmade build...")
         for i in self.ingredients: 
             i.retrieve()
 
-        cmd = self.udocker + " mkrepo " + REPO_PATH
+        cmd = self.udocker + " mkrepo " + cfg.REPO_PATH
         print cmd
         try:
             outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
@@ -339,11 +315,11 @@ class Dolmade(object):
         for r in self.runs:
             (u,c) = r
             if (u == 'root'):
-                cmd = self.udockerCmd+" run --volume="+INST_PATH+":/install --user=root --volume="+os.path.expanduser("~")+\
+                cmd = self.udockerCmd+" run --volume="+cfg.INST_PATH+":/install --user=root --volume="+os.path.expanduser("~")+\
                       "/.Xauthority --hostenv --dri "+self.name+" "+"bash -c 'cd /install && "+' '.join(c)+"'"
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
-                cmd = self.udockerCmd+" run --volume="+INST_PATH+":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+\
+                cmd = self.udockerCmd+" run --volume="+cfg.INST_PATH+":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+\
                       "/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
@@ -376,7 +352,7 @@ class Dolmade(object):
 
         iconInContainer = self.metaPath()+"/icon.png"
         open(iconInContainer, 'w+')
-        cmd = self.udockerCmd+" run --user="+getpass.getuser()+" -v=" + INST_PATH+"/"+self.iconfn+":/"+self.iconfn+\
+        cmd = self.udockerCmd+" run --user="+getpass.getuser()+" -v=" + cfg.INST_PATH+"/"+self.iconfn+":/"+self.iconfn+\
               " -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+\
               self.iconfn + "[0] " + "/wineprefix/icon.png'"
         print(cmd)
@@ -386,12 +362,12 @@ class Dolmade(object):
         cleanName=self.name.replace('_',' ').replace('&',"_n_")
         subprocess.call("echo '"+cleanName+"' > "+namefileInContainer, shell=True, close_fds=True)
 
-        deskfileOnHost = DESK_PATH + "/" + self.name + ".desktop"
+        deskfileOnHost = cfg.DESK_PATH + "/" + self.name + ".desktop"
         with open(deskfileOnHost, "w") as text_file:
             text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
             text_file.write("Name="+cleanName+"\nGenericName="+cleanName+"\nComment=" +cleanName+"\n")
             text_file.write("Icon="+self.metaPath()+"/icon.png"+"\n")
-            text_file.write("Exec="+SELF_PATH+"/dolmades launch '"+self.name+"'\n")
+            text_file.write("Exec="+cfg.SELF_PATH+"/dolmades launch '"+self.name+"'\n")
             text_file.write("Categories=Game;\n")
             text_file.write("Path="+os.path.expanduser("~")+"\n")
 
