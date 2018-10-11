@@ -151,14 +151,16 @@ Lists the locally available dolmades:
 
 Removes the given dolmade and frees up the allocated space:
 ```
-./dolmades rm name-of-dolmade
+./dolmades del name-of-dolmade
 ```
+You can pass multiple dolmade names or sha256 container ids.
 
 ### Execution
 
-Executes the targetSelector or the executable defined via `SetTarget` in the `dolmadefile`:
+Executes the `/.dolmades/start.sh` script which either runs the executable defined via `SetTarget` in the `dolmadefile`
+or the target selector script which lets you choose between all installed targets.
 ```
-./dolmades exec name-of-dolmade
+./dolmades launch name-of-dolmade
 ```
 ### Debug
 
