@@ -12,10 +12,13 @@ As of now there are two python scripts
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 
 ## Requirements
+As of now: Python 2.7
 
-* Python 2.7 or 3.5
+Notes
+* `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
+* `dolmades` will be written to support either Python 2.7 or 3.5 given that it is feasible
 
-## Basic Use
+## First Use
 
 To cook a dolmade use the very simple example:
 
@@ -69,7 +72,7 @@ broken_sword_3__the_sleeping_dragon
 ...
 ```
 
-Now choose a game of your liking and tell `goglizer` to download the ingredients and create a dolmade file using the `-d` parameter.
+Now choose a game of your liking and instruct `goglizer` to download the ingredients and create a corresponding dolmade file using the `-d` parameter.
 ```
 ./goglizer -d=broken_sword_3__the_sleeping_dragon
 ```
@@ -108,7 +111,7 @@ winetricks winxp
 # test cooked dolmade
 targetSelector
 ```
-The previous changes are now applied permanently to the dolmade but will get lost if it will be cooked another time.
+The previous changes are now applied permanently to the dolmade but will get lost if it will be recooked.
 That is why, secondly, we need to update the corresponing `dolmadefile`.
 Edit `edna_harvey_the_breakout:en.dolmade` and add the following section right before the `RunUser` command which launches the installer using `wine`:
 ```
@@ -131,8 +134,8 @@ Your dolmades are managed by `dolmades`
 ## Initialization
 
 Initialization does two things:
-* initializing the dolmades directory under `$HOME/.dolmades`
-* downloading the docker runtime container
+* if it doesn't exist yet: initializing the dolmades directory under `$HOME/.dolmades`
+* downloading the docker runtime container with the matching version and (re)create it
 
 ```
 ./dolmades init
