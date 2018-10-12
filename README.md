@@ -6,7 +6,7 @@ Dolmades are intended as a mean to ease installation and distribution of windows
 As of now there are two python scripts
 
 * dolmades - to maintain your installed windows application
-* goglizer - prepares win-only GOG games to be cooked (GOG account required)
+* goglizer - prepares win-only GOG games to be cooked; GOG account required
 * cook - cooks a dolmade given a Dolmadefile (specification) and its ingredients (files)
 
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
@@ -16,9 +16,9 @@ As of now: Python 2.7
 
 Notes
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
-* `dolmades` will be written to support either Python 2.7 and bearing in mind python 3 compatibility for later when udocker supports it, too
+* `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too
 
-## First Use
+## First use
 
 To cook a dolmade use the very simple example:
 
@@ -26,6 +26,10 @@ To cook a dolmade use the very simple example:
 ./cook Dolmadefile
 ```
 Click straight through the installation process. This will install the free game Broken Sword 2.5 on your desktop.
+It can be started by double clicking the desktop icon or from terminal:
+```
+./dolmades launch Broken_Sword
+```
 
 ## Usage with GOG account
 
@@ -127,7 +131,7 @@ Finally, the dolmade can be cooked once more:
 
 This erases the previous dolmade and applies the fix permanently. Now add and commit your `dolmadefile` to your personal github repository.
 
-## Dolmades Management
+## Managing dolmades
 
 Your dolmades are managed by `dolmades`
 
