@@ -42,5 +42,12 @@ class Main(object):
                 except:
                     print("No desktop shortcut "+fn+" found!")
 
+        if (sys.argv[1]=='debug'):
+            cmd=self.udockerCmd+" run --user="+getpass.getuser()+\
+                " --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+\
+                " --bindhome --hostenv --hostauth --dri '"+sys.argv[2]+"' bash"
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+
 if __name__ == "__main__":
     sys.exit(Main().start())
