@@ -2,17 +2,20 @@
 
 ## Introduction
 
-Dolmades are intended as a mean to ease installation and distribution of windows programs in Linux environments to the utmost extent. This collection of command line tools represent the first implementation of the underlying concept.
-As of now there are two python scripts
+Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. This collection of command line tools represent the prototypical implementation of the underlying concepts.
+As of now there are three python scripts:
 
 * dolmades - to maintain your installed windows application
 * goglizer - prepares win-only GOG games to be cooked; GOG account required
-* cook - cooks a dolmade given a Dolmadefile (specification) and its ingredients (files)
+* cook - cooks a dolmade given a Dolmadefile and its ingredients
 
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 
 ## Requirements
-As of now: Python 2.7
+As of now 
+* Python 2.7
+* curl
+* tar (udocker requires some recent version, I can't find the issue pointing out which one it is)
 
 Notes
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
