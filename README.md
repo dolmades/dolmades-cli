@@ -12,14 +12,18 @@ As of now there are three python scripts:
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 
 ## Requirements
+
 As of now 
+* x86-64 linuxes only
 * Python 2.7
 * curl
 * tar (udocker requires some recent version, I can't find the issue pointing out which one it is)
 
 Notes
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
-* `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too
+* `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
+* 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
+* wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windowses
 
 ## First use
 
