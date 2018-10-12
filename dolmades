@@ -49,5 +49,12 @@ class Main(object):
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
+        if (sys.argv[1]=='export'):
+            fn=sys.argv[2]
+            path=os.path.realpath(cfg.REPO_PATH+"/containers/"+fn)
+            cmd="tar --directory="+cfg.REPO_PATH+"/containers/ -czpf "+fn+".dme "+path.replace(cfg.REPO_PATH+"/containers/",'')
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+
 if __name__ == "__main__":
     sys.exit(Main().start())
