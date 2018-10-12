@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 
-VERSION = "latest"
+VERSION = "1.0"
 META_DIR = ".dolmades"
 INST_DIR = "install"
 # Python version major.minor
