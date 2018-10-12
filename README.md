@@ -127,7 +127,7 @@ Finally, the dolmade can be cooked once more:
 
 This erases the previous dolmade and applies the fix permanently. Now add and commit your `dolmadefile` to your personal github repository.
 
-## Dolmades Management
+## Managing dolmades
 
 Your dolmades are managed by `dolmades`
 
