@@ -16,20 +16,21 @@ DESCRIPTION
     There be Templars!
 
 # Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+# At first the ingredient is 
 INGREDIENT
     110026b9c1f4eaa0ed4f7dfc59519a4df8e1a3eff4616b10b59da4ba04abe4ed
     bs25setup.zip
     Broken Sword 2.5 Setup
     http://bf25.digital-extremes.com/bs25setup.zip
     http://server.c-otto.de/baphometsfluch/bs25setup.zip
-    file:///home/stefan/Downloads/bs25setup.zip
+    file://~/Downloads/bs25setup.zip
 
 INGREDIENT
     84934b495a5847244b9be221d96cff12212c72704afdfefff843892b3ae608d4
     BS25_patch000_multilingual.zip
     Broken Sword 2.5 MultiLingual Patch
     http://baphometsfluch25.de/downloads/sonstiges/BS25_patch000_multilingual.zip
-    file:///home/stefan/Downloads/BS25_patch000_multilingual.zip
+    file://~/Downloads/BS25_patch000_multilingual.zip
 
 # Run a command inside the dolmade
 # PWD is the install folder
