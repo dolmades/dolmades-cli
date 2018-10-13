@@ -230,6 +230,9 @@ class Dolmade(object):
             isInvalid = True
             for url_pf in ['http://', 'https://', 'ftp://', 'file://', 'gog://']:
                 if (cmdp[i].startswith(url_pf)): 
+                    # calling user home dir expansion
+                    cmdp[i]=cmdp[i].replace('file://~/','file://'+os.path.expanduser('~')+'/')
+                    # TODO ~otheruser home dir expansion
                     sys.stdout.write(":" + cmdp[i])
                     ingr.addUrl(cmdp[i])
                     isInvalid = False
