@@ -135,6 +135,7 @@ class Dolmade(object):
     sha256 = None
     ingredients = []
     runs = []
+    targetArgs = None
 
     def __init__(self):
         self.version = "latest"
@@ -258,10 +259,10 @@ class Dolmade(object):
         self.runs.append(('setTarget', cmdp))
         print("Determine target path by running:" + ' '.join(cmdp))
 
-    def setTargetBind(self, cmdp):
-        targetBinds.append(cmdp)
-        print("Bind mount for target run:" + join(cmdp))
-        
+    def setTargetArgs(self, cmdp):
+        self.targetArgs=' '.join(cmdp)
+        print("Passing the following arguments to the target:"+self.targetArgs)
+
     def path(self):
         if self.sha256:
             return cfg.REPO_PATH+"/containers/"+self.sha256+"/ROOT/"
@@ -384,7 +385,10 @@ class Dolmade(object):
         with open(runscriptInContainer, "w") as text_file:
             text_file.write("#!/bin/bash\n")
             text_file.write('cd "'+self.targetPath+'"\n')
-            text_file.write(self.target+"\n")
+            if self.targetArgs:
+                text_file.write(self.target+" "+self.targetArgs+"\n")
+            else:
+                text_file.write(self.target+"\n")
 
         st = os.stat(deskfileOnHost)
         os.chmod(deskfileOnHost, st.st_mode | stat.S_IEXEC)
@@ -407,7 +411,7 @@ class Main(object):
                  'RUNROOT': self.dolmade.runRoot,
                  'ICON': self.dolmade.icon,
                  'SETTARGET': self.dolmade.setTarget,
-                 'TARGETBIND': self.dolmade.setTargetBind }
+                 'SETTARGETARGS': self.dolmade.setTargetArgs}
 
         if len(cmdarg)<1:
             return
@@ -472,3 +476,4 @@ class Main(object):
 
 if __name__ == "__main__":
     sys.exit(Main().start())
+
