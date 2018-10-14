@@ -21,7 +21,7 @@ class Main(object):
     def start(self):
         if (sys.argv[1]=='launch'):
             cmd=self.udockerCmd+" run --user="+getpass.getuser()+\
-                " --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri '"+sys.argv[2]+"' /.dolmades/start.sh"
+                    " --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri '"+sys.argv[2]+"' sh -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
