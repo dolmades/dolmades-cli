@@ -10,6 +10,7 @@ As of now there are three python scripts:
 * cook - cooks a dolmade given a Dolmadefile and its ingredients
 
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
+A global configuration file called `config.py` provides important settings to all three scripts.
 
 ## Requirements
 
