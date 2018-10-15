@@ -1,4 +1,5 @@
 1.0 - the_goglizer
+ #23 allow multiple compatible sha256 sums for ingredients
  #28 docs, update README.md and add docs for `Dolmadefile`
  #35 ensure splitting Dolmadefile parsing and processing
  #NN Check on mandatory commands, bail out if missing
