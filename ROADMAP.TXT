@@ -1,4 +1,9 @@
-1.0 - the_goglizer
+Later 2019: wineconf 2019
+
+April 2019: Publish two or three articles
+
+Jan 2019: First release: 1.0 - the_goglizer
+
  #23 allow multiple compatible sha256 sums for ingredients
  #28 docs, update README.md and add docs for `Dolmadefile`
  #35 ensure splitting Dolmadefile parsing and processing
