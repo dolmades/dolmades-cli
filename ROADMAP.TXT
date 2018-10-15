@@ -1,0 +1,10 @@
+1.0 - the_goglizer
+ #28 docs, update README.md and add docs for `Dolmadefile`
+ #35 ensure splitting Dolmadefile parsing and processing
+ #NN Check on mandatory commands, bail out if missing
+ #17 Change from one shared `install` dir to one dedicated `install` dir per dolmade
+ #21 implement bind concept
+ #32 write complete metadata to metadir
+ #30 Fix wrongly set $HOME on /wineprefix creation
+ #20 Make users wine profile dir independent of linux user name
+ #3 create `dolmades` wrapper script for execution of installed dolmades
