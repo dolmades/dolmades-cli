@@ -118,8 +118,10 @@ First, we need to figure out interactively what needs to be done:
 
 # set windows version to WinXP
 winetricks winxp
+
 # rerun installer and ensure that it works now
 /install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
+
 # test cooked dolmade
 targetSelector
 ```
