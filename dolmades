@@ -80,6 +80,19 @@ class Main(object):
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
+        if (sys.argv[1]=='import'):
+            fn=os.path.realpath(sys.argv[2])
+            path=os.path.realpath(cfg.REPO_PATH+"/containers")
+            cmd="cd "+path+" && tar -xzvf "+fn
+            print(cmd)
+            shasum=subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT).split('\n')[0].replace('/','')
+            cmd=self.udockerCmd+" name "+shasum+" "+sys.argv[2].split('.')[0]
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+            cmd=self.udockerCmd+" run --user="+getpass.getuser()+" --hostenv '"+sys.argv[2].split('.')[0]+"' sh -c 'wineboot -u && wineserver -w'"
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+
         if (sys.argv[1]=='export'):
             fn=sys.argv[2]
             path=os.path.realpath(cfg.REPO_PATH+"/containers/"+fn)
