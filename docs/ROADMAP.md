@@ -13,7 +13,7 @@
  * [ ] #35 ensure splitting Dolmadefile parsing and processing
  * [ ] #NN Check on mandatory commands, bail out if missing
  * [ ] #17 Change from one shared `install` dir to one dedicated `install` dir per dolmade
- * [ ] #21 implement bind concept
+ * [X] #21 implement bind concept
  * [ ] #16 prettify console output
  * [ ] #32 write complete metadata to metadir
  * [ ] #30 Fix wrongly set $HOME on /wineprefix creation
