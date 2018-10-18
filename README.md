@@ -211,5 +211,8 @@ It is possible to make files or directories of the host file system accessible f
 ./dolmades bind name-of-dolmade bind1 bind2 ...
 ```
 
-A bind is defined as follows: `/hostdir/hostfile:/dolmadedir/dolmadefile` or `/hostdir/:/dolmadedir/`
-Note, that a bind requires files/directories to exist on the host and within the dolmade!
+A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/dolmadedir/:/hostdir/`
+*Notes* 
+* This will create an empty file/directory in the dolmade if those do not exist already.
+* The created files/directories in the dolmade persist even after the corresponding binds have been removed.*
+* As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!*
