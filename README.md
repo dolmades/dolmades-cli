@@ -176,7 +176,7 @@ or the target selector script which lets you choose between all installed target
 ```
 ./dolmades launch name-of-dolmade
 ```
-### Debug
+### Debugging
 
 It is possible to launch a bash inside the container. 
 The installation directory will be available under `/install` and installed windows applications under `/wineprefix`.
@@ -198,7 +198,7 @@ If `name-of-base` is given as argument a temporary dolmade is being created and 
 * `winestable` - `base` with wine stable added and preconfigured
 * `winedevel`- `base` with wine testing added and preconfigured
 
-### Binds
+### Binding
 
 It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
 
@@ -217,3 +217,25 @@ A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/d
 * This will create an empty file/directory in the dolmade if those do not exist already.
 * The created files/directories in the dolmade persist even after the corresponding binds have been removed.*
 * As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!*
+
+### Migration (experimental)
+
+It is possible to export and import a readily installed dolmade. 
+
+```
+./dolmades export Broken_Sword Broken_Sword.dme
+```
+
+```
+./dolmades import Broken_Sword
+```
+
+The idea is to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. This is the final goal! Currently, this feature is experimental, and will only work if the user name remains the same. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
+
+### Serving
+
+Last but not least the dolmade can be served on the desktop
+```
+./dolmades serve name-of-dolmade
+```
+This will create a clickable short cut on the desktop which will launch the corresponding dolmade. It can be safely deleted and recreated any time.
