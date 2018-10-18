@@ -11,7 +11,6 @@ import hashlib
 
 import config as cfg
 
-
 class Main(object):
 
     def __init__(self):
@@ -20,8 +19,40 @@ class Main(object):
 
     def start(self):
         if (sys.argv[1]=='launch'):
+
+            containerPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]
+
+            fn=containerPath+"/configuredBinds"
+            if not os.path.exists(fn):
+                open(fn, 'a').close()
+
+            f = open(fn,'r')
+            binds=f.readlines()
+            cmd_bind=''
+
+            for bind in binds:
+                bind=bind.strip()
+                src=''.join(bind.split(':')[1:])
+                dst=bind.split(':')[0]
+
+                # ensure the destination inside the container exists
+                # either as path or as file
+                if dst.endswith('/'):
+                    if not os.path.exists(containerPath+"/ROOT/"+dst):
+                        os.makedirs(containerPath+"/ROOT/"+dst)
+                else:
+                    dstPath=''.join(dst.split('/')[:-1])
+                    if dstPath:
+                        if not os.path.exists(containerPath+"/ROOT/"+dstPath):
+                            os.makedirs(containerPath+"/ROOT/"+dstPath)
+                    print("touch "+containerPath+"/ROOT/"+dst)
+                    subprocess.call("touch "+containerPath+"/ROOT/"+dst)
+
+                cmd_bind=cmd_bind+" --volume="+src+":"+dst
+
             cmd=self.udockerCmd+" run --user="+getpass.getuser()+\
-                    " --volume="+os.path.expanduser("~")+"/.Xauthority --hostenv --dri '"+sys.argv[2]+"' sh -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
+                    " --volume="+os.path.expanduser("~")+"/.Xauthority "\
+                    +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -55,6 +86,58 @@ class Main(object):
             cmd="tar --directory="+cfg.REPO_PATH+"/containers/ -czpf "+fn+".dme "+path.replace(cfg.REPO_PATH+"/containers/",'')
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
+
+        if (sys.argv[1]=='binds'):
+            cn=sys.argv[2]
+            fn=cfg.REPO_PATH+"/containers/"+cn+"/configuredBinds"
+
+            if not os.path.exists(fn):
+                open(fn, 'a').close()
+
+            f = open(fn,'r')
+            print(f.read())
+
+
+        if (sys.argv[1]=='bind'):
+            binds=sys.argv[3:]
+            containerPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]
+            fn=containerPath+"/configuredBinds"
+
+            # remove all wine drives except c: and z:
+            for drvletter in ['a','b','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y']:
+                p=containerPath+"/ROOT/wineprefix/drive_"+drvletter
+                if os.path.exists(p):
+                    os.rmdir(p)
+                pl=containerPath+"/ROOT/wineprefix/dosdevices/"+drvletter+":"
+                if os.path.islink(pl):
+                    os.remove(pl)
+
+            f = open(fn,'w')
+            for bind in binds:
+                f.write(bind+"\n")
+                bind=bind.strip()
+                src=''.join(bind.split(':')[1:])
+                dst=bind.split(':')[0]
+                if cfg.DOLMADES_PATH.startswith(''.join(bind.split(':')[1:])):
+                    print("You can reach your dolmades dir using the bind "+bind+"! This is highly discouraged!")
+                # create the destdir for wine drives
+                if dst.startswith('/wineprefix/drive_'):
+                    os.mkdir(containerPath+"/ROOT/"+dst)
+
+            if (binds):
+                f.seek(-1,os.SEEK_END)
+                f.truncate()
+
+            f.close
+
+            # recreate proper symlinks for created wine drives
+            for drvletter in ['a','b','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y']:
+                p=containerPath+"/ROOT/wineprefix/drive_"+drvletter
+                pl=containerPath+"/ROOT/wineprefix/dosdevices/"+drvletter+":"
+                if os.path.exists(p):
+                    if os.path.islink(pl):
+                        os.remove(pl)
+                    os.symlink("../drive_"+drvletter,pl)
 
 if __name__ == "__main__":
     sys.exit(Main().start())
