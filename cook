@@ -128,8 +128,6 @@ class Ingredient(object):
 
 class Dolmade(object):
 
-    udocker=cfg.SELF_PATH + '/udocker'
-    udockerCmd=udocker+" --quiet --repo="+cfg.REPO_PATH
     iconfn = None
     name = None
     sha256 = None
@@ -141,7 +139,7 @@ class Dolmade(object):
         self.version = "latest"
         self.prepareDirectories()
 
-        cmd = self.udockerCmd+" inspect dolmades-runtime"
+        cmd = cfg.UDOCKERCMD_QUIET+" inspect dolmades-runtime"
         try:
             outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
             if (outp != ""):
@@ -178,14 +176,14 @@ class Dolmade(object):
     def prepareRuntime(self):
         print("Preparing Dolmades Runtime...")
 
-        cmd = self.udockerCmd+" pull dolmades/runtime:"+cfg.VERSION
+        cmd = cfg.UDOCKERCMD_QUIET+" pull dolmades/runtime:"+cfg.VERSION
         print("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd + " rm dolmades-runtime"
+        cmd = cfg.UDOCKERCMD_QUIET+" rm dolmades-runtime"
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd + " create --name=dolmades-runtime dolmades/runtime:"+cfg.VERSION
+        cmd = cfg.UDOCKERCMD_QUIET+" create --name=dolmades-runtime dolmades/runtime:"+cfg.VERSION
         subprocess.call(cmd, shell=True, close_fds=True)
 
         if (not os.path.exists(cfg.REPO_PATH+"/containers/dolmades-runtime/ROOT/"+cfg.META_DIR)):
@@ -285,18 +283,18 @@ class Dolmade(object):
         for i in self.ingredients: 
             i.retrieve()
 
-        cmd = self.udocker + " mkrepo " + cfg.REPO_PATH
+        cmd = cfg.UDOCKER+" mkrepo "+cfg.REPO_PATH
         print cmd
         try:
             outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
         except:
             print("Repo exists already")
 
-        cmd = self.udockerCmd+" pull "+self.baseImg+":"+self.version
+        cmd = cfg.UDOCKERCMD_QUIET+" pull "+self.baseImg+":"+self.version
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" create "+self.baseImg+":"+self.version
+        cmd = cfg.UDOCKERCMD_QUIET+" create "+self.baseImg+":"+self.version
         self.sha256 = subprocess.check_output(cmd, shell=True, close_fds=True).strip()
 
         if (not os.path.exists(self.metaPath())):
@@ -304,11 +302,11 @@ class Dolmade(object):
         
         print("Installing the sucessfully built dolmade...")
 
-        cmd = self.udockerCmd+" rm "+self.name
+        cmd = cfg.UDOCKERCMD_QUIET+" rm "+self.name
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = self.udockerCmd+" name "+self.sha256+" "+self.name
+        cmd = cfg.UDOCKERCMD_QUIET+" name "+self.sha256+" "+self.name
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -318,16 +316,16 @@ class Dolmade(object):
         for r in self.runs:
             (u,c) = r
             if (u == 'root'):
-                cmd = self.udockerCmd+" run --volume="+cfg.INST_PATH+":/install --user=root --volume="+os.path.expanduser("~")+\
+                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+cfg.INST_PATH+":/install --user=root --volume="+os.path.expanduser("~")+\
                       "/.Xauthority --hostenv --dri "+self.name+" "+"bash -c 'cd /install && "+' '.join(c)+"'"
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
-                cmd = self.udockerCmd+" run --volume="+cfg.INST_PATH+":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+\
+                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+cfg.INST_PATH+":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+\
                       "/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'setTarget'):
-                cmd = self.udockerCmd+" run --user="+getpass.getuser()+" --hostenv "+self.name+" bash -c '"+' '.join(c)+"'"
+                cmd = cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+" --hostenv "+self.name+" bash -c '"+' '.join(c)+"'"
                 print(cmd)
                 try:
                     outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
@@ -355,7 +353,7 @@ class Dolmade(object):
 
         iconInContainer = self.metaPath()+"/icon.png"
         open(iconInContainer, 'w+')
-        cmd = self.udockerCmd+" run --user="+getpass.getuser()+" -v=" + cfg.INST_PATH+"/"+self.iconfn+":/"+self.iconfn+\
+        cmd = cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+" -v=" + cfg.INST_PATH+"/"+self.iconfn+":/"+self.iconfn+\
               " -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+\
               self.iconfn + "[0] " + "/wineprefix/icon.png'"
         print(cmd)

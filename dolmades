@@ -13,10 +13,6 @@ import config as cfg
 
 class Main(object):
 
-    def __init__(self):
-        self.udockerCmd=cfg.SELF_PATH+"/udocker --repo="+cfg.REPO_PATH
-        pass
-
     def start(self):
         if (sys.argv[1]=='launch'):
 
@@ -50,20 +46,20 @@ class Main(object):
 
                 cmd_bind=cmd_bind+" --volume="+src+":"+dst
 
-            cmd=self.udockerCmd+" run --user="+getpass.getuser()+\
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+\
                     " --volume="+os.path.expanduser("~")+"/.Xauthority "\
                     +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (sys.argv[1]=='list'):
-            cmd=self.udockerCmd+" ps"
+            cmd=cfg.UDOCKERCMD_QUIET+" ps"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (sys.argv[1]=='del'):
             for cn in sys.argv[2:]:
-                cmd=self.udockerCmd+" rm "+cn
+                cmd=cfg.UDOCKERCMD_QUIET+" rm "+cn
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
                 fn=cfg.DESK_PATH+"/"+cn+".desktop"
@@ -74,7 +70,7 @@ class Main(object):
                     print("No desktop shortcut "+fn+" found!")
 
         if (sys.argv[1]=='debug'):
-            cmd=self.udockerCmd+" run --user="+getpass.getuser()+\
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+\
                 " --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+\
                 " --bindhome --hostenv --hostauth --dri '"+sys.argv[2]+"' bash"
             print(cmd)
@@ -86,10 +82,10 @@ class Main(object):
             cmd="cd "+path+" && tar -xzvf "+fn
             print(cmd)
             shasum=subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT).split('\n')[0].replace('/','')
-            cmd=self.udockerCmd+" name "+shasum+" "+sys.argv[2].split('.')[0]
+            cmd=cfg.UDOCKERCMD_QUIET+" name "+shasum+" "+sys.argv[2].split('.')[0]
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
-            cmd=self.udockerCmd+" run --user="+getpass.getuser()+" --hostenv '"+sys.argv[2].split('.')[0]+"' sh -c 'wineboot -u && wineserver -w'"
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+" --hostenv '"+sys.argv[2].split('.')[0]+"' sh -c 'wineboot -u && wineserver -w'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 

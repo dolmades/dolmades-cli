@@ -15,6 +15,10 @@ HOME = os.path.expanduser('~')
 DOLMADES_PATH = HOME + '/.dolmades'
 REPO_PATH = DOLMADES_PATH + "/repo"
 
+UDOCKER = SELF_PATH+"/udocker"
+UDOCKERCMD_VERBOSE = UDOCKER+" --repo="+REPO_PATH
+UDOCKERCMD_QUIET = UDOCKER+" --quiet --repo="+REPO_PATH
+
 try:
     DESK_PATH = subprocess.check_output(['xdg-user-dir', 'DESKTOP']).strip()
 except:
