@@ -14,6 +14,9 @@ import config as cfg
 class Main(object):
 
     def start(self):
+        if (sys.argv[1]=='init'):
+            cfg.INIT()
+
         if (sys.argv[1]=='launch'):
 
             containerPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]
