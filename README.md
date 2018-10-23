@@ -88,12 +88,7 @@ Now choose a game of your liking and instruct `goglizer` to download the ingredi
 ```
 ./goglizer -d=broken_sword_3__the_sleeping_dragon
 ```
-download its ingredients and prepare a Dolmadefile for installation
-```
-./goglizer -d=broken_sword_3__the_sleeping_dragon
-```
-
-Now install the dolmade
+This will download its ingredients and prepare a Dolmadefile for installation. Now the dolmade can be installed:
 ```
 ./cook broken_sword_3__the_sleeping_dragon.dolmade
 ```
