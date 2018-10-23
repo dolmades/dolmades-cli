@@ -71,7 +71,7 @@ broken_sword_3__the_sleeping_dragon
 ...
 ```
 
-Note, that only games are being listed that have no corresponding linux installer. If you want those to be listed as well you need to use the `-l` parameter:
+Note, that only games are being listed that have no corresponding linux installer. If you want linux games to be listed as well you need to use the `-l` parameter:
 
 ```
 ./goglizer -l
