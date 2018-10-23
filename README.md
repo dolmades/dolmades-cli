@@ -18,7 +18,7 @@ As of now
 * x86-64 linuxes only
 * Python 2.7
 * curl
-* tar (udocker requires some recent version, I can't find the issue pointing out which one it is)
+* tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137)
 
 Notes
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
