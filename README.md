@@ -18,13 +18,13 @@ As of now
 * x86-64 linuxes only
 * Python 2.7
 * curl
-* tar (udocker requires some recent version, I can't find the issue pointing out which one it is)
+* tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137)
 
 Notes
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
 * 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
-* wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windowses
+* wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windows
 
 ## First use
 
@@ -71,7 +71,7 @@ broken_sword_3__the_sleeping_dragon
 ...
 ```
 
-Note, that only games are being listed that have no corresponding linux installer. If you want those to be listed as well you need to use the `-l` parameter:
+Note, that only games are being listed that have no corresponding linux installer. If you want linux games to be listed as well you need to use the `-l` parameter:
 
 ```
 ./goglizer -l
@@ -88,12 +88,7 @@ Now choose a game of your liking and instruct `goglizer` to download the ingredi
 ```
 ./goglizer -d=broken_sword_3__the_sleeping_dragon
 ```
-download its ingredients and prepare a Dolmadefile for installation
-```
-./goglizer -d=broken_sword_3__the_sleeping_dragon
-```
-
-Now install the dolmade
+This will download its ingredients and prepare a Dolmadefile for installation. Now the dolmade can be installed:
 ```
 ./cook broken_sword_3__the_sleeping_dragon.dolmade
 ```
