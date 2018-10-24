@@ -111,7 +111,7 @@ class Ingredient(object):
             try:
                 print("Retrieving " + self.fileName + " from " + u)
                 cmd = cfg.SELF_PATH+'/udocker'+" --quiet --repo="+cfg.REPO_PATH+\
-                      " run --user=$(whoami) --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+" dolmades-runtime sh -c 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" \""+u+"\"'"
+                      " run --user=$(whoami) --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+" dolmades-runtime sh -c 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" -L \""+u+"\"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
 
