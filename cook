@@ -137,7 +137,7 @@ class Dolmade(object):
 
     def __init__(self):
         self.version = "latest"
-        self.prepareDirectories()
+        cfg.INIT()
 
         cmd = cfg.UDOCKERCMD_QUIET+" inspect dolmades-runtime"
         try:
@@ -278,7 +278,7 @@ class Dolmade(object):
     def installPath(self):
         return self.path()+"/"+cfg.INST_DIR
 
-    def build(self):
+    def build(self, options):
         print("Performing the dolmade build...")
         for i in self.ingredients: 
             i.retrieve()
@@ -363,20 +363,24 @@ class Dolmade(object):
         cleanName=self.name.replace('_',' ').replace('&',"_n_")
         subprocess.call("echo '"+cleanName+"' > "+namefileInContainer, shell=True, close_fds=True)
 
-        deskfileOnHost = cfg.DESK_PATH + "/" + self.name + ".desktop"
-        with open(deskfileOnHost, "w") as text_file:
+        if "--no-serve" not in options:
+            deskfileOnHost = cfg.DESK_PATH + "/" + self.name + ".desktop"
+            with open(deskfileOnHost, "w") as text_file:
 
-            try:
-                desc=self.description.replace('\n',' ')
-            except:
-                desc=cleanName
+                try:
+                    desc=self.description.replace('\n',' ')
+                except:
+                    desc=cleanName
 
-            text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
-            text_file.write("Name="+cleanName+"\nGenericName=\""+desc+"\"\nComment="+cleanName+"\n")
-            text_file.write("Icon="+self.metaPath()+"/icon.png"+"\n")
-            text_file.write("Exec="+cfg.SELF_PATH+"/dolmades launch '"+self.name+"'\n")
-            text_file.write("Categories=Game;\n")
-            text_file.write("Path="+os.path.expanduser("~")+"\n")
+                text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
+                text_file.write("Name="+cleanName+"\nGenericName=\""+desc+"\"\nComment="+cleanName+"\n")
+                text_file.write("Icon="+self.metaPath()+"/icon.png"+"\n")
+                text_file.write("Exec="+cfg.SELF_PATH+"/dolmades launch '"+self.name+"'\n")
+                text_file.write("Categories=Game;\n")
+                text_file.write("Path="+os.path.expanduser("~")+"\n")
+
+            st = os.stat(deskfileOnHost)
+            os.chmod(deskfileOnHost, st.st_mode | stat.S_IEXEC)
 
         runscriptInContainer = self.metaPath()+"/start.sh"
 
@@ -388,14 +392,10 @@ class Dolmade(object):
             else:
                 text_file.write(self.target+"\n")
 
-        st = os.stat(deskfileOnHost)
-        os.chmod(deskfileOnHost, st.st_mode | stat.S_IEXEC)
         st = os.stat(runscriptInContainer)
         os.chmod(runscriptInContainer, st.st_mode | stat.S_IEXEC)
 
 class Main(object):
-    dolmade = Dolmade()
-
     def executeCmd(self, cmdarg):
         """all supported commands"""
         cmds = { '': self.dolmade.dumpComment,
@@ -422,12 +422,24 @@ class Main(object):
         else:
             raise Exception('Unknown instruction ' + cmd + ":" + " ".join(cmdarg))
 
-
     def execute(self):
-        if (len(sys.argv)==1):
-            inputFileName = os.getcwd() + "/Dolmadefile"
-        else:
-            inputFileName = sys.argv[1];
+        if (len(sys.argv)<2):
+            print("Usage: cook [--no-serve|--no-download|--no-validate] Dolmadefile)")
+            print("       --no-serve: do not generate a desktop shortcut")
+            print("       --no-download: use only local ingredients [NOT IMPLEMENTED YET]")
+            print("       --no-validate: do not validate ingredients using their checksums [NOT IMPLEMENTED YET]")
+            print("       --hard-validate: fail when an ingredient has a wrong checksum [NOT IMPLEMENTED YET]")
+            return
+
+        inputFileName = None
+        options = []
+        for a in sys.argv[1:]:
+            if a.startswith("--"):
+                options.append(a)
+            else:
+                inputFileName = a
+        
+        self.dolmade = Dolmade()
 
         try:
             with open(inputFileName, "r") as dolmadeFile:
@@ -451,7 +463,7 @@ class Main(object):
         except (IOError, OSError):
             print("ERROR: Cannot open " + inputFileName)
 
-        self.dolmade.build()
+        self.dolmade.build(options)
 
     def start(self):
         """Program start and exception handling"""
