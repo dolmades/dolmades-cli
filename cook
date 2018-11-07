@@ -220,7 +220,7 @@ class Dolmade(object):
         h = cmdp[0]
         fn = cmdp[1]
         dn = cmdp[2]
-        u = cmdp[3]
+        u = cmdp[3].replace('file://~/','file://'+os.path.expanduser('~')+'/')
 
         sys.stdout.write("Adding Ingredient " + dn + ":" + fn + ":" + h + ":" + u)
         ingr = Ingredient(h,fn,dn,u)
