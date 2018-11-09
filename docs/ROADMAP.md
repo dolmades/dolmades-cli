@@ -21,6 +21,6 @@
  * [ ] #30 Fix wrongly set $HOME on /wineprefix creation
  * [ ] #20 Make users wine profile dir independent of linux user name
  
- * [ ] #3 create `dolmades` wrapper script for execution of installed dolmades
- * [ ] #36 make desktop file generation optional (`cook`)
+ * [X] #3 create `dolmades` wrapper script for execution of installed dolmades
+ * [X] #36 make desktop file generation optional (`cook`)
  * [ ] #23 allow multiple compatible sha256 sums for ingredients
