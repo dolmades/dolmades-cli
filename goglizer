@@ -397,7 +397,7 @@ class Main(object):
 
         dolmadefile.write("# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...\n")
         dolmadefile.write("INGREDIENT\n")
-        cmd = "sh -c 'curl -s "+game.icon+"|sha256sum|cut -f 1 -d \" \"'"
+        cmd = "sh -c 'curl -L -s "+game.icon+"|sha256sum|cut -f 1 -d \" \"'"
         chksum = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
         dolmadefile.write("    "+chksum)
         icon_fn = game.icon.split("/")[-1]
