@@ -6,7 +6,7 @@
 
 ### April 2019: Publish two or three articles
 
-## March 2019: Next Release 1.1
+### March 2019: Next Release 1.1
 
  * [ ] #35 ensure splitting Dolmadefile parsing and processing
  * [ ] #NN Finalizing Dolmadefile syntax / format
@@ -23,4 +23,4 @@
  * [ ] #30 Fix wrongly set $HOME on /wineprefix creation
  * [ ] #20 Make users wine profile dir independent of linux user name
  
-## Now: Release 1.0 "the goglizer"
+### Now: Release 1.0 "the goglizer"
