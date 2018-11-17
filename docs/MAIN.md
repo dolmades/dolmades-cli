@@ -26,7 +26,7 @@
 
 ___
 
-# Documentation Dolmades 1.0 "the goglizer"
+# Dolmades 1.0 "the goglizer"
 
 ## Introduction
 
