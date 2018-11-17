@@ -69,13 +69,13 @@ Dolmades make heavy use of the following underlying technologies:
 * **Mobility:** Dolmades are designed to be portable across various system (hardware, distros).
 * **Safety&Security:** Dolmades are isolated from each other and from the host system. Breaking one will leave all others unaffected, and you won't be able to harm your host system unless you use shares.
 
-* Users
+* **Users**
   * **Creation:** Cook your application using recipes and install a desktop symlink.
   * **Target launcher:** Displays a selection of all installed applications and you choose which one to run.
   * **Shares:** Bind selected paths from the host system to windows drives inside a dolmade.
   * **Import&Export:** EXPERIMENTAL - allows sharing cooked dolmades and requires user names to remain identical!
   
-* Developers: 
+* **Developers:** 
   * **Create recipes:** Use the existing Dolmadefiles as template for your own win-only apps.
   * **Debug mode:** Examine problems, add fixes and rebuild the application.
   * **Selectable base:** Choose between between several wine versions (currently stable, devel, staging).
