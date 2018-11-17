@@ -32,10 +32,13 @@ Dolmades make heavy use of the following underlying technologies:
  * Docker+DockerHub: for the dolmades base images
  * udocker + proot: for user-level containerization
  * wine + winetricks: for running windows application in Linux
+ * lgogdownloader: for GOG support
 
 ### Features
 
-* **GOG games support:** generate template recipes for your personal GOG collection and installation is a breeze
+The focus in the 1.x release cycle will be put on support for GOG gaming.
+
+* **GOG gaming support:** generate template recipes for your personal GOG collection and installation is a breeze
 * **Ease-of-use:** supports major linux distros and require no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
 * **Mobility:** cooked dolmades are designed to be portable across various distros and system hardware
@@ -112,14 +115,14 @@ A system tray icon indicates the running dolmade. On left click you can access t
 
 #### Generating a dolmade recipe using a GOG account
 
-Here we gonna cook your favourite GOG win-only game using the script `goglizer`.
-At first, you will be asked to authorize using your GOG account:
+Here we gonna cook your favourite GOG win-only game using the script `goglizer`:
 ```
 ./goglizer -u
 ```
 The `-u` parameter tells `goglizer` to retrieve the dolmades runtime container and your personal game list.
-The authorization credentials are being stored in your home directory for subsequent use.
-After success a list of your games is being shown:
+At first, you will be asked to authorize using your GOG account. Since two-factor-authentication is mandatory you will need to check your email and enter the code that GOG sends to you. This needs to be done only once. 
+After that, the authorization credentials are being stored in your home directory for subsequent use.
+Finally a list of your games is being shown:
 
 ```
 Found dolmade repo under /home/stefan/.dolmades/repo
