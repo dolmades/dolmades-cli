@@ -74,7 +74,7 @@ cd dolmades-cli
 ```
 
 
-#### First use
+#### Cooking a dolmade
 
 To cook a dolmade use the very simple example:
 
@@ -95,7 +95,7 @@ or from terminal:
 
 ![](shots/firstuse_2.png?raw=true)
 
-#### GOG account
+#### Generating a dolmade recipe using a GOG account
 
 Here we gonna cook your favourite GOG win-only game using the script `goglizer`.
 At first, you will be asked to authorize using your GOG account:
@@ -170,13 +170,10 @@ After successful completion you will find a clickable icon on your desktop :)
 ...supported distros, requirements, limits, caveats, ...
 
 ## HOWTO
-
-### Cook a dolmade recipe
-### Create a dolmade recipe
-### Migrate a dolmade
-### Copy-Protected CD/DVD Game
+### Migration HOWTO
+### Copy-Protected CD/DVD Game HOWTO
 ...describe how we can install Harry Potter 1 and Harry Potter 2 from copy protected CD media
-### Contribution
+### Contribution HOWTO
    
 ## Roadmap
 
