@@ -78,8 +78,8 @@ simply clone the repository using git:
 cd $HOME
 git clone --branch the_goglizer https://github.com/dolmades/dolmades-cli.git
 cd dolmades-cli
+git checkout tags/1.0 -b the_goglizer
 ```
-
 
 #### Cooking a dolmade
 
