@@ -111,13 +111,13 @@ It can be started by double clicking the desktop icon or from terminal:
 #### GOG account
 
 Here we gonna cook your favourite GOG win-only game using the script `goglizer`.
-At first, you will be asked to authorize using your GOG account.
+At first, you will be asked to authorize using your GOG account:
 ```
 ./goglizer -u
 ```
 The `-u` parameter tells `goglizer` to retrieve the dolmades runtime container and your personal game list.
 The authorization credentials are being stored in your home directory for subsequent use.
-After success a list of your games is being shown. 
+After success a list of your games is being shown:
 
 ```
 Found dolmade repo under /home/stefan/.dolmades/repo
@@ -153,7 +153,7 @@ broken_sword_3__the_sleeping_dragon
 ...
 ```
 
-Now choose a game of your liking and instruct `goglizer` to download the ingredients and create a corresponding dolmade file using the `-d` parameter.
+Now choose a game of your liking and instruct `goglizer` to download the ingredients and create a corresponding dolmade file using the `-d` parameter:
 ```
 ./goglizer -d=broken_sword_3__the_sleeping_dragon
 ```
