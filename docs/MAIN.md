@@ -23,7 +23,7 @@ As of now:
 
 Dolmades make heavy use of the following underlying technologies:
 
- * Docker+DockerHub: for the dolmades base images
+ * Docker + DockerHub: for the dolmades base images
  * udocker + proot: for user-level containerization
  * wine + winetricks: for running windows application in Linux
  * lgogdownloader: for GOG support
