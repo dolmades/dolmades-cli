@@ -11,7 +11,7 @@ Dolmades are intended as a mean to ease packaging, installation and distribution
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 A global configuration file called `config.py` provides important settings to all three scripts.
 
-## Requirements
+### Requirements
 
 As of now 
 * x86-64 linuxes only
@@ -25,7 +25,7 @@ Notes
 * 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windows
 
-## Technical Base
+### Technical Base
 
 Dolmades make heavy use of the following underlying technologies:
 
@@ -33,7 +33,7 @@ Dolmades make heavy use of the following underlying technologies:
  * udocker + proot: for user-level containerization
  * wine + winetricks: for running windows application in Linux
 
-## Features
+### Features
 
 * **GOG games support:** generate template recipes for your personal GOG collection and installation is a breeze
 * **Ease-of-use:** supports major linux distros and require no special permissions
@@ -52,15 +52,13 @@ Dolmades make heavy use of the following underlying technologies:
   * **Debug mode:** examine problems, add fixes and instantly rebuild the application
   * **Selectable base:** choose between between several wine versions
 
-## Features of the next release
+### Planned for the next release
 
 * Improved Import&Export to work across changing user names
 * Recipe specification: Gather feedback. Complete syntax. Standardize it.
 * Lots of refactoring / bug fixing
 
 ## Basics
-
-### Concepts
 
 Dolmades makes use of several concepts which will be briefly explained here:
 
