@@ -71,7 +71,7 @@ Dolmades make heavy use of the following underlying technologies:
   * **Creation:** cook your application using recipes and install a desktop symlink
   * **Target launcher:** displays a selection of all installed applications and you choose which one to run
   * **Shares:** bind selected paths from the host system to windows drives inside a dolmade
-  * **Import&Export:** EXPERIMENTAL - allows sharing cooked dolmades and requires user names to remain identical!
+  * **Import&Export:** allows sharing cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
   
 * **Developers:** 
   * **Create recipes:** use the existing Dolmadefiles as template for your own win-only apps
