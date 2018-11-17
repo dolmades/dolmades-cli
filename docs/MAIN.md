@@ -62,7 +62,7 @@ Dolmades make heavy use of the following underlying technologies:
 ## Features
 
 * **GOG games support:** generate template recipes for your personal GOG collection and installation is a breeze
-* **Ease-of-use:** supports any linux distro and require no special permissions
+* **Ease-of-use:** supports major linux distros and require no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
 * **Mobility:** designed to be portable across various distros and system hardware
 * **Safety&Security:** dolmades are isolated from each other and from the host system by default
