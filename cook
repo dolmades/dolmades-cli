@@ -135,8 +135,9 @@ class Dolmade(object):
     runs = []
     targetArgs = None
 
-    def __init__(self):
+    def __init__(self, inputFileName):
         self.version = "latest"
+        self.inputFileName = inputFileName
         cfg.INIT()
 
         cmd = cfg.UDOCKERCMD_QUIET+" inspect dolmades-runtime"
@@ -363,6 +364,9 @@ class Dolmade(object):
         cleanName=self.name.replace('_',' ').replace('&',"_n_")
         subprocess.call("echo '"+cleanName+"' > "+namefileInContainer, shell=True, close_fds=True)
 
+        shutil.copy(self.inputFileName, self.metaPath()+"/Dolmadefile")
+
+
         if "--no-serve" not in options:
             deskfileOnHost = cfg.DESK_PATH + "/" + self.name + ".desktop"
             with open(deskfileOnHost, "w") as text_file:
@@ -439,7 +443,7 @@ class Main(object):
             else:
                 inputFileName = a
         
-        self.dolmade = Dolmade()
+        self.dolmade = Dolmade(inputFileName)
 
         try:
             with open(inputFileName, "r") as dolmadeFile:
