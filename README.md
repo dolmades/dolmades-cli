@@ -26,6 +26,17 @@ Notes
 * 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windows
 
+## Setup
+
+Either download the release tar ball under https://github.com/dolmades/dolmades-cli/releases or
+simply clone the repository using git
+
+```
+cd $HOME
+git clone --branch the_goglizer https://github.com/dolmades/dolmades-cli.git
+cd dolmades-cli
+```
+
 ## First use
 
 To cook a dolmade use the very simple example:
