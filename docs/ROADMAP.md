@@ -2,7 +2,7 @@
 
 ### Next WineConf
 
-### August 2019: Release 1.1
+### August 2019: Release 1.2
 
 ### April 2019: Publish two or three articles
 
