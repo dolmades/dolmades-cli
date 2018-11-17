@@ -1,6 +1,6 @@
 # Roadmap
 
-### Next WineConf
+### Someday: Next WineConf
 
 ### August 2019: Release 1.2
 
@@ -23,4 +23,5 @@
  * [ ] #30 Fix wrongly set $HOME on /wineprefix creation
  * [ ] #20 Make users wine profile dir independent of linux user name
  
-### Now: Release 1.0 "the goglizer"
+
+**Current Release: 1.0 "the goglizer"**
