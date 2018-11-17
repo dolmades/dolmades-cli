@@ -30,8 +30,7 @@ ___
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. This collection of command line tools represent the prototypical implementation of the underlying concepts.
-As of now there are three python scripts:
+Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
 
 * dolmades - to maintain your installed windows application
 * goglizer - prepares win-only GOG games to be cooked; GOG account required
@@ -58,31 +57,32 @@ Notes
 
 Dolmades make heavy use of the following underlying technologies:
 
- * Docker: for the wine base images
+ * Docker+DockerHub: for the dolmades base images
  * udocker + proot: for user-level containerization
- * wine
+ * wine + winetricks: for running windows application in Linux
 
 ## Features
 
-* GOG games support: generate a template for games in your personal GOG collection and install it within minutes
-* sandboxing: dolmades are isolated between each other and from the host system
-* compatibility: recipes are designed to create functional dolmades across various systems (hardware, distros)
-* mobility: dolmades are designed to be portable across various system (hardware, distros)
+* GOG games support: Generate a template for games in your personal GOG collection and install it within minutes.
+* Ease-of-use: Dolmades are designed to support any linux distro and require no special permissions.
+* Compatibility: Recipes are designed to create functional dolmades across various systems (hardware, distros).
+* Mobility: Dolmades are designed to be portable across various system (hardware, distros).
+* Safety&Security: Dolmades are isolated from each other and from the host system. Breaking one will leave all others unaffected, and you won't be able to harm your host system unless you use shares.
 
-* for users
-  * creation: cook your application using recipes and install a desktop symlink
-  * target launcher: lists all installed applications and select which one to run
-  * shares: bind selected paths from the host system to windows drives
-  * import/export functionality (EXPERIMENTAL, requires user names to remain identical)
+* Users
+  * Creation: Cook your application using recipes and install a desktop symlink.
+  * Target launcher: Displays a selection of all installed applications and you choose which one to run.
+  * Shares: Bind selected paths from the host system to windows drives inside a dolmade.
+  * Import&Export functionality - this is EXPERIMENTAL and requires user names to remain identical!
   
-* for developers: 
-  * create recipes: use the existing Dolmadefiles as template for your own win-only apps
-  * debug mode: examine problems, add fixes and rebuild the application
-  * selectable base: choose between between several wine versions (currently stable, devel, staging)
+* Developers: 
+  * Create recipes: Use the existing Dolmadefiles as template for your own win-only apps.
+  * Debug mode: Examine problems, add fixes and rebuild the application.
+  * Selectable base: Choose between between several wine versions (currently stable, devel, staging).
 
 ## Features of the next release
 
-* Improve import/export to work across changing user names
+* Improved Import&Export to work across changing user names
 * Recipe specification: complete syntax
 * Lots of refactoring / bug fixing
 
