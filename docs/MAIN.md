@@ -103,10 +103,14 @@ To cook a dolmade use the very simple example:
 ./cook Dolmadefile
 ```
 Click straight through the installation process. This will install the free game Broken Sword 2.5 on your desktop.
-It can be started by double clicking the desktop icon or from terminal:
+It can be started by double clicking the desktop icon 
+![](shots/firstuse_0.png?raw=true)
+or from terminal:
 ```
 ./dolmades launch Broken_Sword
 ```
+![](shots/firstuse_1.png?raw=true)
+![](shots/firstuse_2.png?raw=true)
 
 #### GOG account
 
