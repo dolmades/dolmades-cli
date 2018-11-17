@@ -14,7 +14,7 @@ A global configuration file called `config.py` provides important settings to al
 ### Requirements
 
 As of now:
-* x86-64 linuxes only
+* x86-64 linux
 * Python 2.7
 * curl
 * tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137)
