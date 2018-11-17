@@ -1,5 +1,3 @@
-* [ ] Introduction
-* [ ] Features
 * [ ] Basics
   * [ ] Usage
   * [ ] Development
