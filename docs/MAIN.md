@@ -75,7 +75,7 @@ Dolmades make heavy use of the following underlying technologies:
   
 * **Developers:** 
   * **Create recipes:** Use the existing Dolmadefiles as template for your own win-only apps.
-  * **Debug mode:** Examine problems, add fixes and rebuild the application.
+  * **Debug mode:** Examine problems, add fixes and instantly rebuild the application.
   * **Selectable base:** Choose between between several wine versions (currently stable, devel, staging).
 
 ## Features of the next release
