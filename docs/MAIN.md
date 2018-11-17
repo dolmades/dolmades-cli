@@ -30,7 +30,7 @@ Dolmades make heavy use of the following underlying technologies:
 
 ### Features
 
-The focus in the 1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of the main unsolved issues.
+The focus in the 1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
 * **GOG gaming support:** generate template recipes for your personal GOG collection and installation is a breeze
 * **Ease-of-use:** supports major linux distros and require no special permissions
