@@ -23,5 +23,6 @@
  * [ ] #30 Fix wrongly set $HOME on /wineprefix creation
  * [ ] #20 Make users wine profile dir independent of linux user name
  
+---
 
 **Current Release: 1.0 "the goglizer"**
