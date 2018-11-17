@@ -13,7 +13,7 @@ A global configuration file called `config.py` provides important settings to al
 
 ### Requirements
 
-As of now 
+As of now:
 * x86-64 linuxes only
 * Python 2.7
 * curl
