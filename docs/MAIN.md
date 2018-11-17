@@ -1,11 +1,4 @@
-* [ ] Basics
-  * [ ] Usage
-  * [ ] Development
-  * [ ] Versioning
-  * [ ] Base Images
-  * [ ] External Binds
-  * [ ] Future: next version, C++ rewrite, registry support...
-  * [ ] Acknowledgement
+
 * [ ] Tools
   * [x] `dolmades`
   * [ ] `goglizer`
@@ -21,6 +14,8 @@
   * [ ] Copy-Protected CD/DVD Game: Describe how we can install Harry Potter 1 and Harry Potter 2 from copy protected CD media
    * [ ] Contribution
 * [X] Roadmap
+* [ ] Future: next version, C++ rewrite, registry support...
+* [ ] Acknowledgement
 
 ___
 
