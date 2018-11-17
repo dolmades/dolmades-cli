@@ -100,13 +100,15 @@ or from terminal:
 ./dolmades launch Broken_Sword
 ```
 
+Select `Windowed Mode` in the launcher and click "Ok":
+
 ![](shots/firstuse_1.png?raw=true)
 
-Select `(windowed mode)` in the launcher.
+This will launch the game:
 
 ![](shots/firstuse_2.png?raw=true)
 
-A system tray runner icon will appear where you can access the run log on left click. On right click you can forcibly terminate the running dolmade in case the app hangs itself. 
+A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
 
 #### Generating a dolmade recipe using a GOG account
 
