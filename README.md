@@ -29,7 +29,7 @@ Notes
 ## Setup
 
 Either download the release tar ball under https://github.com/dolmades/dolmades-cli/releases or
-simply clone the repository using git
+simply clone the repository using git:
 
 ```
 cd $HOME
