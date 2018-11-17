@@ -88,6 +88,18 @@ Dolmades make heavy use of the following underlying technologies:
 
 ### Usage
 
+#### Setup
+
+Either download the release tar ball under https://github.com/dolmades/dolmades-cli/releases or
+simply clone the repository using git:
+
+```
+cd $HOME
+git clone --branch the_goglizer https://github.com/dolmades/dolmades-cli.git
+cd dolmades-cli
+```
+
+
 #### First use
 
 To cook a dolmade use the very simple example:
