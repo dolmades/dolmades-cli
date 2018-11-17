@@ -13,13 +13,13 @@
  * [ ] #NN Refactoring: write parser class for Dolmadefiles
  * [ ] #23 allow ingredients to have multiple hashs
  * [ ] #NN Check on mandatory commands, bail out if missing
- 
+ ---
  * [ ] #17 Change from one shared `install` dir to one dedicated `install` dir per dolmade
- 
+ ---
  * [ ] #NN Add a tool to search for Dolmadefiles given some ingredient
-
+---
  * [ ] #16 prettify console output
- 
+ ---
  * [ ] #30 Fix wrongly set $HOME on /wineprefix creation
  * [ ] #20 Make users wine profile dir independent of linux user name
  
