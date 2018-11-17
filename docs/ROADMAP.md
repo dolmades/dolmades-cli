@@ -1,26 +1,28 @@
 # Roadmap
 
-### Later 2019: WineConf 2019
+### Someday: Next WineConf
 
-### August 2019: Release 1.1
+### August 2019: Release 1.2
 
 ### April 2019: Publish two or three articles
 
-## Jan 2019: First Release "the_goglizer" 1.0
-
- * [ ] #28 docs, update README.md and add docs for `Dolmadefile`
- 
+### March 2019: Next Release 1.1
+---
  * [ ] #35 ensure splitting Dolmadefile parsing and processing
+ * [ ] #NN Finalizing Dolmadefile syntax / format
+ * [ ] #NN Refactoring: write parser class for Dolmadefiles
+ * [ ] #23 allow ingredients to have multiple hashs
  * [ ] #NN Check on mandatory commands, bail out if missing
+ ---
  * [ ] #17 Change from one shared `install` dir to one dedicated `install` dir per dolmade
-
- * [X] #21 implement bind concept 
+ ---
+ * [ ] #NN Add a tool to search for Dolmadefiles given some ingredient
+---
  * [ ] #16 prettify console output
- * [ ] #32 write complete metadata to metadir
- 
+ ---
  * [ ] #30 Fix wrongly set $HOME on /wineprefix creation
  * [ ] #20 Make users wine profile dir independent of linux user name
- 
- * [X] #3 create `dolmades` wrapper script for execution of installed dolmades
- * [X] #36 make desktop file generation optional (`cook`)
- * [ ] #23 allow multiple compatible sha256 sums for ingredients
+---
+### Current Release: 1.0 "the goglizer"
+
+Scheduled 15.12.2019
