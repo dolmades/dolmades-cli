@@ -23,3 +23,23 @@
   * [ ] Copy-Protected CD/DVD Game: Describe how we can install Harry Potter 1 and Harry Potter 2 from copy protected CD media
    * [ ] Contribution
 * [X] Roadmap
+
+___
+
+# Documentation Dolmades 1.0 "the goglizer"
+
+## Introduction
+
+## Features
+
+## Basics
+
+## Tools
+
+## Dolmadefile Syntax
+
+## FAQ
+
+## HOWTOs
+
+## Roadmap
