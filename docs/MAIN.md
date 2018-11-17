@@ -60,6 +60,15 @@ Dolmades make heavy use of the following underlying technologies:
 
 ## Basics
 
+### Concepts
+
+Dolmades makes use of several concepts which will be briefly explained here:
+
+* **Dolmades:** Win apps which behave like containers. They can be created, deleted, executed and migrated.
+* **Recipes:** Specification files which define the building process of a dolmade.
+* **Ingredients:** Recipes require certain ingredients which can be ISO files, installers, images ...
+* **Binds:** Dolmades are isolated by default but can access files or directories on the host system using shared binds 
+
 ### Usage
 
 #### Setup
@@ -76,13 +85,14 @@ cd dolmades-cli
 
 #### Cooking a dolmade
 
+Cooking describes the process of building a dolmade from a recipe and the required ingredients.
 To cook a dolmade use the very simple example:
 
 ```
 ./cook Dolmadefile
 ```
-Click straight through the installation process. This will install the free game Broken Sword 2.5 on your desktop.
-It can be started by double clicking the desktop icon 
+At first the required ingredients will be downloaded. Then, the dolmade is being created and the installer is being run.
+Click straight through the installation process. This will install the free game Broken Sword 2.5 on your desktop. It can be started by double clicking the desktop icon:
 
 ![](shots/firstuse_0.png?raw=true)
 
@@ -170,6 +180,7 @@ After successful completion you will find a clickable icon on your desktop :)
 ...supported distros, requirements, limits, caveats, ...
 
 ## HOWTO
+### Recipe creation HOWTO
 ### Migration HOWTO
 ### Copy-Protected CD/DVD Game HOWTO
 ...describe how we can install Harry Potter 1 and Harry Potter 2 from copy protected CD media
