@@ -55,7 +55,7 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
 * Recipe specification: Gather feedback. Complete syntax. Standardize it.
 * Lots of refactoring / bug fixing
 
-## Basics
+## Basic Usage
 
 Dolmades makes use of several concepts which will be briefly explained here:
 
@@ -64,9 +64,7 @@ Dolmades makes use of several concepts which will be briefly explained here:
 * **Ingredients:** Recipes require certain ingredients which can be ISO files, installers, images ...
 * **Binds:** Dolmades are isolated by default but can access files or directories on the host system using shared binds 
 
-### Usage
-
-#### Setup
+### Setup
 
 Either download the release tar ball under https://github.com/dolmades/dolmades-cli/releases or
 simply clone the repository using git:
@@ -78,7 +76,7 @@ cd dolmades-cli
 git checkout tags/1.0 -b the_goglizer
 ```
 
-#### Cooking a dolmade
+### Cooking a dolmade
 
 Cooking describes the process of building a dolmade from a recipe and the required ingredients.
 To cook a dolmade use the very simple example:
@@ -107,7 +105,7 @@ This will launch the game:
 
 A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
 
-#### Generating a dolmade recipe using a GOG account
+### Generating a dolmade recipe using a GOG account
 
 Here we gonna cook your favourite GOG win-only game using the script `goglizer`:
 ```
@@ -162,6 +160,7 @@ This will download its ingredients and prepare a Dolmadefile for installation. N
 ```
 After successful completion you will find a clickable icon on your desktop :)
 
+## Advanced Usage
 
 ### Development
 ### Versioning
