@@ -276,7 +276,8 @@ ICON
 ```
 
 This command is mandatory. It specifies the icon file to be used for the desktop symbol and the target launcher.
-**NOTES**
+
+**FINAL NOTES**
 
 * Comments can be added as lines starting with `#`. Comments cannot be appended to existing command lines.
 * The order of the commands has to be obeyed until parsing has been refactored. This is planned for the next release.
