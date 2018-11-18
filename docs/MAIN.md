@@ -193,33 +193,44 @@ COMMAND
 DOLMADE
  Name_Of_The_Dolmade
 ```
-**Mandatory**
-
-Defines the name of the dolmade used internally by `dolmades`. Whitespaces are not allowed. 
+This command is mandatory. It defines the name of the dolmade used internally by `dolmades`. Whitespaces are not allowed. 
 This name is going to be used in the desktop symlink title with `_` characters converted into blanks.
 
 ```
 VERSION
  1.0
 ```
-**Optional**
-
-Defines the tag of the base image pulled by the recipe, and has to match with the version reported by `cook`.
-Can be omitted in development. In that case no version checking takes place, and the `latest` base image is being used.
+This command is optional. It defines the tag of the base image pulled by the recipe, and has to match with the version reported by `cook`. Advised to be omitted in development, such that no version checking takes place, and the `latest` base image is being used.
 
 ```
 BASE
  dolmades/winestable
 ```
 
-Defines the DockerHub repository to be used. The tag of the image used is defined by `VERSION`.
+This command is mandatory. It defines the DockerHub repository to be used. The tag of the image used is defined by `VERSION`.
 
 ```
 DESCRIPTION
  A description of the contents of this dolmade
 ```
 
-This description is stored inside the container. It is not being used yet.
+This command is optional. This description is stored inside the container and it is not being used yet.
+
+```
+INGREDIENT
+ sha256
+ filename
+ description
+ http://remote1
+ ftp://remote2
+ file://local3
+ gog://remoteid
+ ...
+```
+This command is repeatable and optional. For each ingredient used within the recipe one entry is needed.
+The ingredient will be fetched from one of the locations defined and made available inside the container under `filename`.
+WRITEMORE
+ 
 
 **NOTES**
 
