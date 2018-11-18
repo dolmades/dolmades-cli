@@ -60,7 +60,7 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
 Dolmades makes use of several concepts which will be briefly explained here:
 
 * **Dolmades:** Win apps which behave like containers. They can be created, deleted, executed and migrated.
-* **Recipes:** Specification files which define the building process of a dolmade.
+* **Recipes:** Also Dolmadefiles; specification files which define the building process of a dolmade.
 * **Ingredients:** Recipes require certain ingredients which can be ISO files, installers, images ...
 * **Binds:** Dolmades are isolated by default but can access files or directories on the host system using shared binds 
 
@@ -158,7 +158,7 @@ Now choose a game of your liking and instruct `goglizer` to download the ingredi
 ```
 This will download its ingredients and prepare a Dolmadefile for installation. Now the dolmade can be installed:
 ```
-./cook broken_sword_3__the_sleeping_dragon.dolmade
+./cook "broken_sword_3__the_sleeping_dragon:en:1.0.dolmade"
 ```
 After successful completion you will find a clickable icon on your desktop :)
 
@@ -170,13 +170,63 @@ After successful completion you will find a clickable icon on your desktop :)
 
 ## Tools
 
-### `dolmades`
-### `goglizer`
-### `cook`
-### `config.py`
+### dolmades
+### goglizer
+### cook
+### config.py
 
-## `Dolmadefile` Syntax
-...`Dolmadefile` 1.0 Syntax - mark which command is mandatory and which one is optional
+## Dolmadefile Syntax
+
+A Dolmadefile is a recipe or specification which allows the guided build of the respective dolmade.
+Dolmadefiles are for dolmades what Dockerfiles are for Docker except that most dolmades are not built fully automated and hence require interaction e.g. when a graphical installer is used. 
+
+The structure of a `Dolmadefile` is:
+```
+COMMAND
+  ARGUMENTS
+  FURTHER ARGUMENTS
+  ...
+```
+### Commands
+
+```
+DOLMADE
+ Name_Of_The_Dolmade
+```
+**Mandatory**
+
+Defines the name of the dolmade used internally by `dolmades`. Whitespaces are not allowed. 
+This name is going to be used in the desktop symlink title with `_` characters converted into blanks.
+
+```
+VERSION
+ 1.0
+```
+**Optional**
+
+Defines the tag of the base image pulled by the recipe, and has to match with the version reported by `cook`.
+Can be omitted in development. In that case no version checking takes place, and the `latest` base image is being used.
+
+```
+BASE
+ dolmades/winestable
+```
+
+Defines the DockerHub repository to be used. The tag of the image used is defined by `VERSION`.
+
+```
+DESCRIPTION
+ A description of the contents of this dolmade
+```
+
+This description is stored inside the container. It is not being used yet.
+
+**NOTES**
+
+* Comments can be added as lines starting with `#`. Comments cannot be appended to existing command lines.
+* The order of the commands has to be obeyed until parsing has been refactored. This is planned for the next release.
+* The `INGREDIENT` - and maybe some other commands - are likely to undergo slight changes until the next release
+
 
 ## FAQ
 ...supported distros, requirements, limits, caveats, ...
