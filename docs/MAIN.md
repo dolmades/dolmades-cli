@@ -234,9 +234,48 @@ INGREDIENT
 ```
 This command is repeatable and optional. For each ingredient used within the recipe one entry is needed.
 The ingredient will be fetched from one of the locations defined and made available inside the container under `filename`.
-WRITEMORE
- 
 
+```
+RUNUSER
+ cmd1 &&
+ cmd2 &&
+ ...  &&
+ cmdN
+``` 
+This command is repeatable and optional. This command will be launched as the calling user in a bash environment inside the dolmade. The current path will be the target directory.
+You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution.
+
+```
+RUNROOT
+ cmd1 &&
+ cmd2 &&
+ ...  &&
+ cmdN
+```
+
+This command is repeatable and optional. This command will be launched as fake root in a bash environment inside the dolmade. The current path will be the target directory.
+You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution. Usually `RUNUSER` should suffice but if you need to install some packages using `apt` `RUNROOT` will be required.
+
+```
+SETTARGET
+ targetCall
+``` 
+
+This command is optional. If omitted the dolmade will launch using the target launcher and allow the user to select one of all installed targets i.e. lnk-files created during the installation. Sometimes it is desirable to launch a specific executable and then this option can be used to set the exe-binary.
+
+```
+SETTARGETARGS
+ targetArgs
+```
+
+This command is optional. Sometimes if `SETTARGET` is used it is still neccessary to specify also some arguments. This can be done using this command.
+
+```
+ICON
+ iconFileName
+```
+
+This command is mandatory. It specifies the icon file to be used for the desktop symbol and the target launcher.
 **NOTES**
 
 * Comments can be added as lines starting with `#`. Comments cannot be appended to existing command lines.
