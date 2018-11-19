@@ -285,7 +285,9 @@ This command is mandatory. It specifies the icon file to be used for the desktop
 
 
 ## FAQ
-...supported distros, requirements, limits, caveats, ...
+
+ * Which distros have been tested? See [this issue](https://github.com/dolmades/dolmades-cli/issues/26)
+ * requirements, limits, caveats...
 
 ## HOWTO
 ### Recipe creation HOWTO
