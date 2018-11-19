@@ -324,4 +324,4 @@ I figure some exciting use cases which would become addressable as well, e.g.
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windows
 * do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
 
-## Acknowledgement
+## Acknowledgements
