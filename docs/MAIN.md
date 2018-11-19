@@ -55,7 +55,7 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
 * Recipe specification: Gather feedback. Complete syntax. Standardize it.
 * Lots of refactoring / bug fixing
 
-## Basics
+## Basic Usage
 
 Dolmades makes use of several concepts which will be briefly explained here:
 
@@ -64,9 +64,7 @@ Dolmades makes use of several concepts which will be briefly explained here:
 * **Ingredients:** Recipes require certain ingredients which can be ISO files, installers, images ...
 * **Binds:** Dolmades are isolated by default but can access files or directories on the host system using shared binds 
 
-### Usage
-
-#### Setup
+### Setup
 
 Either download the release tar ball under https://github.com/dolmades/dolmades-cli/releases or
 simply clone the repository using git:
@@ -78,7 +76,7 @@ cd dolmades-cli
 git checkout tags/1.0 -b the_goglizer
 ```
 
-#### Cooking a dolmade
+### Cooking a dolmade
 
 Cooking describes the process of building a dolmade from a recipe and the required ingredients.
 To cook a dolmade use the very simple example:
@@ -90,7 +88,9 @@ To cook a dolmade use the very simple example:
 At first the required ingredients will be downloaded. Then, the dolmade is being created and the installer is being run.
 Click straight through the installation process. This will install the free game Broken Sword 2.5 on your desktop. It can be started by double clicking the desktop icon:
 
-![](shots/firstuse_0.png?raw=true)
+<p align="center">
+  <img src="shots/firstuse_0.png?raw=true" alt="screen shot 0"/>
+</p>
 
 or from terminal:
 ```
@@ -99,15 +99,19 @@ or from terminal:
 
 Select `Windowed Mode` in the launcher and click "Ok":
 
-![](shots/firstuse_1.png?raw=true)
+<p align="center">
+  <img src="shots/firstuse_1.png?raw=true" alt="screen shot 1"/>
+</p>
 
 This will launch the game:
 
-![](shots/firstuse_2.png?raw=true)
+<p align="center">
+  <img src="shots/firstuse_2.png?raw=true" alt="screen shot 2"/>
+</p>
 
 A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
 
-#### Generating a dolmade recipe using a GOG account
+### Generating a dolmade recipe using a GOG account
 
 Here we gonna cook your favourite GOG win-only game using the script `goglizer`:
 ```
@@ -162,6 +166,7 @@ This will download its ingredients and prepare a Dolmadefile for installation. N
 ```
 After successful completion you will find a clickable icon on your desktop :)
 
+## Advanced Usage
 
 ### Development
 ### Versioning
@@ -229,10 +234,50 @@ INGREDIENT
 ```
 This command is repeatable and optional. For each ingredient used within the recipe one entry is needed.
 The ingredient will be fetched from one of the locations defined and made available inside the container under `filename`.
-WRITEMORE
- 
 
-**NOTES**
+```
+RUNUSER
+ cmd1 &&
+ cmd2 &&
+ ...  &&
+ cmdN
+``` 
+This command is repeatable and optional. This command will be launched as the calling user in a bash environment inside the dolmade. The current path will be the target directory.
+You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution.
+
+```
+RUNROOT
+ cmd1 &&
+ cmd2 &&
+ ...  &&
+ cmdN
+```
+
+This command is repeatable and optional. This command will be launched as fake root in a bash environment inside the dolmade. The current path will be the target directory.
+You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution. Usually `RUNUSER` should suffice but if you need to install some packages using `apt` `RUNROOT` will be required.
+
+```
+SETTARGET
+ targetCall
+``` 
+
+This command is optional. If omitted the dolmade will launch using the target launcher and allow the user to select one of all installed targets i.e. lnk-files created during the installation. Sometimes it is desirable to launch a specific executable and then this option can be used to set the exe-binary.
+
+```
+SETTARGETARGS
+ targetArgs
+```
+
+This command is optional. Sometimes if `SETTARGET` is used it is still neccessary to specify also some arguments. This can be done using this command.
+
+```
+ICON
+ iconFileName
+```
+
+This command is mandatory. It specifies the icon file to be used for the desktop symbol and the target launcher.
+
+**FINAL NOTES**
 
 * Comments can be added as lines starting with `#`. Comments cannot be appended to existing command lines.
 * The order of the commands has to be obeyed until parsing has been refactored. This is planned for the next release.
