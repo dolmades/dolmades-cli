@@ -41,7 +41,7 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
   * **Creation:** cook your application using recipes and install a desktop symlink
   * **Target launcher:** displays a selection of all installed applications and you choose which one to run
   * **Shares:** bind selected paths from the host system to windows drives inside a dolmade
-  * **Import&Export:** allows sharing cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
+  * **Import&Export:** allows sharing of cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
   
 * **Developers:** 
   * **Create recipes:** use the existing Dolmadefiles as template for your own win-only apps
@@ -181,8 +181,8 @@ After successful completion you will find a clickable icon on your desktop :)
 
 ## Dolmadefile Syntax
 
-A Dolmadefile is a recipe or specification which allows the guided build of the respective dolmade.
-Dolmadefiles are for dolmades what Dockerfiles are for Docker except that most dolmades are not built fully automated and hence require interaction e.g. when a graphical installer is used. 
+A Dolmadefile is a specification which allows the guided build of the respective dolmade.
+Dolmadefiles are for dolmades what Dockerfiles are for Docker except that most dolmades are not built fully automated and hence require interaction if a graphical installer is being used. 
 
 The structure of a `Dolmadefile` is:
 ```
@@ -246,8 +246,8 @@ RUNUSER
  ...  &&
  cmdN
 ``` 
-This command is repeatable and optional. This command will be launched as the calling user in a bash environment inside the dolmade. The current path will be the target directory.
-You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution.
+This command is repeatable and optional. This command will be launched as the calling user in a bash environment inside the dolmade. [config.py:INST_PATH](https://github.com/dolmades/dolmades-cli/blob/d64513966aa3ba5b84dc22143ea527bde806683b/config.py#L80) will be the target directory.
+You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will terminate the execution.
 
 ```
 RUNROOT
@@ -257,7 +257,7 @@ RUNROOT
  cmdN
 ```
 
-This command is repeatable and optional. This command will be launched as fake root in a bash environment inside the dolmade. The current path will be the target directory.
+This command is repeatable and optional. This command will be launched as fake root in a bash environment inside the dolmade. [config.py:INST_PATH](https://github.com/dolmades/dolmades-cli/blob/d64513966aa3ba5b84dc22143ea527bde806683b/config.py#L80) will be the target directory.
 You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution. Usually `RUNUSER` should suffice but if you need to install some packages using `apt` `RUNROOT` will be required.
 
 ```
