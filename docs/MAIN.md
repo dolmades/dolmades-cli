@@ -1,4 +1,4 @@
-# Dolmades 1.0 "the goglizer"
+# "The Goglizer" - Dolmades 1.0 
 
 ## Introduction
 
