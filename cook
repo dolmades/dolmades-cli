@@ -317,12 +317,12 @@ class Dolmade(object):
         for r in self.runs:
             (u,c) = r
             if (u == 'root'):
-                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+cfg.INST_PATH+":/install --user=root --volume="+os.path.expanduser("~")+\
-                      "/.Xauthority --hostenv --dri "+self.name+" "+"bash -c 'cd /install && "+' '.join(c)+"'"
+                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+cfg.INST_PATH+":/install --user=root --hostenv --dri "+\
+                      +self.name+" "+"bash -c 'cd /install && "+' '.join(c)+"'"
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
-                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+cfg.INST_PATH+":/install --user="+getpass.getuser()+" --volume="+os.path.expanduser("~")+\
-                      "/.Xauthority --hostenv --dri " + self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
+                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+cfg.INST_PATH+":/install --user="+getpass.getuser()+" --hostenv --dri "+\
+                      self.name + " " + "bash -c 'cd /install && " + ' '.join(c) + "'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'setTarget'):

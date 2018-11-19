@@ -49,8 +49,7 @@ class Main(object):
 
                 cmd_bind=cmd_bind+" --volume="+src+":"+dst
 
-            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+\
-                    " --volume="+os.path.expanduser("~")+"/.Xauthority "\
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()\
                     +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
