@@ -1,4 +1,4 @@
-# Dolmades 1.0 "the goglizer"
+# "The Goglizer" - Dolmades 1.0 
 
 ## Introduction
 
@@ -11,9 +11,8 @@ Dolmades are intended as a mean to ease packaging, installation and distribution
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 A global configuration file called `config.py` provides important settings to all three scripts.
 
-### Requirements
+### Requirements (as of now)
 
-As of now:
 * x86-64 linux
 * Python 2.7
 * curl
@@ -42,7 +41,7 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
   * **Creation:** cook your application using recipes and install a desktop symlink
   * **Target launcher:** displays a selection of all installed applications and you choose which one to run
   * **Shares:** bind selected paths from the host system to windows drives inside a dolmade
-  * **Import&Export:** allows sharing cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
+  * **Import&Export:** allows sharing of cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
   
 * **Developers:** 
   * **Create recipes:** use the existing Dolmadefiles as template for your own win-only apps
@@ -182,14 +181,19 @@ After successful completion you will find a clickable icon on your desktop :)
 
 ## Dolmadefile Syntax
 
-A Dolmadefile is a recipe or specification which allows the guided build of the respective dolmade.
-Dolmadefiles are for dolmades what Dockerfiles are for Docker except that most dolmades are not built fully automated and hence require interaction e.g. when a graphical installer is used. 
+A Dolmadefile is a specification which allows the guided build of the respective dolmade.
+Dolmadefiles are for dolmades what Dockerfiles are for Docker except that most dolmades are not built fully automated and hence require interaction if a graphical installer is being used. 
 
 The structure of a `Dolmadefile` is:
 ```
-COMMAND
+# Arbitrary comment...
+COMMAND1
   ARGUMENTS
   FURTHER ARGUMENTS
+  ...
+  
+COMMAND2
+  ARGUMENTS
   ...
 ```
 ### Commands
@@ -242,8 +246,8 @@ RUNUSER
  ...  &&
  cmdN
 ``` 
-This command is repeatable and optional. This command will be launched as the calling user in a bash environment inside the dolmade. The current path will be the target directory.
-You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution.
+This command is repeatable and optional. This command will be launched as the calling user in a bash environment inside the dolmade. [config.py:INST_PATH](https://github.com/dolmades/dolmades-cli/blob/d64513966aa3ba5b84dc22143ea527bde806683b/config.py#L80) will be the target directory.
+You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will terminate the execution.
 
 ```
 RUNROOT
@@ -253,7 +257,7 @@ RUNROOT
  cmdN
 ```
 
-This command is repeatable and optional. This command will be launched as fake root in a bash environment inside the dolmade. The current path will be the target directory.
+This command is repeatable and optional. This command will be launched as fake root in a bash environment inside the dolmade. [config.py:INST_PATH](https://github.com/dolmades/dolmades-cli/blob/d64513966aa3ba5b84dc22143ea527bde806683b/config.py#L80) will be the target directory.
 You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution. Usually `RUNUSER` should suffice but if you need to install some packages using `apt` `RUNROOT` will be required.
 
 ```
@@ -276,18 +280,24 @@ ICON
 ```
 
 This command is mandatory. It specifies the icon file to be used for the desktop symbol and the target launcher.
+If the icon filename is relative `/install` will be prepended.
 
 **FINAL NOTES**
 
+* There has to be an empty line in between subsequent commands
 * Comments can be added as lines starting with `#`. Comments cannot be appended to existing command lines.
 * The order of the commands has to be obeyed until parsing has been refactored. This is planned for the next release.
 * The `INGREDIENT` - and maybe some other commands - are likely to undergo slight changes until the next release
 
-
 ## FAQ
-...supported distros, requirements, limits, caveats, ...
 
-## HOWTO
+ * Which distros have been tested? See [this issue](https://github.com/dolmades/dolmades-cli/issues/26)
+ * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible
+ * Will dolmade likely become a Linux distribution? No. I plan to support major distributions though.
+ 
+ * requirements, limits, caveats...
+
+## HOWTOs
 ### Recipe creation HOWTO
 ### Migration HOWTO
 ### Copy-Protected CD/DVD Game HOWTO
@@ -297,7 +307,16 @@ This command is mandatory. It specifies the icon file to be used for the desktop
 ## Roadmap
 
 ## Future
-...next version, C++ rewrite, registry support...
+Dolmades currently is a prototypical implementation done in python. 
+Once it is feature-complete I want to work on an enhanced followup version based on Qt combined with a remote repository service. The primary goal will be to create a powerful GUI for users to use their favourite Windows software under Linux.
+
+I figure some exciting use cases which would become addressable as well, e.g.
+
+ * Automated deployment of windows software and complex development environments on large pools of computers
+ * Cloud-based GUI applications based on Linux and VNC
+ * Enhanced debugging and development for wine development
+ * Fully automated dolmade cooking using Xvfb
+ * Functional archival of legacy software
 
 ## Troubleshooting
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
@@ -306,4 +325,4 @@ This command is mandatory. It specifies the icon file to be used for the desktop
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windows
 * do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
 
-## Acknowledgement
+## Acknowledgements
