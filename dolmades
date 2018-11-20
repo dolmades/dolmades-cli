@@ -172,5 +172,32 @@ class Main(object):
             st = os.stat(deskfileOnHost)
             os.chmod(deskfileOnHost, st.st_mode | stat.S_IEXEC)
 
+        if (sys.argv[1]=="help"):
+            print("Usage: dolmades [init|launch|list|del|debug|import|export|bind|binds|serve] options")
+            try:
+                cmd = sys.argv[2]
+            except:
+                cmd = ""
+            if cmd=="init":
+                print(" init : initialize the dolmades runtime, DOLMADES_PATH and REPO_PATH")
+            if cmd=="launch":
+                print(" launch DOLMADENAME : launch the autostart script")
+            if cmd=="list":
+                print(" list : lists all available dolmades")
+            if cmd=="del":
+                print(" del DOLMADENAME : deletes the given dolmade")
+            if cmd=="debug":
+                print(" debug DOLMADENAME : enters a bash shell. $HOME and INSTALL_PATH under /install are available.")
+            if cmd=="import":
+                print(" import DOLMADE.DMD : imports a previously exported image [experimental]")
+            if cmd=="export":
+                print(" export DOLMADE DOLMADE.DMD : exports a cooked dolmade image")
+            if cmd=="bind":
+                print(" bind DOLMADE bind1 bind2 ... : set bind1 bind2. To bind a win drive N to /tmp : /tmp:/wineprefix/drive_n")
+            if cmd=="binds":
+                print(" binds DOLMADENAME : list active binds")
+            if cmd=="serve":
+                print(" serve DOLMADENAME : create a desktop symbol")
+
 if __name__ == "__main__":
     sys.exit(Main().start())
