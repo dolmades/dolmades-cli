@@ -179,6 +179,16 @@ After successful completion you will find a clickable icon on your desktop :)
 ### cook
 ### config.py
 
+Dolmades ships preconfigured but you may modify some settings to your liking:
+
+* `VERSION = "1.0"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. It is set to `latest` in branches and omitted in the recipes, it will be just set for releases.
+
+* `DOLMADES_PATH = HOME + '/.dolmades'` - this is the base path where dolmades stores its runtime, icons and GOG games lists. Note: this affects which host directories you can bind. A bind is never allowed to contain `DOLMADES_PATH` since it would be a security issue!
+
+* `REPO_PATH = DOLMADES_PATH + "/repo"` - this is the base path where dolmades stores its base images and dolmades plus their meta data. Note: this affects which host directories you can bind. A bind is never allowed to contain `REPO_PATH` since it would be a security issue!
+
+All other settings are advised to be kept!
+
 ## Dolmadefile Syntax
 
 A Dolmadefile is a specification which allows the guided build of the respective dolmade.
