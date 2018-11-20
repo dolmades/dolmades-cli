@@ -125,12 +125,16 @@ class Main(object):
 
             f = open(fn,'w')
             for bind in binds:
+                if cfg.DOLMADES_PATH.startswith(''.join(bind.split(':')[1:])):
+                    print("You can reach DOLMADES_PATH using the bind "+bind+"! This is insecure and not allowed!")
+                    return
+                if cfg.REPO_PATH.startswith(''.join(bind.split(':')[1:])):
+                    print("You can reach REPO_PATH using the bind "+bind+"! This is insecure and not allowed!")
+                    return
                 f.write(bind+"\n")
                 bind=bind.strip()
                 src=''.join(bind.split(':')[1:])
                 dst=bind.split(':')[0]
-                if cfg.DOLMADES_PATH.startswith(''.join(bind.split(':')[1:])):
-                    print("You can reach your dolmades dir using the bind "+bind+"! This is highly discouraged!")
                 # create the destdir for wine drives
                 if dst.startswith('/wineprefix/drive_'):
                     os.mkdir(containerPath+"/ROOT/"+dst)
