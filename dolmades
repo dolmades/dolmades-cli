@@ -44,8 +44,9 @@ class Main(object):
                     if dstPath:
                         if not os.path.exists(containerPath+"/ROOT/"+dstPath):
                             os.makedirs(containerPath+"/ROOT/"+dstPath)
+                    # FIXME we also need to create the directory should it not exist already!
                     print("touch "+containerPath+"/ROOT/"+dst)
-                    subprocess.call("touch "+containerPath+"/ROOT/"+dst)
+                    subprocess.call("touch "+containerPath+"/ROOT/"+dst, shell=True, close_fds=True)
 
                 cmd_bind=cmd_bind+" --volume="+src+":"+dst
 
