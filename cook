@@ -399,6 +399,7 @@ class Dolmade(object):
                 text_file.write(self.target+" "+self.targetArgs+"\n")
             else:
                 text_file.write(self.target+"\n")
+            text_file.write("wineserver -w")
 
         st = os.stat(runscriptInContainer)
         os.chmod(runscriptInContainer, st.st_mode | stat.S_IEXEC)
