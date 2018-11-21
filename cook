@@ -354,15 +354,18 @@ class Dolmade(object):
 
         iconInContainer = self.metaPath()+"/icon.png"
         open(iconInContainer, 'w+')
-        if self.iconfn.startswith('/'):
-            iconAbsPath=cfg.INST_PATH+"/.."+self.iconfn
-        else:
-            iconAbsPath=cfg.INST_PATH+"/"+self.iconfn
-        cmd = cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+" -v=" + cfg.INST_PATH+"/"+self.iconfn+":/"+self.iconfn.split('/')[-1]+\
-              " -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+\
-              self.iconfn.split('/')[-1] + "[0] " + "/wineprefix/icon.png'"
-        print(cmd)
-        subprocess.call(cmd, shell=True, close_fds=True)
+        try:
+            if self.iconfn.startswith('/'):
+                iconAbsPath=cfg.INST_PATH+"/.."+self.iconfn
+            else:
+                iconAbsPath=cfg.INST_PATH+"/"+self.iconfn
+            cmd = cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+" -v=" + cfg.INST_PATH+"/"+self.iconfn+":/"+self.iconfn.split('/')[-1]+\
+                  " -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+\
+                  self.iconfn.split('/')[-1] + "[0] " + "/wineprefix/icon.png'"
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+        except:
+            shutil.copy(self.metaPath()+"/icons/dolmade.png", iconInContainer)
 
         namefileInContainer = self.metaPath()+"/dolmadename"
         cleanName=self.name.replace('_',' ').replace('&',"_n_")
