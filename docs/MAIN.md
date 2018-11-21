@@ -289,8 +289,8 @@ ICON
  iconFileName
 ```
 
-This command is mandatory. It specifies the icon file to be used for the desktop symbol and the target launcher.
-If the icon filename is relative `/install` will be prepended.
+This command is optional. It specifies the icon file to be used for the desktop symbol and the target launcher.
+If the icon filename is relative `/install` will be prepended. If the command is omitted it defaults to the dolmade icon.
 
 **FINAL NOTES**
 
