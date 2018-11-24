@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. It is currently is a prototypical implementation done in python. Once it is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. The currently version is a prototype in python. 
 
 This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
 
@@ -13,6 +13,8 @@ This release focuses on basic features and GOG support. As of now a collection o
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 A global configuration file called `config.py` provides important settings to all three scripts.
 
+Once the prototype is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+
 ### Requirements
 
 * x86-64 linux
@@ -20,7 +22,7 @@ A global configuration file called `config.py` provides important settings to al
 * curl
 * tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137)
 
-### Technical Base
+### Acknowledgements
 
 Dolmades make heavy use of the following underlying technologies:
 
@@ -56,7 +58,7 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
 * Recipe specification: Gather feedback. Complete syntax. Standardize it.
 * Lots of refactoring / bug fixing
 
-## Basic Usage
+## Basics
 
 Dolmades makes use of several concepts which will be briefly explained here:
 
@@ -112,9 +114,9 @@ This will launch the game:
 
 A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
 
-### Generating a dolmade recipe using a GOG account
+### Generating a GOG dolmade
 
-Here we gonna cook your favourite GOG win-only game using the script `goglizer`:
+For this to work you need to be registered at (GOG)[https://gog.com]. They offer some items for free so you can test `goglizer` without purchasing a game. This is how to cook your favourite GOG win-only game using the script `goglizer`:
 ```
 ./goglizer -u
 ```
@@ -167,21 +169,179 @@ This will download its ingredients and prepare a Dolmadefile for installation. N
 ```
 After successful completion you will find a clickable icon on your desktop :)
 
-## Advanced Usage
+## Fixing issues
 
-### Development
-### Versioning
+As of now for many games the installation procedure fails or the installed game won't work properly.
+The goal of dolmades is to make it easy to find and apply fixes to the generated Dolmadefile in such cases. 
+Let's generate the dolmadefile:
+```
+./goglizer -d=edna_harvey_the_breakout
+```
+Then, we try to cook it:
+```
+./cook edna_harvey_the_breakout:en.dolmade
+```
+The java installation will fail and leave a broken dolmade.
+First, we need to figure out interactively what needs to be done:
+```
+./dolmades debug edna_harvey_the_breakout:en.dolmade
+
+# set windows version to WinXP
+winetricks winxp
+
+# rerun installer and ensure that it works now
+/install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
+
+# test cooked dolmade
+targetSelector
+```
+The previous changes are now applied permanently to the dolmade but will get lost if it will be recooked.
+That is why, secondly, we need to update the corresponing `dolmadefile`.
+Edit `edna_harvey_the_breakout:en.dolmade` and add the following section right before the `RunUser` command which launches the installer using `wine`:
+```
+RunUser
+ winetricks winxp
+
+```
+
+Finally, the dolmade can be cooked once more:
+```
+./cook edna_harvey_the_breakout:en.dolmade
+```
+
+This erases the previous dolmade and applies the fix permanently. Now add and commit your `dolmadefile` to your personal github repository.
+
+## Managing dolmades
+
+Your dolmades are managed by `dolmades`
+
+## Initialization
+
+Initialization does two things:
+* if it doesn't exist yet: initializing the dolmades directory under `$HOME/.dolmades`
+* downloading the docker runtime container with the matching version and (re)create it
+
+```
+./dolmades init
+```
+
+### Listing
+Lists the locally available dolmades:
+```
+./dolmades list
+```
+
+### Removal
+
+Removes the given dolmade and frees up the allocated space:
+```
+./dolmades del name-of-dolmade
+```
+You can pass multiple dolmade names or sha256 container ids.
+
+### Execution
+
+Executes the `/.dolmades/start.sh` script which either runs the executable defined via `SetTarget` in the `dolmadefile`
+or the target selector script which lets you choose between all installed targets.
+```
+./dolmades launch name-of-dolmade
+```
+### Debugging
+
+It is possible to launch a bash inside the container. 
+The installation directory will be available under `/install` and installed windows applications under `/wineprefix`.
+Furthermore, the home directory of the calling user is available:
+```
+./dolmades debug name-of-dolmade
+ls -lad $HOME /wineprefix /install
+```
+In rare cases you might to run as fake root, e.g. to install a missing package:
+```
+./dolmades root-debug runtime
+apt-get update && apt-get -y install vim
+```
+
+If `name-of-dolmade` is given as argument the changes are being applied permanently.
+If `name-of-base` is given as argument a temporary dolmade is being created and destroyed after the shell is being closed. `name-of-base` is used as template and currently can be one of the following:
+* `runtime` - used internally by `dolmades`, `cook` and `goglizer`
+* `base` - Ubuntu 16.04 LTS prepared for the installation of wine
+* `winestable` - `base` with wine stable added and preconfigured
+* `winedevel`- `base` with wine testing added and preconfigured
+
+### Binding
+
+It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
+
+```
+./dolmades binds name-of-dolmade
+# listing the currently configured binds
+```
+
+```
+./dolmades bind name-of-dolmade bind1 bind2 ...
+```
+
+A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/dolmadedir/:/hostdir/`
+
+*Notes* 
+* This will create an empty file/directory in the dolmade if those do not exist already.
+* The created files/directories in the dolmade persist even after the corresponding binds have been removed.
+* As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!
+* In wine the C and the Z drive are predefined. Utilize `/wineprefix/drive_x:/my/hostdir/` to bind to drive X.
+
+### Migration (experimental)
+
+It is possible to export and import a readily installed dolmade. 
+
+```
+./dolmades export Broken_Sword Broken_Sword.dme
+```
+
+```
+./dolmades import Broken_Sword
+```
+
+The idea is to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. This is the final goal! Currently, this feature is experimental, and will only work if the user name remains the same. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
+
+### Serving
+
+Last but not least the dolmade can be served on the desktop
+```
+./dolmades serve name-of-dolmade
+```
+This will create a clickable short cut on the desktop which will launch the corresponding dolmade. It can be safely deleted and recreated any time.
+
+## Advanced
+
 ### Base Images
-### External Binds
+`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build are available at https://github.com/dolmades-docker. As of now three images are available:
 
-## Tools
+* winestable - current wine stable version
+* winedevel - current wine development version
+* winestaging - current wine staging version: development version + custom patches
 
-### dolmades
-### goglizer
-### cook
-### config.py
+The images for releases will be tagged accordingly and not being rebuilt in future. 
+Images with the `latest` tag will be used for development and occasionally being rebuilt. 
+This is what all images have in common:
 
-Dolmades ships preconfigured but you may modify some settings to your liking:
+* Ubuntu LTS 16.04 64-bit base with wine PPA
+* Wine installation under `/wineprefix` with 32-bit prefix
+* targetLauncher GUI script under `/usr/local/bin`
+* `wget curl less vim` for convenience 
+
+### Help
+
+All available tools give help output:
+```
+./dolmades help
+./dolmades help bind
+./cook
+./goglizer -h
+```
+
+### Configuration
+
+Dolmades ships preconfigured but you may modify some settings to your liking in file `config.py`:
 
 * `VERSION = "1.0"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. It is set to `latest` in branches and omitted in the recipes, it will be just set for releases.
 
@@ -356,6 +516,7 @@ I figure some exciting use cases which would become addressable as well, e.g.
  * Support for complex Linux software setups
 
 ## Troubleshooting
+
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
 * 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
@@ -363,4 +524,4 @@ I figure some exciting use cases which would become addressable as well, e.g.
 * do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
 * sometimes `udocker` fails to pull some layers from the docker registry (timeouts). Simply repeating the commands should help.
 
-## Acknowledgements
+Last but not least: if you are in trouble check out the issues and open a new one if applicable.
