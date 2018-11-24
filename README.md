@@ -491,5 +491,6 @@ I figure some exciting use cases which would become addressable as well, e.g.
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32-bit windows
 * do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
 * sometimes `udocker` fails to pull some layers from the docker registry (timeouts). Simply repeating the commands should help.
+* GOG installer errors: many GOG games display error messages at the end of the installation process. I suspect some unsupported  facl commands are the source. The installed games seem to work anyways!
 
 Last but not least: if you are in trouble check out the issues and open a new one if applicable.
