@@ -56,7 +56,7 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
 * Recipe specification: Gather feedback. Complete syntax. Standardize it.
 * Lots of refactoring / bug fixing
 
-## Basic Usage
+## Basics
 
 Dolmades makes use of several concepts which will be briefly explained here:
 
@@ -112,9 +112,9 @@ This will launch the game:
 
 A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
 
-### Generating a dolmade recipe using a GOG account
+### Generating a GOG dolmade
 
-Here we gonna cook your favourite GOG win-only game using the script `goglizer`:
+For this to work you need to be registered at (GOG)[https://gog.com]. They offer some items for free so you can test `goglizer` without purchasing a game. This is how to cook your favourite GOG win-only game using the script `goglizer`:
 ```
 ./goglizer -u
 ```
@@ -167,21 +167,37 @@ This will download its ingredients and prepare a Dolmadefile for installation. N
 ```
 After successful completion you will find a clickable icon on your desktop :)
 
-## Advanced Usage
+## Advanced
 
-### Development
-### Versioning
 ### Base Images
-### External Binds
+`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build are available at https://github.com/dolmades-docker. As of now three images are available:
 
-## Tools
+* winestable - current wine stable version
+* winedevel - current wine development version
+* winestaging - current wine staging version: development version + custom patches
 
-### dolmades
-### goglizer
-### cook
-### config.py
+The images for releases will be tagged accordingly and not being rebuilt in future. 
+Images with the `latest` tag will be used for development and occasionally being rebuilt. 
+This is what all images have in common:
 
-Dolmades ships preconfigured but you may modify some settings to your liking:
+* Ubuntu LTS 16.04 64-bit base with wine PPA
+* Wine installation under `/wineprefix` with 32-bit prefix
+* targetLauncher GUI script under `/usr/local/bin`
+* `wget curl less vim` for convenience 
+
+### Tools help
+
+All available tools give help output:
+```
+./dolmades help
+./dolmades help bind
+./cook
+./goglizer -h
+```
+
+### Configuration
+
+Dolmades ships preconfigured but you may modify some settings to your liking in file `config.py`:
 
 * `VERSION = "1.0"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. It is set to `latest` in branches and omitted in the recipes, it will be just set for releases.
 
