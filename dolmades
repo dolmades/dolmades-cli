@@ -14,10 +14,15 @@ import config as cfg
 class Main(object):
 
     def start(self):
-        if (sys.argv[1]=='init'):
+        try:
+            cmd = sys.argv[1]
+        except:
+            cmd = "help"
+
+        if (cmd=='init'):
             cfg.INIT()
 
-        if (sys.argv[1]=='launch'):
+        if (cmd=='launch'):
 
             containerPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]
 
@@ -44,7 +49,6 @@ class Main(object):
                     if dstPath:
                         if not os.path.exists(containerPath+"/ROOT/"+dstPath):
                             os.makedirs(containerPath+"/ROOT/"+dstPath)
-                    # FIXME we also need to create the directory should it not exist already!
                     print("touch "+containerPath+"/ROOT/"+dst)
                     subprocess.call("touch "+containerPath+"/ROOT/"+dst, shell=True, close_fds=True)
 
@@ -55,12 +59,12 @@ class Main(object):
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
-        if (sys.argv[1]=='list'):
+        if (cmd=='list'):
             cmd=cfg.UDOCKERCMD_QUIET+" ps"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
-        if (sys.argv[1]=='del'):
+        if (cmd=='del'):
             for cn in sys.argv[2:]:
                 cmd=cfg.UDOCKERCMD_QUIET+" rm "+cn
                 print(cmd)
@@ -72,14 +76,14 @@ class Main(object):
                 except:
                     print("No desktop shortcut "+fn+" found!")
 
-        if (sys.argv[1]=='debug'):
+        if (cmd=='debug'):
             cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+\
                 " --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+\
                 " --bindhome --hostenv --hostauth --dri '"+sys.argv[2]+"' bash"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
-        if (sys.argv[1]=='import'):
+        if (cmd=='import'):
             fn=os.path.realpath(sys.argv[2])
             path=os.path.realpath(cfg.REPO_PATH+"/containers")
             cmd="cd "+path+" && tar -xzvf "+fn
@@ -92,14 +96,14 @@ class Main(object):
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
-        if (sys.argv[1]=='export'):
+        if (cmd=='export'):
             fn=sys.argv[2]
             path=os.path.realpath(cfg.REPO_PATH+"/containers/"+fn)
             cmd="tar --directory="+cfg.REPO_PATH+"/containers/ -czpf "+fn+".dme "+path.replace(cfg.REPO_PATH+"/containers/",'')
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
-        if (sys.argv[1]=='binds'):
+        if (cmd=='binds'):
             cn=sys.argv[2]
             fn=cfg.REPO_PATH+"/containers/"+cn+"/configuredBinds"
 
@@ -110,7 +114,7 @@ class Main(object):
             print(f.read())
 
 
-        if (sys.argv[1]=='bind'):
+        if (cmd=='bind'):
             binds=sys.argv[3:]
             containerPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]
             fn=containerPath+"/configuredBinds"
@@ -155,7 +159,7 @@ class Main(object):
                         os.remove(pl)
                     os.symlink("../drive_"+drvletter,pl)
 
-        if (sys.argv[1]=="serve"):
+        if (cmd=="serve"):
             metaPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]+"/ROOT/.dolmades"
             f=open(metaPath+"/dolmadename")
             cleanName=f.read().strip()
@@ -173,7 +177,7 @@ class Main(object):
             st = os.stat(deskfileOnHost)
             os.chmod(deskfileOnHost, st.st_mode | stat.S_IEXEC)
 
-        if (sys.argv[1]=="help"):
+        if (cmd=="help"):
             print("Usage: dolmades [init|launch|list|del|debug|import|export|bind|binds|serve] options")
             try:
                 cmd = sys.argv[2]
