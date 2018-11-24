@@ -187,7 +187,7 @@ First, we need to figure out interactively what needs to be done:
 ```
 ./dolmades debug edna_harvey_the_breakout:en.dolmade
 
-# set windows version to WinXP
+# THIS IS THE REQUIRED FIX: set windows version to WinXP
 winetricks winxp
 
 # rerun installer and ensure that it works now
