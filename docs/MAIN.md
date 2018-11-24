@@ -167,6 +167,148 @@ This will download its ingredients and prepare a Dolmadefile for installation. N
 ```
 After successful completion you will find a clickable icon on your desktop :)
 
+## Fixing issues
+
+As of now for many games the installation procedure fails or the installed game won't work properly.
+The goal of dolmades is to make it easy to find and apply fixes to the generated Dolmadefile in such cases. 
+Let's generate the dolmadefile:
+```
+./goglizer -d=edna_harvey_the_breakout
+```
+Then, we try to cook it:
+```
+./cook edna_harvey_the_breakout:en.dolmade
+```
+The java installation will fail and leave a broken dolmade.
+First, we need to figure out interactively what needs to be done:
+```
+./dolmades debug edna_harvey_the_breakout:en.dolmade
+
+# set windows version to WinXP
+winetricks winxp
+
+# rerun installer and ensure that it works now
+/install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
+
+# test cooked dolmade
+targetSelector
+```
+The previous changes are now applied permanently to the dolmade but will get lost if it will be recooked.
+That is why, secondly, we need to update the corresponing `dolmadefile`.
+Edit `edna_harvey_the_breakout:en.dolmade` and add the following section right before the `RunUser` command which launches the installer using `wine`:
+```
+RunUser
+ winetricks winxp
+
+```
+
+Finally, the dolmade can be cooked once more:
+```
+./cook edna_harvey_the_breakout:en.dolmade
+```
+
+This erases the previous dolmade and applies the fix permanently. Now add and commit your `dolmadefile` to your personal github repository.
+
+## Managing dolmades
+
+Your dolmades are managed by `dolmades`
+
+## Initialization
+
+Initialization does two things:
+* if it doesn't exist yet: initializing the dolmades directory under `$HOME/.dolmades`
+* downloading the docker runtime container with the matching version and (re)create it
+
+```
+./dolmades init
+```
+
+### Listing
+Lists the locally available dolmades:
+```
+./dolmades list
+```
+
+### Removal
+
+Removes the given dolmade and frees up the allocated space:
+```
+./dolmades del name-of-dolmade
+```
+You can pass multiple dolmade names or sha256 container ids.
+
+### Execution
+
+Executes the `/.dolmades/start.sh` script which either runs the executable defined via `SetTarget` in the `dolmadefile`
+or the target selector script which lets you choose between all installed targets.
+```
+./dolmades launch name-of-dolmade
+```
+### Debugging
+
+It is possible to launch a bash inside the container. 
+The installation directory will be available under `/install` and installed windows applications under `/wineprefix`.
+Furthermore, the home directory of the calling user is available:
+```
+./dolmades debug name-of-dolmade
+ls -lad $HOME /wineprefix /install
+```
+In rare cases you might to run as fake root, e.g. to install a missing package:
+```
+./dolmades root-debug runtime
+apt-get update && apt-get -y install vim
+```
+
+If `name-of-dolmade` is given as argument the changes are being applied permanently.
+If `name-of-base` is given as argument a temporary dolmade is being created and destroyed after the shell is being closed. `name-of-base` is used as template and currently can be one of the following:
+* `runtime` - used internally by `dolmades`, `cook` and `goglizer`
+* `base` - Ubuntu 16.04 LTS prepared for the installation of wine
+* `winestable` - `base` with wine stable added and preconfigured
+* `winedevel`- `base` with wine testing added and preconfigured
+
+### Binding
+
+It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
+
+```
+./dolmades binds name-of-dolmade
+# listing the currently configured binds
+```
+
+```
+./dolmades bind name-of-dolmade bind1 bind2 ...
+```
+
+A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/dolmadedir/:/hostdir/`
+
+*Notes* 
+* This will create an empty file/directory in the dolmade if those do not exist already.
+* The created files/directories in the dolmade persist even after the corresponding binds have been removed.
+* As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!
+* In wine the C and the Z drive are predefined. Utilize `/wineprefix/drive_x:/my/hostdir/` to bind to drive X.
+
+### Migration (experimental)
+
+It is possible to export and import a readily installed dolmade. 
+
+```
+./dolmades export Broken_Sword Broken_Sword.dme
+```
+
+```
+./dolmades import Broken_Sword
+```
+
+The idea is to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. This is the final goal! Currently, this feature is experimental, and will only work if the user name remains the same. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
+
+### Serving
+
+Last but not least the dolmade can be served on the desktop
+```
+./dolmades serve name-of-dolmade
+```
+This will create a clickable short cut on the desktop which will launch the corresponding dolmade. It can be safely deleted and recreated any time.
+
 ## Advanced
 
 ### Base Images
@@ -185,7 +327,7 @@ This is what all images have in common:
 * targetLauncher GUI script under `/usr/local/bin`
 * `wget curl less vim` for convenience 
 
-### Tools help
+### Help
 
 All available tools give help output:
 ```
