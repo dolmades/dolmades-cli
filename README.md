@@ -1,8 +1,8 @@
-# "The Goglizer" - Dolmades 1.0 
+# "The Goglizer" - Dolmades v1.0 
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. The current version is a prototype in python. 
+Dolmades are intended as a mean to ease packaging, installation, usage and distribution of windows programs in Linux environments to the utmost extent. The current version is a prototype in python. 
 
 This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
 
@@ -51,7 +51,7 @@ Dolmades make heavy use of the following underlying technologies:
   * **Selectable base:** choose between between several wine versions
 
 
-The focus in the 1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
+The focus in the v1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
 ### Planned for the next release
 
@@ -70,14 +70,14 @@ Dolmades makes use of several concepts which will be briefly explained here:
 
 ### Setup
 
-Either download the release tar ball under https://github.com/dolmades/dolmades-cli/releases or
+Either download [the release tar ball](https://github.com/dolmades/dolmades-cli/archive/v1.0.tar.gz) or
 simply clone the repository using git:
 
 ```
 cd $HOME
 git clone https://github.com/dolmades/dolmades-cli.git
 cd dolmades-cli
-git checkout tags/1.0 -b the_goglizer
+git checkout tags/v1.0 -b the_goglizer
 ```
 
 ### Cooking a dolmade
