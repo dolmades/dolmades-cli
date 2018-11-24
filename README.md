@@ -221,8 +221,8 @@ A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/d
 
 *Notes* 
 * This will create an empty file/directory in the dolmade if those do not exist already.
-* The created files/directories in the dolmade persist even after the corresponding binds have been removed.*
-* As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!*
+* The created files/directories in the dolmade persist even after the corresponding binds have been removed.
+* As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!
 
 ### Migration (experimental)
 
