@@ -219,8 +219,8 @@ Your dolmades are managed by `dolmades`
 ## Initialization
 
 Initialization does two things:
-* if it doesn't exist yet: initializing the dolmades directory under `$HOME/.dolmades`
-* downloading the docker runtime container with the matching version and (re)create it
+* if it doesn't exist yet: initializing the dolmades directory under `DOLMADES_PATH`
+* downloading the docker `runtime` container with the matching version and (re)create it
 
 ```
 ./dolmades init
@@ -302,7 +302,7 @@ It is possible to export and import a readily installed dolmade.
 ./dolmades import Broken_Sword
 ```
 
-The idea is to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. This is the final goal! Currently, this feature is experimental, and will only work if the user name remains the same. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
+The final goal is to be able to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. Currently, this feature is experimental, and will only work if the user name remains the same. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
 
 ### Serving
 
