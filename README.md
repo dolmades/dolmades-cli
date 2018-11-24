@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. The currently version is a prototype in python. 
+Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. The current version is a prototype in python. 
 
 This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
 
