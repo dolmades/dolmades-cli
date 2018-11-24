@@ -2,7 +2,9 @@
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
+Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. It is currently is a prototypical implementation done in python. Once it is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+
+This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
 
 * dolmades - to maintain your installed windows application
 * goglizer - prepares win-only GOG games to be cooked; GOG account required
@@ -11,7 +13,7 @@ Dolmades are intended as a mean to ease packaging, installation and distribution
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 A global configuration file called `config.py` provides important settings to all three scripts.
 
-### Requirements (as of now)
+### Requirements
 
 * x86-64 linux
 * Python 2.7
@@ -316,9 +318,33 @@ If the icon filename is relative `/install` will be prepended. If the command is
    
 ## Roadmap
 
+#### Someday: Next WineConf
+
+#### August 2019: Release 1.2
+
+#### April 2019: Publish two or three articles
+
+#### March 2019: Next Release 1.1
+---
+ * Ensure splitting Dolmadefile parsing and processing (#35)
+ * Finalizing Dolmadefile syntax / format (#NN)
+ * Refactoring: write parser class for Dolmadefiles (#NN)
+ * Allow ingredients to have multiple hashs (#23)
+ * Check on mandatory commands, bail out if missing (#NN)
+ ---
+ * Change from one shared `install` dir to one dedicated `install` dir per dolmade (#17)
+ ---
+ * Add a tool to search for Dolmadefiles given some ingredient (#NN)
+---
+ * Prettify console output (#16)
+ ---
+ * Fix wrongly set $HOME on /wineprefix creation (#30)
+ * Make users wine profile dir independent of linux user name (#20)
+---
+
 ## Future
 Dolmades currently is a prototypical implementation done in python. 
-Once it is feature-complete I want to work on an enhanced followup version based on Qt combined with a remote repository service. The primary goal will be to create a powerful GUI for users to use their favourite Windows software under Linux.
+Once it is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
 
 I figure some exciting use cases which would become addressable as well, e.g.
 
@@ -327,12 +353,14 @@ I figure some exciting use cases which would become addressable as well, e.g.
  * Enhanced debugging and development for wine development
  * Fully automated dolmade cooking using Xvfb
  * Functional archival of legacy software
+ * Support for complex Linux software setups
 
 ## Troubleshooting
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
 * 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
-* wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32bit windows
+* wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32-bit windows
 * do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
+* sometimes `udocker` fails to pull some layers from the docker registry (timeouts). Simply repeating the commands should help.
 
 ## Acknowledgements
