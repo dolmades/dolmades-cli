@@ -1,4 +1,4 @@
-# "The Goglizer" - Dolmades 1.0 
+# "The Goglizer" - Dolmades v1.0 
 
 ## Introduction
 
@@ -51,7 +51,7 @@ Dolmades make heavy use of the following underlying technologies:
   * **Selectable base:** choose between between several wine versions
 
 
-The focus in the 1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
+The focus in the v1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
 ### Planned for the next release
 
@@ -77,7 +77,7 @@ simply clone the repository using git:
 cd $HOME
 git clone https://github.com/dolmades/dolmades-cli.git
 cd dolmades-cli
-git checkout tags/1.0 -b the_goglizer
+git checkout tags/v1.0 -b the_goglizer
 ```
 
 ### Cooking a dolmade
