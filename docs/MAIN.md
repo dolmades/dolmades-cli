@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. It is currently is a prototypical implementation done in python. Once it is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+Dolmades are intended as a mean to ease packaging, installation and distribution of windows programs in Linux environments to the utmost extent. The currently version is a prototype in python. 
 
 This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
 
@@ -13,6 +13,8 @@ This release focuses on basic features and GOG support. As of now a collection o
 Right after cooking the windows application will be available as clickable shortcut on your desktop.
 A global configuration file called `config.py` provides important settings to all three scripts.
 
+Once the prototype is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+
 ### Requirements
 
 * x86-64 linux
@@ -20,7 +22,7 @@ A global configuration file called `config.py` provides important settings to al
 * curl
 * tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137)
 
-### Technical Base
+### Acknowledgements
 
 Dolmades make heavy use of the following underlying technologies:
 
@@ -514,6 +516,7 @@ I figure some exciting use cases which would become addressable as well, e.g.
  * Support for complex Linux software setups
 
 ## Troubleshooting
+
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
 * 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
@@ -521,4 +524,4 @@ I figure some exciting use cases which would become addressable as well, e.g.
 * do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
 * sometimes `udocker` fails to pull some layers from the docker registry (timeouts). Simply repeating the commands should help.
 
-## Acknowledgements
+Last but not least: if you are in trouble check out the issues and open a new one if applicable.
