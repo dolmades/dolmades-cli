@@ -70,7 +70,7 @@ Dolmades makes use of several concepts which will be briefly explained here:
 
 ### Setup
 
-Either download the release tar ball under https://github.com/dolmades/dolmades-cli/releases or
+Either download [the release tar ball](https://github.com/dolmades/dolmades-cli/archive/v1.0.tar.gz) or
 simply clone the repository using git:
 
 ```
