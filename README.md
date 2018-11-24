@@ -26,10 +26,10 @@ Once the prototype is feature-complete I want to work on an enhanced followup ve
 
 Dolmades make heavy use of the following underlying technologies:
 
- * Docker + DockerHub: for the dolmades base images
- * udocker + proot: for user-level containerization
- * wine + winetricks: for running windows application in Linux
- * lgogdownloader: for GOG support
+ * **Docker + DockerHub:** for the dolmades base images
+ * **udocker + proot:** for user-level containerization
+ * **wine + winetricks:** for running windows application in Linux
+ * **lgogdownloader:** for GOG support
 
 ### Features
 
