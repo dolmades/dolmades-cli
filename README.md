@@ -195,9 +195,10 @@ winetricks winxp
 # rerun installer and ensure that it works now
 /install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
 
-# test cooked dolmade
+# test cooked dolmade, start in windowed mode
 targetSelector
 ```
+
 The previous changes are now applied permanently to the dolmade but will get lost if it will be recooked.
 That is why, secondly, we need to update the corresponing `dolmadefile`.
 Edit `edna_harvey_the_breakout:en.dolmade` and add the following section right before the `RunUser` command which launches the installer using `wine`:
@@ -212,7 +213,7 @@ Finally, the dolmade can be cooked once more:
 ./cook edna_harvey_the_breakout:en.dolmade
 ```
 
-This erases the previous dolmade and applies the fix permanently. Now add and commit your `dolmadefile` to your personal github repository.
+This erases the previous dolmade and applies the fix permanently.
 
 ## Managing dolmades
 
