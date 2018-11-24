@@ -33,8 +33,6 @@ Dolmades make heavy use of the following underlying technologies:
 
 ### Features
 
-The focus in the 1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
-
 * **GOG gaming support:** generate template recipes for your personal GOG collection and installation is a breeze
 * **Ease-of-use:** supports major linux distros and require no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
@@ -51,6 +49,9 @@ The focus in the 1.x release cycle will be put on support for gaming, the standa
   * **Create recipes:** use the existing Dolmadefiles as template for your own win-only apps
   * **Debug mode:** examine problems, add fixes and instantly rebuild the application
   * **Selectable base:** choose between between several wine versions
+
+
+The focus in the 1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
 ### Planned for the next release
 
