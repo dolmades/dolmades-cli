@@ -115,9 +115,11 @@ This will launch the game:
 
 A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
 
+More recipes for dolmades can be downloaded [here](https://github.com/dolmadefiles)
+
 ### Generating a GOG dolmade
 
-For this to work you need to be registered at (GOG)[https://gog.com]. They offer some items for free so you can test `goglizer` without purchasing a game. This is how to cook your favourite GOG win-only game using the script `goglizer`:
+For this to work you need to be registered at [GOG](https://gog.com). They offer some items for free so you can test `goglizer` without purchasing a game. This is how to cook your favourite GOG win-only game using the script `goglizer`:
 ```
 ./goglizer -u
 ```
