@@ -72,8 +72,8 @@ Dolmades makes use of several concepts which will be briefly explained here:
 
 Either download the release tar ball
 ```
-wget https://github.com/dolmades/dolmades-cli/archive/v1.0.tar.gz
-tar -xzf v1.0.tar.gz
+curl -L -o dolmades.tgz https://github.com/dolmades-cli/archive/v1.0.tar.gz
+tar -xzf dolmades.tgz
 cd dolmades-cli-1.0/
 ```
 or simply clone the latest master using git:
