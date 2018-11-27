@@ -31,3 +31,5 @@
  * Make users wine profile dir independent of linux user name (#20)
 ---
 
+### Metadata
+describe stored metadata...
