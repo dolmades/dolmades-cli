@@ -48,7 +48,7 @@ def INIT(force):
         print("initialized dolmade repo under " + REPO_PATH)
 
     print("Storing dolmade runnables...")
-    cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" ."
+    cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" dolmades udocker cook goglizer config.py"
     subprocess.call(cmd, shell=True, close_fds=True)
 
     force_runtime_rebuild=False
