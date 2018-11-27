@@ -215,7 +215,7 @@ Finally, the dolmade can be cooked once more:
 ./cook edna_harvey_the_breakout:en.dolmade
 ```
 
-This erases the previous dolmade and applies the fix permanently.
+This erases the previous dolmade and helps keeping recipe and cooked dolmade in sync with each other.
 
 ## Managing dolmades
 
