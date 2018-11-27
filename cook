@@ -138,15 +138,9 @@ class Dolmade(object):
     def __init__(self, inputFileName):
         self.version = "latest"
         self.inputFileName = inputFileName
-        cfg.INIT()
+        cfg.INIT(False)
 
         cmd = cfg.UDOCKERCMD_QUIET+" inspect dolmades-runtime"
-        try:
-            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
-            if (outp != ""):
-                print("Dolmades Runtime found")
-        except:
-            self.prepareRuntime()
 
     def prepareDirectories(self):
         untouched = True
@@ -173,25 +167,6 @@ class Dolmade(object):
             print("Found dolmade repo under " + cfg.REPO_PATH)
         else:
             print("Initialized dolmade repo under " + cfg.REPO_PATH)
-
-    def prepareRuntime(self):
-        print("Preparing Dolmades Runtime...")
-
-        cmd = cfg.UDOCKERCMD_QUIET+" pull dolmades/runtime:"+cfg.VERSION
-        print("Pulling dolmades runtime container...")
-        subprocess.call(cmd, shell=True, close_fds=True)
-
-        cmd = cfg.UDOCKERCMD_QUIET+" rm dolmades-runtime"
-        subprocess.call(cmd, shell=True, close_fds=True)
-
-        cmd = cfg.UDOCKERCMD_QUIET+" create --name=dolmades-runtime dolmades/runtime:"+cfg.VERSION
-        subprocess.call(cmd, shell=True, close_fds=True)
-
-        if (not os.path.exists(cfg.REPO_PATH+"/containers/dolmades-runtime/ROOT/"+cfg.META_DIR)):
-            os.mkdir(cfg.REPO_PATH+"/containers/dolmades-runtime/ROOT/"+cfg.META_DIR, 0755)
-
-        print("done")
-
 
     def dumpComment(self, cmdp):
         if (False):
@@ -291,7 +266,7 @@ class Dolmade(object):
         except:
             print("Repo exists already")
 
-        cmd = cfg.UDOCKERCMD_QUIET+" pull "+self.baseImg+":"+self.version
+        cmd = cfg.UDOCKERCMD_VERBOSE+" pull "+self.baseImg+":"+self.version
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -372,7 +347,7 @@ class Dolmade(object):
         subprocess.call("echo '"+cleanName+"' > "+namefileInContainer, shell=True, close_fds=True)
 
         shutil.copy(self.inputFileName, self.metaPath()+"/Dolmadefile")
-        shutil.copy(cfg.REPO_PATH+"/dolmades-bin.tgz", self.metaPath()+"/dolmades-bin.tgz")
+        shutil.copy(cfg.DOLMADES_PATH+"/dolmades-bin.tgz", self.metaPath()+"/dolmades-bin.tgz")
 
 
         if "--no-serve" not in options:

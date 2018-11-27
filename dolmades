@@ -20,7 +20,7 @@ class Main(object):
             cmd = "help"
 
         if (cmd=='init'):
-            cfg.INIT()
+            cfg.INIT(True)
 
         if (cmd=='launch'):
 

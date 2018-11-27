@@ -174,58 +174,7 @@ class GameList(object):
 
 class Main(object):
     def __init__(self):
-        self.prepareDirectories()
-
-        cmd = cfg.UDOCKERCMD_QUIET+" inspect dolmades-runtime"
-        try:
-            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
-            if (outp != ""):
-                print("Dolmade Runtime found")
-                return
-        except:
-            self.prepareRuntime()
-
-    def prepareDirectories(self):
-        untouched = True
-        if (not os.path.exists(cfg.DOLMADES_PATH)):
-            os.mkdir(cfg.DOLMADES_PATH, 0755)
-            untouched = False
-        try:
-            if (os.path.exists(cfg.REPO_PATH)):
-                os.rmdir(cfg.REPO_PATH)
-                untouched = False
-        except:
-            pass
-
-        if (not os.path.exists(cfg.REPO_PATH)):
-            cmd = cfg.UDOCKER+ " mkrepo "+cfg.REPO_PATH
-            printit(cmd)
-            subprocess.call(cmd, shell=True, close_fds=True)
-            untouched = False
-        
-        if (not os.path.exists(cfg.INST_PATH)):
-            os.mkdir(cfg.INST_PATH, 0755)
-            untouched = False
-        if (untouched):
-            printit("Found dolmade repo under " + cfg.REPO_PATH)
-        else:
-            printit("Initialized dolmade repo under " + cfg.REPO_PATH)
-
-    def prepareRuntime(self):
-        print("Preparing Dolmades Runtime...")
-        cmd = cfg.UDOCKERCMD_QUIET+" pull dolmades/runtime:"+cfg.VERSION
-        printit(cmd)
-        print("Pulling dolmades runtime container...")
-        subprocess.call(cmd, shell=True, close_fds=True)
-
-        cmd = cfg.UDOCKERCMD_QUIET+" rm dolmades-runtime"
-        printit(cmd)
-        subprocess.call(cmd, shell=True, close_fds=True)
-
-        cmd = cfg.UDOCKERCMD_QUIET+" create --name=dolmades-runtime dolmades/runtime:"+cfg.VERSION
-        printit(cmd)
-        subprocess.call(cmd, shell=True, close_fds=True)
-        print("done")
+        cfg.INIT(False)
 
     def setGameTitle(self, title):
         gameTitle=title
@@ -488,7 +437,6 @@ class Main(object):
             return
 
         if (self.updateGameMetadata):
-            self.prepareRuntime()
             self.updateGameList()
 
         if (self.showGameMetadata):
