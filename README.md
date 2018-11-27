@@ -72,7 +72,7 @@ Dolmades makes use of several concepts which will be briefly explained here:
 
 Either download the release tar ball
 ```
-curl -L -o dolmades.tgz https://github.com/dolmades-cli/archive/v1.0.tar.gz
+curl -L -o dolmades.tgz https://github.com/dolmades/dolmades-cli/archive/v1.0.tar.gz
 tar -xzf dolmades.tgz
 cd dolmades-cli-1.0/
 ```
