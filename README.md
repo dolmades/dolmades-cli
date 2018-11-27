@@ -20,7 +20,7 @@ Once the prototype is feature-complete I want to work on an enhanced followup ve
 * x86-64 linux
 * Python 2.7
 * curl
-* tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137)
+* tar
 
 ### Acknowledgements
 
@@ -492,6 +492,7 @@ I figure some exciting use cases which would become addressable as well, e.g.
 ## Troubleshooting
 
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
+* `udocker` requires tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137) which every recent distro should provide
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
 * 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32-bit windows
