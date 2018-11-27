@@ -70,14 +70,16 @@ Dolmades makes use of several concepts which will be briefly explained here:
 
 ### Setup
 
-Either download [the release tar ball](https://github.com/dolmades/dolmades-cli/archive/v1.0.tar.gz) or
-simply clone the repository using git:
-
+Either download the release tar ball
 ```
-cd $HOME
+curl -L -o dolmades.tgz https://github.com/dolmades-cli/archive/v1.0.tar.gz
+tar -xzf dolmades.tgz
+cd dolmades-cli-1.0/
+```
+or simply clone the latest master using git:
+```
 git clone https://github.com/dolmades/dolmades-cli.git
 cd dolmades-cli
-git checkout tags/v1.0 -b the_goglizer
 ```
 
 ### Cooking a dolmade
