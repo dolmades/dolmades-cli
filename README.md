@@ -17,10 +17,9 @@ Once the prototype is feature-complete I want to work on an enhanced followup ve
 
 ### Requirements
 
-* x86-64 linux
+* x86-64 linux with X11
 * Python 2.7
-* curl
-* tar
+* tar+curl
 
 ### Acknowledgements
 
