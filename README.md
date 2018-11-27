@@ -43,7 +43,7 @@ Dolmades make heavy use of the following underlying technologies:
   * **Creation:** cook your application using recipes and install a desktop symlink
   * **Target launcher:** displays a selection of all installed applications and you choose which one to run
   * **Shares:** bind selected paths from the host system to windows drives inside a dolmade
-  * **Import&Export:** allows sharing of cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
+  * **Import/Export:** allows sharing of cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
   
 * **Developers:** 
   * **Create recipes:** use the existing Dolmadefiles as template for your own win-only apps
@@ -53,11 +53,12 @@ Dolmades make heavy use of the following underlying technologies:
 
 The focus in the v1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
-### Planned for the next release
+### Planned for 1.1 "From Blue To Green"
 
-* Improved Import&Export to work across changing user names
+* Improved Import/Export to work across changing user names
 * Recipe specification: Gather feedback. Complete syntax. Standardize it.
 * Lots of refactoring / bug fixing
+* More documentation
 
 ## Basics
 
