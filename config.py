@@ -60,6 +60,10 @@ def INIT():
     cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime dolmades/runtime:"+VERSION
     print(cmd)
     subprocess.call(cmd, shell=True, close_fds=True)
+
+    cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" ."
+    print(cmd)
+    subprocess.call(cmd, shell=True, close_fds=True)
     print("done")
 
 try:

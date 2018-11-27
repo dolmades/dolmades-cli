@@ -372,6 +372,7 @@ class Dolmade(object):
         subprocess.call("echo '"+cleanName+"' > "+namefileInContainer, shell=True, close_fds=True)
 
         shutil.copy(self.inputFileName, self.metaPath()+"/Dolmadefile")
+        shutil.copy(cfg.REPO_PATH+"/dolmades-bin.tgz", self.metaPath()+"/dolmades-bin.tgz")
 
 
         if "--no-serve" not in options:
