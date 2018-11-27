@@ -142,32 +142,6 @@ class Dolmade(object):
 
         cmd = cfg.UDOCKERCMD_QUIET+" inspect dolmades-runtime"
 
-    def prepareDirectories(self):
-        untouched = True
-        if (not os.path.exists(cfg.DOLMADES_PATH)):
-            os.mkdir(cfg.DOLMADES_PATH, 0755)
-            untouched = False
-        try:
-            if (os.path.exists(cfg.REPO_PATH)):
-                os.rmdir(cfg.REPO_PATH)
-                untouched = False
-        except:
-            pass
-
-        if (not os.path.exists(cfg.REPO_PATH)):
-            cmd = cfg.SELF_PATH + "/udocker mkrepo "+cfg.REPO_PATH
-            print(cmd)
-            subprocess.call(cmd, shell=True, close_fds=True)
-            untouched = False
-
-        if (not os.path.exists(cfg.INST_PATH)):
-            os.mkdir(cfg.INST_PATH, 0755)
-            untouched = False
-        if (untouched):
-            print("Found dolmade repo under " + cfg.REPO_PATH)
-        else:
-            print("Initialized dolmade repo under " + cfg.REPO_PATH)
-
     def dumpComment(self, cmdp):
         if (False):
             print(cmdp)
@@ -258,13 +232,6 @@ class Dolmade(object):
         print("Performing the dolmade build...")
         for i in self.ingredients: 
             i.retrieve()
-
-        cmd = cfg.UDOCKER+" mkrepo "+cfg.REPO_PATH
-        print cmd
-        try:
-            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
-        except:
-            print("Repo exists already")
 
         cmd = cfg.UDOCKERCMD_VERBOSE+" pull "+self.baseImg+":"+self.version
         print cmd
