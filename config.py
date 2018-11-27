@@ -19,7 +19,7 @@ UDOCKER = SELF_PATH+"/udocker"
 UDOCKERCMD_VERBOSE = UDOCKER+" --repo="+REPO_PATH
 UDOCKERCMD_QUIET = UDOCKER+" --quiet --repo="+REPO_PATH
 
-def INIT():
+def INIT(force):
     print("Preparing directories...")
 
     untouched = True
@@ -40,31 +40,49 @@ def INIT():
         untouched = False
 
     if (not os.path.exists(INST_PATH)):
-        os.mkdir(self.INST_PATH, 0755)
+        os.mkdir(INST_PATH, 0755)
         untouched = False
     if (untouched):
         print("found dolmade repo under " + REPO_PATH)
     else:
         print("initialized dolmade repo under " + REPO_PATH)
 
-    print("Preparing runtime...")
-    cmd = UDOCKERCMD_QUIET+" pull dolmades/runtime:"+VERSION
-    print(cmd)
-    print("Pulling dolmades runtime container...")
-    subprocess.call(cmd, shell=True, close_fds=True)
-
-    cmd = UDOCKERCMD_QUIET+" rm dolmades-runtime"
-    print(cmd)
-    subprocess.call(cmd, shell=True, close_fds=True)
-
-    cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime dolmades/runtime:"+VERSION
-    print(cmd)
-    subprocess.call(cmd, shell=True, close_fds=True)
-
+    print("Storing dolmade runnables...")
     cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" ."
-    print(cmd)
     subprocess.call(cmd, shell=True, close_fds=True)
-    print("done")
+
+    force_runtime_rebuild=False
+    cmd = UDOCKERCMD_QUIET+" inspect dolmades-runtime"
+    try:
+        outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+        if (outp != ""):
+            print("Dolmades Runtime found")
+    except:
+        force_runtime_rebuild=True
+
+    if force_runtime_rebuild or force:
+        print("Rebuilding runtime...")
+        cmd = UDOCKERCMD_QUIET+" pull dolmades/runtime:"+VERSION
+        print(cmd)
+        print("Pulling dolmades runtime container...")
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd = UDOCKERCMD_QUIET+" inspect dolmades-runtime"
+        try:
+            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+            if (outp != ""):
+                cmd = UDOCKERCMD_QUIET+" rm dolmades-runtime"
+                print(cmd)
+                subprocess.call(cmd, shell=True, close_fds=True)
+        except:
+            pass
+
+        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime dolmades/runtime:"+VERSION
+        print(cmd)
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+    if (not os.path.exists(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR)):
+        os.mkdir(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR, 0755)
 
 try:
     DESK_PATH = subprocess.check_output(['xdg-user-dir', 'DESKTOP']).strip()
