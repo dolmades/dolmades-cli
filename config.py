@@ -1,7 +1,7 @@
 import sys
 import os
 import subprocess
-from prettyprint import printit
+from prettyprint import printitb
 
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])

@@ -10,6 +10,7 @@ import re
 import hashlib
 
 import config as cfg
+from prettyprint import color, printb, printit, printitb, printu
 
 class Ingredient(object):
 
@@ -34,30 +35,21 @@ class Ingredient(object):
         self.urls.append(u)
 
 
-    def downloadProgress(self, download_t, download_d, upload_t, upload_d):
-        try:
-            frac = float(download_d)/float(download_t)
-        except:
-            frac = 0
-        sys.stdout.write("\r%s %3i%%" % ("Download:", frac*100)  )
-        if (frac > 99.999):
-            print('')
-
     def checklocal(self):
         try:
             sha256 = hashlib.sha256()
             block_size=65536
             if not os.path.isfile(cfg.INST_PATH + "/" + self.fileName):
-                print('File has yet to be retrieved!')
+                printitb('File has yet to be retrieved!')
                 return False
             with open(cfg.INST_PATH + "/" + self.fileName, 'rb') as f:
                 for block in iter(lambda: f.read(block_size), b''):
                     sha256.update(block)
             if (sha256.hexdigest() != self.sha256hash):
-                print('Error: '+self.fileName+' invalid hash sum for ingredient')
+                printitb('Error: '+self.fileName+' invalid hash sum for ingredient')
                 return False
             else:
-                print('Good: '+self.fileName+' hash sum correct!')
+                printitb('Good: '+self.fileName+' hash sum correct!')
                 return True
         except Exception as error:
             print("Caught " + repr(error))
@@ -70,7 +62,7 @@ class Ingredient(object):
         # try to use local copy of the ingredient if available
         for u in self.local_urls:
             try:
-                print("Using local copy of " + self.fileName + " from " + u)
+                printitb("Using local copy of " + self.fileName + " from " + u)
                 shutil.copy(u.replace('file://',''), cfg.INST_PATH + "/" + self.fileName)
                 if self.checklocal():
                     return True
@@ -83,7 +75,7 @@ class Ingredient(object):
         # try to obtain file via GOG downloader
         for u in self.gog_urls:
             try:
-                print("Using a valid GOG account to download " + u + " as " + self.fileName)
+                printitb("Using a valid GOG account to download " + u + " as " + self.fileName)
                 cmd = cfg.SELF_PATH + '/udocker' + " --quiet"\
                       " run --user=$(whoami) --bindhome --hostauth -v " + cfg.INST_PATH+\
                       "/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader --download-file "+\
@@ -98,7 +90,7 @@ class Ingredient(object):
         # try to retrieve ingredient from remote locations
         for u in self.urls:
             try:
-                print("Retrieving " + self.fileName + " from " + u)
+                printitb("Retrieving " + self.fileName + " from " + u)
                 cmd = cfg.SELF_PATH+'/udocker'+" --quiet"\
                       " run --user=$(whoami) --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+" dolmades-runtime sh -c 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" -L \""+u+"\"'"
                 print(cmd)
@@ -138,22 +130,22 @@ class Dolmade(object):
     def checkVersion(self, version):
         self.version=''.join(version)
         if self.version == cfg.VERSION:
-            print("Good! The dolmadefile and this script both match version "+self.version)
+            printitb("Good! The dolmadefile and this script both match version "+self.version)
         else:
-            print("Bad! The dolmadefile is for version "+self.version+", but this script for version "+cfg.VERSION)
+            printitb("Bad! The dolmadefile is for version "+self.version+", but this script for version "+cfg.VERSION)
             sys.exit(1)
 
     def setupDolmade(self, cmdp):
         self.name = ' '.join(cmdp)
-        print("Setting Dolmade Name to " + self.name)
+        print(color.BOLD + "Setting Dolmade Name to " + color.END + self.name)
 
     def setupBase(self, cmdp):
         self.baseImg = ''.join(cmdp)
-        print("Setting Base Docker Image to " + self.baseImg)
+        print(color.BOLD + "Setting Base Docker Image to " + color.END + self.baseImg)
 
     def setupDescription(self, cmdp):
         self.description = '\n'.join(cmdp)
-        print("Setting Description to " + self.description)
+        print(color.BOLD + "Setting Description to " + color.END + self.description)
 
     def setupIngredient(self, cmdp):
         h = cmdp[0]
@@ -161,7 +153,7 @@ class Dolmade(object):
         dn = cmdp[2]
         u = cmdp[3].replace('file://~/','file://'+os.path.expanduser('~')+'/')
 
-        sys.stdout.write("Adding Ingredient " + dn + ":" + fn + ":" + h + ":" + u)
+        sys.stdout.write(color.BOLD + "Adding Ingredient " + color.END + dn + ":" + fn + ":" + h + ":" + u)
         ingr = Ingredient(h,fn,dn,u)
         
         for i in range(4,len(cmdp)):
@@ -181,30 +173,30 @@ class Dolmade(object):
         print("")
 
     def run(self, cmdp):
-        print("Running as User:" + ' '.join(cmdp))
+        print(color.BOLD + "Running as User:" + color.END + ' '.join(cmdp))
         self.runs.append(('user',cmdp))
 
     def runRoot(self, cmdp):
-        print("Running as Root:" + ' '.join(cmdp))
+        print(color.BOLD + "Running as Root:" + color.END + ' '.join(cmdp))
         self.runs.append(('root',cmdp))
 
     def icon(self, cmdp):
         self.iconfn = ''.join(cmdp)
-        print("Selecting Icon:" + self.iconfn)
+        print(color.BOLD + "Selecting Icon:" + color.END + self.iconfn)
 
     def setTarget(self, cmdp):
         self.runs.append(('setTarget', cmdp))
-        print("Determine target path by running:" + ' '.join(cmdp))
+        print(color.BOLD + "Determine target path by running:" + color.END + ' '.join(cmdp))
 
     def setTargetArgs(self, cmdp):
         self.targetArgs=' '.join(cmdp)
-        print("Passing the following arguments to the target:"+self.targetArgs)
+        print(color.BOLD + "Passing the following arguments to the target:" + color.END + self.targetArgs)
 
     def path(self):
         if self.sha256:
             return cfg.DOLMADES_PATH+"/containers/"+self.sha256+"/ROOT/"
         else:
-            print("Error: Dolmade has not been created yet!")
+            printitb("Error: Dolmade has not been created yet!")
             return None
 
     def metaPath(self):
@@ -218,7 +210,7 @@ class Dolmade(object):
         return self.path()+"/"+cfg.INST_DIR
 
     def build(self, options):
-        print("Performing the dolmade build...")
+        printitb("Performing the dolmade build...")
         for i in self.ingredients: 
             i.retrieve()
 
@@ -232,7 +224,7 @@ class Dolmade(object):
         if (not os.path.exists(self.metaPath())):
             os.mkdir(self.metaPath(), 0755)
         
-        print("Installing the sucessfully built dolmade...")
+        printitb("Installing the sucessfully built dolmade...")
 
         cmd = cfg.UDOCKERCMD_QUIET+" rm "+self.name
         print(cmd)
@@ -265,21 +257,21 @@ class Dolmade(object):
                     self.target = ''.join(outp.split('/')[-1])
                     self.targetPath = '/'.join(outp.split('/')[:-1])
                 except:
-                    print("ERROR: could not determine target path!")
+                    printitb("ERROR: could not determine target path!")
 
         descInContainer = self.metaPath()+"/description.txt"
         f = open(descInContainer, 'w')
         try:
             f.write(self.description)
         except:
-            print("No description predefined.")
+            printitb("No description predefined.")
         f.close()
 
         if (self.target):
-            print("Predefined target is "+self.target+", target path is "+self.targetPath)
+            printitb("Predefined target is "+self.target+", target path is "+self.targetPath)
             self.target = 'wine "'+self.target+'"'
         else:
-            print("No target predefined. Target launcher will be used.")
+            printitb("No target predefined. Target launcher will be used.")
             self.target="./targetLauncher"
             self.targetPath="/usr/local/bin"
 

@@ -85,7 +85,7 @@ class Main(object):
 
         if (cmd=='import'):
             fn=os.path.realpath(sys.argv[2])
-            path=os.path.realpath(cfg.REPO_PATH+"/containers")
+            path=os.path.realpath(cfg.DOLMADES_PATH+"/containers")
             cmd="cd "+path+" && tar -xzvf "+fn
             print(cmd)
             shasum=subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT).split('\n')[0].replace('/','')
@@ -98,14 +98,14 @@ class Main(object):
 
         if (cmd=='export'):
             fn=sys.argv[2]
-            path=os.path.realpath(cfg.REPO_PATH+"/containers/"+fn)
-            cmd="tar --directory="+cfg.REPO_PATH+"/containers/ -czpf "+fn+".dme "+path.replace(cfg.REPO_PATH+"/containers/",'')
+            path=os.path.realpath(cfg.DOLMADES_PATH+"/containers/"+fn)
+            cmd="tar --directory="+cfg.DOLMADES_PATH+"/containers/ -czpf "+fn+".dme "+path.replace(cfg.DOLMADES_PATH+"/containers/",'')
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=='binds'):
             cn=sys.argv[2]
-            fn=cfg.REPO_PATH+"/containers/"+cn+"/configuredBinds"
+            fn=cfg.DOLMADES_PATH+"/containers/"+cn+"/configuredBinds"
 
             if not os.path.exists(fn):
                 open(fn, 'a').close()
@@ -116,7 +116,7 @@ class Main(object):
 
         if (cmd=='bind'):
             binds=sys.argv[3:]
-            containerPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]
+            containerPath=cfg.DOLMADES_PATH+"/containers/"+sys.argv[2]
             fn=containerPath+"/configuredBinds"
 
             # remove all wine drives except c: and z:
@@ -132,9 +132,6 @@ class Main(object):
             for bind in binds:
                 if cfg.DOLMADES_PATH.startswith(''.join(bind.split(':')[1:])):
                     print("You can reach DOLMADES_PATH using the bind "+bind+"! This is insecure and not allowed!")
-                    return
-                if cfg.REPO_PATH.startswith(''.join(bind.split(':')[1:])):
-                    print("You can reach REPO_PATH using the bind "+bind+"! This is insecure and not allowed!")
                     return
                 f.write(bind+"\n")
                 bind=bind.strip()
