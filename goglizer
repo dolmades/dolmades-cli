@@ -10,30 +10,9 @@ import re
 import hashlib
 
 import config as cfg
+from prettyprint import color, printb, printit, printu
 
 if sys.version[0]=="3": raw_input=input
-
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   ITALIC = '\033[3m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
-
-def printb(str):
-    print(color.BOLD + str + color.END)
-
-def printit(str):
-    print(color.ITALIC + str + color.END)
-
-def printu(str):
-    print(color.UNDERLINE + str + color.END)
 
 class GameElement(object):
     def __init__(self):

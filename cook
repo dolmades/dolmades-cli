@@ -11,17 +11,6 @@ import hashlib
 
 import config as cfg
 
-def createDirectories():
-    if (not os.path.exists(cfg.DOLMADES_PATH)):
-        os.mkdir(cfg.DOLMADES_PATH, 0755)
-    try:
-        if (os.path.exists(cfg.REPO_PATH)):
-            os.rmdir(cfg.REPO_PATH)
-    except:
-        print(cfg.REPO_PATH+" not empty, do not delete...")
-    if (not os.path.exists(cfg.INST_PATH)):
-        os.mkdir(cfg.INST_PATH, 0755)
-
 class Ingredient(object):
 
     def __init__(self, h, fn, dn, u):
@@ -95,7 +84,7 @@ class Ingredient(object):
         for u in self.gog_urls:
             try:
                 print("Using a valid GOG account to download " + u + " as " + self.fileName)
-                cmd = cfg.SELF_PATH + '/udocker' + " --quiet --repo=" + cfg.REPO_PATH+\
+                cmd = cfg.SELF_PATH + '/udocker' + " --quiet"\
                       " run --user=$(whoami) --bindhome --hostauth -v " + cfg.INST_PATH+\
                       "/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader --download-file "+\
                       u.replace("gog://","")+"'"
@@ -110,7 +99,7 @@ class Ingredient(object):
         for u in self.urls:
             try:
                 print("Retrieving " + self.fileName + " from " + u)
-                cmd = cfg.SELF_PATH+'/udocker'+" --quiet --repo="+cfg.REPO_PATH+\
+                cmd = cfg.SELF_PATH+'/udocker'+" --quiet"\
                       " run --user=$(whoami) --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+" dolmades-runtime sh -c 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" -L \""+u+"\"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
@@ -213,7 +202,7 @@ class Dolmade(object):
 
     def path(self):
         if self.sha256:
-            return cfg.REPO_PATH+"/containers/"+self.sha256+"/ROOT/"
+            return cfg.DOLMADES_PATH+"/containers/"+self.sha256+"/ROOT/"
         else:
             print("Error: Dolmade has not been created yet!")
             return None
@@ -423,7 +412,6 @@ class Main(object):
     def start(self):
         """Program start and exception handling"""
         try:
-            createDirectories()
             exit_status = self.execute()
         except (KeyboardInterrupt, SystemExit):
             self.cleanup()

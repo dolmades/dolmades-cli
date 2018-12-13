@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+from prettyprint import printit
 
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
@@ -12,42 +13,28 @@ INST_DIR = "install"
 SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 HOME = os.path.expanduser('~')
 
-DOLMADES_PATH = HOME + '/.dolmades'
-REPO_PATH = DOLMADES_PATH + "/repo"
+DOLMADES_PATH = HOME + '/.dolmades-' + VERSION
+INST_PATH = DOLMADES_PATH + "/" + INST_DIR
 
 UDOCKER = SELF_PATH+"/udocker"
-UDOCKERCMD_VERBOSE = UDOCKER+" --repo="+REPO_PATH
-UDOCKERCMD_QUIET = UDOCKER+" --quiet --repo="+REPO_PATH
+UDOCKERCMD_VERBOSE = UDOCKER
+UDOCKERCMD_QUIET = UDOCKER+" --quiet"
+
+os.environ["UDOCKER_DIR"]=DOLMADES_PATH
 
 def INIT(force):
-    print("Preparing directories...")
+    printitb("Initializing dolmades under "+DOLMADES_PATH+"...")
 
-    untouched = True
     if not os.path.exists(DOLMADES_PATH):
-        os.mkdir(DOLMADES_PATH, 0755)
-        untouched = False
-    try:
-        if (os.path.exists(REPO_PATH)):
-            os.rmdir(REPO_PATH)
-            untouched = False
-    except:
-        pass
-
-    if not os.path.exists(REPO_PATH):
-        cmd = UDOCKER+ " mkrepo "+REPO_PATH
+        cmd = UDOCKER+" install "
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
         untouched = False
 
     if (not os.path.exists(INST_PATH)):
         os.mkdir(INST_PATH, 0755)
-        untouched = False
-    if (untouched):
-        print("found dolmade repo under " + REPO_PATH)
-    else:
-        print("initialized dolmade repo under " + REPO_PATH)
 
-    print("Storing dolmade runnables...")
+    printitb("Storing dolmades python runscripts...")
     cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" dolmades udocker cook goglizer config.py"
     subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -56,15 +43,15 @@ def INIT(force):
     try:
         outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
         if (outp != ""):
-            print("Dolmades Runtime found")
+            printitb("Dolmades Runtime found!")
     except:
         force_runtime_rebuild=True
 
     if force_runtime_rebuild or force:
-        print("Rebuilding runtime...")
+        printitb("Rebuilding dolmades runtime...")
         cmd = UDOCKERCMD_QUIET+" pull dolmades/runtime:"+VERSION
         print(cmd)
-        print("Pulling dolmades runtime container...")
+        printitb("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
 
         cmd = UDOCKERCMD_QUIET+" inspect dolmades-runtime"
@@ -81,8 +68,8 @@ def INIT(force):
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
-    if (not os.path.exists(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR)):
-        os.mkdir(REPO_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR, 0755)
+    if (not os.path.exists(DOLMADES_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR)):
+        os.mkdir(DOLMADES_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR, 0755)
 
 try:
     DESK_PATH = subprocess.check_output(['xdg-user-dir', 'DESKTOP']).strip()
@@ -98,7 +85,5 @@ try:
     DOC_PATH = subprocess.check_output(['xdg-user-dir', 'DOCUMENTS']).strip()
 except:
     DOC_PATH = HOME + "/Documents"
-
-INST_PATH = DOLMADES_PATH + "/" + INST_DIR
 
 # TODO check if dirs exist and create them if neccessary!
