@@ -10,6 +10,8 @@ The file structure is currently standardized as follows:
 `/wineprefix/drive_c/users/root` holds the user profile. All unix user names are being symlinked to this directory. 
 This is done automatically (see `/.dolmades/start.env`) whenever a bash is invoked inside the container via `dolmades`.
 
+An empty dolmade allocates approximately 1G of disk space.
+
 # Cooking procedure
 
 The single steps performed during cooking are as follows:
