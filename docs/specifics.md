@@ -27,3 +27,9 @@ The single steps performed during cooking are as follows:
   * Performing all run steps in the given order
   * Deposit meta data i.e. application icon, name, description, recipe, utilized dolmade version
   * Creating desktop symbol unless requested otherwise
+
+# Important environment variables
+
+* UDOCKER_ROOT
+* BASH_ENV
+* ...
