@@ -4,3 +4,5 @@
 | Lutris      | Games      | Install using PPA | requires registration |
 | GameHub | Games      |  TBD | TBD |
 | WineWrapper | Games | user runs bash script | Scripts customized for one particular game | 
+
+add links!!!
