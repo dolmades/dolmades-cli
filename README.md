@@ -540,7 +540,7 @@ If the icon filename is relative `/install` will be prepended. If the command is
 ## Future
 
 Dolmades currently is a prototypical implementation done in python. 
-Once it is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+Once it is feature-complete I want to work on an enhanced version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
 
 I figure some exciting use cases which would become addressable as well, e.g.
 
