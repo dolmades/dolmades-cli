@@ -108,36 +108,33 @@ Cooking describes the process of building a dolmade from a recipe given its requ
 To cook a dolmade use the very simple example:
 
 ```
-./cook recipes/ASD_LifeForce.dolmade --serve
+./cook recipes/ASD_LifeForce.dolmade
 ```
 
-This will install the winning demo of Assembly 2007 by Andromeda Software Development using 
-menu entries and a desktop icon.
+This will install the winning demo of Assembly 2007 by Andromeda Software Development.
 At first the required ingredients will be downloaded and verified by its checksum. 
 Next, the dolmade is created and the installation as defined in the recipe is being performed.
-Finally, you can run the installed dolmade either via menu or by clicking the desktop icon:
+Finally, you can run the installed dolmade:
+```
+./dolmades launch LifeForce_ASD
+```
 
 <p align="center">
   <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="screen shot asd lifeforce"/>
 </p>
 
-The dolmade can be uninstalled again using the corresponding menu entry or from terminal:
+The dolmade can now be uninstalled again:
 ```
 ./dolmades del LifeForce_ASD
-```
-
-To just remove the menu entries and the desktop symbol run:
-```
-./dolmades clearaway LifeForce_ASD
 ```
 
 Now a second example: the free (as in beer) adventure game "Broken Sword":
 
 ```
-./cook recipes/Broken_Sword.dolmade
+./cook recipes/Broken_Sword.dolmade --serve
 ```
 
-This will create the dolmade but no menu entries and desktop symbol.
+This will create the dolmade and add menu entries and desktop symbol.
 
 ```
 ./cook launch Broken_Sword
@@ -161,6 +158,7 @@ The game will be started. You should be hearing sound unless wine detects the wr
 </p>
 
 A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case it hangs. 
+The dolmade can be removed via the corresponding menu entry.
 
 More recipes for dolmades can be downloaded [here](https://github.com/dolmadefiles)
 
@@ -263,6 +261,26 @@ Finally, the dolmade can be cooked once more:
 ```
 
 This erases the previous dolmade and helps keeping recipe and cooked dolmade in sync with each other.
+
+## Installable Dolmades
+Once a dolmade has been cooked and thoroughly tested it is possible to convert it into a standalone installer:
+
+```
+./box LifeForce_ASD
+```
+This will package all dependencies and create an offline installer script based on `makeself` which installs on various Linux systems without special privileges.
+The approximate size overhead produced by the Ubuntu Base Image and the wineprefix will be 800M.
+
+Users who download this file can select it in the "Downloads" folder, and open up a terminal via right click.
+The installer can then be run like this:
+```
+sh LifeForce_ASD.dme.sh
+```
+grant executable permissions via right click.
+Depending on the desktop environment it may be possible to execute the script when double clicked if executable permissions have been granted beforehand via right click.
+Unfortunately many desktop environments do not allow this. The method via terminal is more reliable.
+
+*Note: as of now self-installable Dolmades will require Python 2.7 on the host system. A future release will probably get rid of this requirement.*
 
 ## Managing dolmades
 
