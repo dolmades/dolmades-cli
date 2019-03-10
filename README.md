@@ -222,7 +222,7 @@ You can skip the `goglizer` run completely by using the recipe under `recipes/fl
 ## Fixing issues
 
 As of now for one out of two games the installation procedure fails or the installed game won't work properly.
-If that happens dolmades makes it easy to find and apply fixes to the generated Dolmadefile.
+If that happens dolmades makes it easy to find and apply fixes to the generated recipe.
 Let's give an real example:
 ```
 ./goglizer -d=edna_harvey_the_breakout
