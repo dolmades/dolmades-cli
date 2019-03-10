@@ -222,7 +222,7 @@ class Main(object):
         print(" no arguments:" + color.ITALIC + " show all available win-only games" + color.END)
         print(" -a:" + color.ITALIC + " show all windows games (also those that have a linux installer)" + color.END)
         print(" -h:" + color.ITALIC + " print this help" + color.END)
-        print(" -u:" + color.ITALIC + " update the dolmade runtime container and the GOG game list" + color.END)
+        print(" -u:" + color.ITALIC + " update the GOG game list" + color.END)
         print(" -l=preferredLanguage,fallbackLanguage1,fallbackLanguage2,...:" + color.ITALIC + \
               " use in combination with -d, when omitted installers will default to English (en)" + color.END)
         print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
