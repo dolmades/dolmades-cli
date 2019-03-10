@@ -76,6 +76,7 @@ v1.1 "From Blue To Green" - *TBD*
 * Updated base images to Wine 4
 
 v1.0 "The Goglizer" - *2018-11-27*
+* Initial release
 
 
 ## Basics
