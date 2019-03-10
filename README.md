@@ -134,7 +134,7 @@ Now a second example: the free (as in beer) adventure game "Broken Sword":
 ./cook recipes/Broken_Sword.dolmade --serve
 ```
 
-This will create the dolmade and add menu entries and desktop symbol.
+This will create the dolmade and add menu entries and a desktop symbol.
 
 ```
 ./cook launch Broken_Sword
