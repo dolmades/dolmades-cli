@@ -2,7 +2,6 @@
 
 import shutil
 import stat
-import getpass
 import sys
 import subprocess
 import os
@@ -24,7 +23,13 @@ class Main(object):
 
         if (cmd=='launch'):
 
-            containerPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]
+            try:
+                subprocess.call("pulseaudio -k", shell=True, close_fds=True)
+                print("PulseAudio suspended")
+            except:
+                pass
+
+            containerPath=cfg.DOLMADES_PATH+"/containers/"+sys.argv[2]
 
             fn=containerPath+"/configuredBinds"
             if not os.path.exists(fn):
@@ -54,7 +59,10 @@ class Main(object):
 
                 cmd_bind=cmd_bind+" --volume="+src+":"+dst
 
-            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()\
+            if os.path.exists(cfg.HOME+"/.Xauthority"):
+                cmd_bind=cmd_bind+" --volume="+cfg.HOME+"/.Xauthority"
+
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER\
                     +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
@@ -64,42 +72,44 @@ class Main(object):
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
-        if (cmd=='del'):
-            for cn in sys.argv[2:]:
-                cmd=cfg.UDOCKERCMD_QUIET+" rm "+cn
-                print(cmd)
-                subprocess.call(cmd, shell=True, close_fds=True)
-                fn=cfg.DESK_PATH+"/"+cn+".desktop"
-                try:
-                    os.remove(fn)
-                    print("Found desktop shortcut and removed it!")
-                except:
-                    print("No desktop shortcut "+fn+" found!")
-
         if (cmd=='debug'):
-            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+\
+
+            try:
+                subprocess.call("pulseaudio -k", shell=True, close_fds=True)
+                print("PulseAudio suspended")
+            except:
+                pass
+
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+\
                 " --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+\
-                " --bindhome --hostenv --hostauth --dri '"+sys.argv[2]+"' bash"
+                " --bindhome --hostenv --env='WINEDLLOVERRIDES=winemenubuilder.exe=d' --hostauth --dri '"+sys.argv[2]+"' bash"
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+
+        if (cmd=='debug-root'):
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user=root '"+sys.argv[2]+"' bash"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=='import'):
             fn=os.path.realpath(sys.argv[2])
             path=os.path.realpath(cfg.DOLMADES_PATH+"/containers")
-            cmd="cd "+path+" && tar -xzvf "+fn
+            cmd="mkdir -p "+path+" && cd "+path+" && tar -xzmvf "+fn
             print(cmd)
             shasum=subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT).split('\n')[0].replace('/','')
-            cmd=cfg.UDOCKERCMD_QUIET+" name "+shasum+" "+sys.argv[2].split('.')[0]
+            dn=sys.argv[2].split('/')[-1].split('.')[0]
+            cmd=cfg.UDOCKERCMD_QUIET+" name "+shasum+" "+dn
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
-            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+getpass.getuser()+" --hostenv '"+sys.argv[2].split('.')[0]+"' sh -c 'wineboot -u && wineserver -w'"
+            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" --hostenv '"+dn+"""' bash -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --update && wineserver -w"'"""
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=='export'):
             fn=sys.argv[2]
             path=os.path.realpath(cfg.DOLMADES_PATH+"/containers/"+fn)
-            cmd="tar --directory="+cfg.DOLMADES_PATH+"/containers/ -czpf "+fn+".dme "+path.replace(cfg.DOLMADES_PATH+"/containers/",'')
+            cmd="""sh -c "tar --sort=name --mtime='@0' --format=gnu --owner=0 --group=0 --numeric-owner --directory="""+cfg.DOLMADES_PATH+\
+                    "/containers/ -cp "+path.split("/")[-1]+" | gzip -9 --no-name > "+fn+""".dme" """
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -156,50 +166,104 @@ class Main(object):
                         os.remove(pl)
                     os.symlink("../drive_"+drvletter,pl)
 
-        if (cmd=="serve"):
-            metaPath=cfg.REPO_PATH+"/containers/"+sys.argv[2]+"/ROOT/.dolmades"
-            f=open(metaPath+"/dolmadename")
-            cleanName=f.read().strip()
-            name=cleanName.replace(' ','_').replace("_n_",'&')
-            deskfileOnHost = cfg.DESK_PATH + "/" + name + ".desktop"
+        if (cmd=="del"):
+            if os.path.isfile(cfg.SELF_PATH+"/../uninstall.sh"):
+                print("External uninstaller script found, delegating...")
+                subprocess.call(cfg.SELF_PATH+"/../uninstall.sh", shell=True, close_fds=True)
+                return
+            else:
+                print("No uninstaller found. Delete this dolmade by myself!")
 
-            with open(deskfileOnHost, "w") as text_file:
-                text_file.write("[Desktop Entry]\nEncoding=UTF-8\nValue=1.0\nType=Application\n")
-                text_file.write("Name="+cleanName+"\nGenericName=\""+cleanName+"\"\nComment="+cleanName+"\n")
-                text_file.write("Icon="+metaPath+"/icon.png"+"\n")
-                text_file.write("Exec="+cfg.SELF_PATH+"/dolmades launch '"+name+"'\n")
-                text_file.write("Categories=Game;\n")
-                text_file.write("Path="+os.path.expanduser("~")+"\n")
+        if (cmd=="serve" or cmd=="clearaway" or cmd=="del"):
+            name = sys.argv[2]
+            metaPath=cfg.DOLMADES_PATH+"/containers/"+name+"/ROOT/.dolmades"
 
-            st = os.stat(deskfileOnHost)
-            os.chmod(deskfileOnHost, st.st_mode | stat.S_IEXEC)
+            desktopFile=metaPath+"/Dolmades_v"+cfg.VERSION+"-"+name+".desktop"
+            desktopUninstFile=metaPath+"/Dolmades_v"+cfg.VERSION+"-"+name+"_uninstaller.desktop"
+            directoryFile=metaPath+"/Dolmades_v"+cfg.VERSION+".directory"
+            descriptionFile=metaPath+"/description.txt"
+
+            cleanName=name.replace('_',' ').replace('&',"_n_")
+
+            with open(descriptionFile, "r") as f:
+                description=f.read().replace('\n','\\n')
+
+            if (description==""):
+                print("No description, just using name")
+                description=cleanName
+
+            with open(directoryFile, "w") as f:
+                f.write("[Desktop Entry]\nEncoding=UTF-8\nType=Directory\n")
+                f.write("Name=Dolmades v"+cfg.VERSION+"\n")
+                f.write("Comment=Windows Apps in Linux Containers\n")
+                f.write("Icon="+metaPath+"/icons/dolmade.png\n")
+
+            with open(desktopFile, "w") as f:
+                f.write("[Desktop Entry]\nEncoding=UTF-8\nType=Application\n")
+                f.write("Name="+cleanName+"\nGenericName=\""+description+"\"\nComment="+description+"\n")
+                f.write("Icon="+metaPath+"/icon.png\n")
+                f.write("Exec="+cfg.SELF_PATH+"/dolmades launch '"+name+"'\n")
+                f.write("Path="+cfg.SELF_PATH+"\n")
+
+            with open(desktopUninstFile, "w") as f:
+                f.write("[Desktop Entry]\nEncoding=UTF-8\nType=Application\n")
+                f.write("Name=Remove "+cleanName+"\nGenericName=Uninstall this Dolmade\nComment=Uninstall this Dolmade\n")
+                f.write("Icon="+metaPath+"/icons/delete.svg\n")
+                f.write("Exec="+cfg.SELF_PATH+"/dolmades del '"+name+"'\n")
+                f.write("Path="+cfg.SELF_PATH+"\n")
+
+            if (cmd=="serve"):
+                action="install"
+            else:
+                action="uninstall"
+            cmdline = "xdg-desktop-menu "+action+" --novendor "+directoryFile+" "+desktopFile+" "+desktopUninstFile
+            print(cmdline)
+            subprocess.call(cmdline, shell=True, close_fds=True)
+
+            cmdline = "xdg-desktop-icon "+action+" --novendor "+desktopFile
+            print(cmdline)
+            subprocess.call(cmdline, shell=True, close_fds=True)
+
+            #os.remove(directoryFile)
+            #os.remove(desktopFile)
+            #os.remove(desktopUninstFile)
+
+        if (cmd=="del"):
+            cn=sys.argv[2]
+            cmd=cfg.UDOCKERCMD_QUIET+" rm "+cn
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=="help"):
-            print("Usage: dolmades [init|launch|list|del|debug|import|export|bind|binds|serve] options")
+            print("Usage: dolmades [init|launch|list|del|debug|debug-root|import|export|bind|binds|serve|clearaway] options")
             try:
                 cmd = sys.argv[2]
             except:
                 cmd = ""
             if cmd=="init":
-                print(" init : initialize the dolmades runtime, DOLMADES_PATH and REPO_PATH")
+                print(" init : initialize the dolmades runtime, DOLMADES_PATH")
             if cmd=="launch":
                 print(" launch DOLMADENAME : launch the autostart script")
             if cmd=="list":
                 print(" list : lists all available dolmades")
             if cmd=="del":
-                print(" del DOLMADENAME : deletes the given dolmade")
+                print(" del DOLMADENAME : clears away and deletes the given dolmade")
             if cmd=="debug":
-                print(" debug DOLMADENAME : enters a bash shell. $HOME and INSTALL_PATH under /install are available.")
+                print(" debug DOLMADENAME : enters a bash shell as $USER. $HOME and INSTALL_PATH under /install are available.")
+            if cmd=="debug-root":
+                print(" debug-root DOLMADENAME : enters a bash shell as root. No binds and host environment variables are available.")
             if cmd=="import":
-                print(" import DOLMADE.DMD : imports a previously exported image [experimental]")
+                print(" import DOLMADE.DME : imports a previously exported image. The image can be executed standalone (requires python 2 and gzip).")
             if cmd=="export":
-                print(" export DOLMADE DOLMADE.DMD : exports a cooked dolmade image")
+                print(" export DOLMADE DOLMADE.DME : exports a cooked dolmade image")
             if cmd=="bind":
-                print(" bind DOLMADE bind1 bind2 ... : set bind1 bind2. To bind a win drive N to /tmp : /tmp:/wineprefix/drive_n")
+                print(" bind DOLMADE bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:~/Documents/'")
             if cmd=="binds":
                 print(" binds DOLMADENAME : list active binds")
             if cmd=="serve":
-                print(" serve DOLMADENAME : create a desktop symbol")
+                print(" serve DOLMADENAME : create a menu entry and a desktop symbol")
+            if cmd=="clearaway":
+                print(" clearaway DOLMADENAME: remove menu entry and desktop symbol")
 
 if __name__ == "__main__":
     sys.exit(Main().start())
