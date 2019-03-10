@@ -151,7 +151,7 @@ Select `Windowed Mode` and click "Ok":
   <img src="shots/firstuse_1.png?raw=true" alt="screen shot 1"/>
 </p>
 
-The game will be started. You should be hearing sound unless wine detects the wrong alsa device is which still may happen on some hardware.
+The game will be started. You should be hearing sound unless wine detects the wrong alsa device which still may happen on some hardware.
 
 <p align="center">
   <img src="shots/firstuse_2.png?raw=true" alt="screen shot 2"/>
