@@ -1,26 +1,44 @@
 import sys
 import os
 import subprocess
+import getpass
+
 from prettyprint import printitb
+from platform import architecture
 
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 
-VERSION = "1.0"
+VERSION = "1.1"
 META_DIR = ".dolmades"
 INST_DIR = "install"
+INGR_DIR = "ingredients"
 
 SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 HOME = os.path.expanduser('~')
+USER = getpass.getuser()
 
 DOLMADES_PATH = HOME + '/.dolmades-' + VERSION
 INST_PATH = DOLMADES_PATH + "/" + INST_DIR
+INGREDIENTS_PATH = DOLMADES_PATH + "/" + INGR_DIR
 
 UDOCKER = SELF_PATH+"/udocker"
 UDOCKERCMD_VERBOSE = UDOCKER
 UDOCKERCMD_QUIET = UDOCKER+" --quiet"
 
 os.environ["UDOCKER_DIR"]=DOLMADES_PATH
+# This is set for caching winetricks ingredients
+os.environ["XDG_CACHE_HOME"]=INGREDIENTS_PATH
+os.environ["BASH_ENV"]="/.dolmades/start.env"
+
+if architecture()[0]=="32bit":
+    RUNTIME_IMAGE="dolmades/runtime_i386"
+    DOLMADE_SUFFIX="_i386"
+else:
+    RUNTIME_IMAGE="dolmades/runtime"
+    DOLMADE_SUFFIX=""
+
+
 
 def INIT(force):
     printitb("Initializing dolmades under "+DOLMADES_PATH+"...")
@@ -49,7 +67,7 @@ def INIT(force):
 
     if force_runtime_rebuild or force:
         printitb("Rebuilding dolmades runtime...")
-        cmd = UDOCKERCMD_QUIET+" pull dolmades/runtime:"+VERSION
+        cmd = UDOCKERCMD_QUIET+" pull "+RUNTIME_IMAGE+":"+VERSION
         print(cmd)
         printitb("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
@@ -64,12 +82,15 @@ def INIT(force):
         except:
             pass
 
-        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime dolmades/runtime:"+VERSION
+        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime "+RUNTIME_IMAGE+":"+VERSION
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
     if (not os.path.exists(DOLMADES_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR)):
         os.mkdir(DOLMADES_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR, 0755)
+
+    if (not os.path.exists(INGREDIENTS_PATH)):
+        os.mkdir(INGREDIENTS_PATH, 0755)
 
 try:
     DESK_PATH = subprocess.check_output(['xdg-user-dir', 'DESKTOP']).strip()
