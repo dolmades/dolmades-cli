@@ -42,7 +42,7 @@ As of now a collection of a few command line scripts represent the prototypical 
 * `config.py` - a configuration file providing important settings
 
 ## Long-term Goal
-Once the prototype is feature-complete I want to work on an enhanced followup version based on Qt and a remote repository service where user can store their dolmades, ingredients and recipes.
+Once the prototype is feature-complete I want to work on an enhanced version based on Qt and a remote repository service where user can store their dolmades, ingredients and recipes.
 
 ### Requirements
 
