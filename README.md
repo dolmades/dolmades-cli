@@ -108,46 +108,53 @@ Cooking describes the process of building a dolmade from a recipe given its requ
 To cook a dolmade use the very simple example:
 
 ```
-./cook recipes/ASD_LifeForce.dolmade
+./cook recipes/ASD_LifeForce.dolmade --serve
 ```
 
-This will install the winning demo of Assembly 2007 by Andromeda Software Development.
+This will install the winning demo of Assembly 2007 by Andromeda Software Development using 
+menu entries and a desktop icon.
 At first the required ingredients will be downloaded and verified by its checksum. 
-Then, the dolmade is being created and the installation procedure as defined in the recipe is being run.
+Next, the dolmade is created and the installation as defined in the recipe is being performed.
+Finally, you can run the installed dolmade either via menu or by clicking the desktop icon:
 
 <p align="center">
   <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="screen shot asd lifeforce"/>
 </p>
 
-The demo can now be launched from the command line:
+The dolmade can be uninstalled again using the corresponding menu entry or from terminal:
 ```
-./dolmades launch LifeForce_ASD
-```
-
-A menu entry and a desktop symbol can be created with the following command:
-```
-./dolmades serve LifeForce_ASD
+./dolmades del LifeForce_ASD
 ```
 
-Now try a second example: the free (as in beer) adventure game "Broken Sword":
+To just remove the menu entries and the desktop symbol run:
+```
+./dolmades clearaway LifeForce_ASD
+```
+
+Now a second example: the free (as in beer) adventure game "Broken Sword":
 
 ```
-./cook recipes/Broken_Sword.dolmade --serve
+./cook recipes/Broken_Sword.dolmade
 ```
-This will already create the menu entries and desktop symbol to launch the game.
+
+This will create the dolmade but no menu entries and desktop symbol.
+
+```
+./cook launch Broken_Sword
+```
 
 <p align="center">
   <img src="shots/firstuse_0.png?raw=true" alt="screen shot 0"/>
 </p>
 
 A launcher will appear and offer you multiple choices created by the installer.
-Select `Windowed Mode` in the launcher and click "Ok":
+Select `Windowed Mode` and click "Ok":
 
 <p align="center">
   <img src="shots/firstuse_1.png?raw=true" alt="screen shot 1"/>
 </p>
 
-The game will be started. You should be hearing sound unless your alsa device is wrongly detected by wine which may still happen on some hardware.
+The game will be started. You should be hearing sound unless wine detects the wrong alsa device is which still may happen on some hardware.
 
 <p align="center">
   <img src="shots/firstuse_2.png?raw=true" alt="screen shot 2"/>
@@ -159,7 +166,7 @@ More recipes for dolmades can be downloaded [here](https://github.com/dolmadefil
 
 ### Generating a GOG dolmade
 
-For this to work you need to be registered at [GOG](https://gog.com). They offer some items for free so you can test `goglizer` without purchasing a game. If you have not done so already obtain the free item "Flight of the Amazon Queen" and verify that it is shown in your personal game collection. Retrieve a list of your games using the script `goglizer`:
+For this to work you'll need to be registered at [GOG](https://gog.com). They offer some items for free so you can test `goglizer` without purchasing a game. If you have not done so already obtain the free item "Flight of the Amazon Queen" and verify that it is shown in your personal game collection. Retrieve a list of your games using the script `goglizer`:
 ```
 ./goglizer -u
 ```
