@@ -1,0 +1,38 @@
+# This dolmade needs winestaging due to some recent video codec patches
+# Source: http://www.pouet.net/prod.php?which=31571
+
+# Name of the dolmade (very restricted by udocker)
+DOLMADE
+    LifeForce_ASD
+
+# Docker image to use as a base
+BASE
+    dolmades/winestaging
+
+# Use this version
+VERSION
+    1.1
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+    d7500dffbb63292af3ba608a0651b3463cf1ff8f53cbcc115ebbe32e2d5440f8
+    lifeforce_by_andromeda_software_development.zip
+    ASD LifeForce 1st place @ Assembly 2007
+    https://files.scene.org/get/parties/2007/assembly07/demo/lifeforce_by_andromeda_software_development.zip
+
+# Run a command inside the dolmade
+# PWD is the install folder
+RUNUSER
+    mkdir -p LifeForce && 
+    cp lifeforce_by_andromeda_software_development.zip LifeForce &&
+    cd LifeForce &&
+    unzip -o lifeforce_by_andromeda_software_development.zip &&
+    cd .. &&
+    cp -r LifeForce/ /
+
+# Set icon for the Desktop shortcut
+ICON
+    /LifeForce/Screenshot-assembly.png
+
+TARGET
+    echo "$(find /LifeForce/ -name ASD-LifeForce.exe)"

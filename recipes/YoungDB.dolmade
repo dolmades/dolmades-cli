@@ -1,0 +1,59 @@
+# This dolmade supposedly needs dotnet45
+# Source: http://www.pouet.net/prod.php?which=31571
+
+# Name of the dolmade (very restricted by udocker)
+DOLMADE
+  YoungDB
+
+# Docker image to use as a base
+BASE
+  dolmades/winestable
+
+# Use this version
+VERSION
+  1.1
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+  3eeee366d2e44b0dee921da1459098e475fb28039bc021ddfc0c622e3a85b639
+  YoungDB-2015-02-13.zip
+  Educational Software
+  http://klassenkarte.de/wp-content/uploads/2015/02/YoungDB-2015-02-13.zip
+
+# Install German language settings / locale
+RUNROOT
+  apt-get update && apt-get -y install locales language-pack-de-base && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Run a command inside the dolmade
+# PWD is the /install folder
+RUNUSER
+  unzip -o YoungDB-2015-02-13.zip &&
+  cp YoungDB.exe /wineprefix/drive_c
+
+# needed for mysql scheme export
+RUNUSER
+  winetricks -q corefonts
+
+# needed for YoungDB app
+RUNUSER
+  winetricks -q dotnet40 ; 
+  sleep 0
+
+# needed for access export
+RUNUSER
+  winetricks -q jet40 ;
+  sleep 0
+
+# Set icon for the Desktop shortcut
+#ICON
+#    /path/to/image/file.png
+
+# Comment out the following two lines to fall back to the target selector
+TARGET
+  echo "$(find /wineprefix -name YoungDB.exe)"
+
+TARGETPROLOGUE
+  taskset -c 0
+
+TARGETENV
+  LC_ALL=de_DE.UTF-8
