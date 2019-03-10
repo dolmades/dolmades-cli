@@ -1,19 +1,48 @@
-# Dolmades v1.0 - "The Goglizer"
+<p align="center">
+  <img src="https://dolmades.org/files/dolmade_xxl.png" width="140" alt="screen shot asd lifeforce"/>
+</p>
+
+# Dolmades v1.1 - "From Blue to Green"
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation, usage and distribution of windows programs in Linux environments to the utmost extent. The current version is a prototype in python. 
+Dolmades are intended as a mean to ease packaging, installation, usage and distribution of Windows applications in Linux environments to the utmost extent. 
 
-This release focuses on basic features and GOG support. As of now a collection of a few command line tools represent the prototypical implementation of the underlying concepts:
+### Features
 
-* dolmades - to maintain your installed windows application
-* goglizer - prepares win-only GOG games to be cooked; GOG account required
-* cook - cooks a dolmade given a Dolmadefile and its ingredients
+The focus of the v1.x release cycle will be put on support for gaming, the standardization of the recipe specification used to create dolmades, ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
-Right after cooking the windows application will be available as clickable shortcut on your desktop.
-A global configuration file called `config.py` provides important settings to all three scripts.
+* **Usage**
+  * **Creation:** cook your application using recipes and create a desktop symlink and menu entry
+  * **Target launcher:** displays a selection of all installed applications and you choose which one to run
+  * **Shares:** bind selected paths from the host system to internal windows drives
+  * **Import/Export:** share your cooked dolmades as standalone executables or import them elsewhere
+  
+* **Development:** 
+  * **Create recipes:** use the existing recipes as template for your own win-only apps
+  * **Debug mode:** examine problems, add fixes and instantly rebuild the application
+  * **Selectable base:** choose between between several wine versions
+  * **GOG gaming support:** generate template recipes for your personal GOG collection
 
-Once the prototype is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+Dolmades offer the following features over existing alternatives:
+* **Ease-of-use:** supports major linux distros and require no special permissions
+* **Compatibility:** recipes create functional dolmades across various distros and system hardware
+* **Mobility:** cooked dolmades are designed to be executable across various distros and system hardware
+* **Safety&Security:** dolmades are isolated from each other and from the host system by default
+
+## Prototypical Implementation 
+The current implementation is a prototype in Python and focuses on basic features and GOG support. 
+
+As of now a collection of a few command line scripts represent the prototypical implementation of the underlying concepts:
+
+* `dolmades` - to maintain your installed windows application
+* `ingredients` - to maintain your recipes dependencies (installers, resource files, ...)
+* `cook` - cooks a dolmade given a Dolmadefile and its ingredients
+* `goglizer` - prepares win-only GOG games to be cooked; GOG account required
+* `config.py` - a configuration file provides important settings
+
+## Long-term Goal
+Once the prototype is feature-complete I want to work on an enhanced followup version based on Qt and a remote repository service where user can store their dolmades, ingredients and recipes.
 
 ### Requirements
 
@@ -27,92 +56,96 @@ Dolmades make heavy use of the following underlying technologies:
 
  * **Docker + DockerHub:** for the dolmades base images
  * **udocker + proot:** for user-level containerization
- * **wine + winetricks:** for running windows application in Linux
+ * **wine:** for running windows application in Linux
+ * **winetricks:** for installing most common ingredients
  * **lgogdownloader:** for GOG support
 
-### Features
+### Changelog
 
-* **GOG gaming support:** generate template recipes for your personal GOG collection and installation is a breeze
-* **Ease-of-use:** supports major linux distros and require no special permissions
-* **Compatibility:** recipes create functional dolmades across various distros and system hardware
-* **Mobility:** cooked dolmades are designed to be portable across various distros and system hardware
-* **Safety&Security:** dolmades are isolated from each other and from the host system by default
+v1.1 "From Blue To Green" - *TBD*
 
-* **Users**
-  * **Creation:** cook your application using recipes and install a desktop symlink
-  * **Target launcher:** displays a selection of all installed applications and you choose which one to run
-  * **Shares:** bind selected paths from the host system to windows drives inside a dolmade
-  * **Import/Export:** allows sharing of cooked dolmades - EXPERIMENTAL - requires user names to remain identical!
-  
-* **Developers:** 
-  * **Create recipes:** use the existing Dolmadefiles as template for your own win-only apps
-  * **Debug mode:** examine problems, add fixes and instantly rebuild the application
-  * **Selectable base:** choose between between several wine versions
-
-
-The focus in the v1.x release cycle will be put on support for gaming, the standardization of the `Dolmadefile` specification used to create recipes, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
-
-### Planned for 1.1 "From Blue To Green"
-
-* Improved Import/Export to work across changing user names
-* Recipe specification: Gather feedback. Complete syntax. Standardize it.
+* Support creation of self-installable dolmades
+* Import/Export working across changed user names
+* Improved recipe specification
+* Improved ingredients handling
 * Lots of refactoring / bug fixing
+* Beautification (concept, textual output, code)
 * More documentation
+* Update base images to Wine 4
+
+v1.0 "The Goglizer" - *2018-11-27*
+
 
 ## Basics
 
 Dolmades makes use of several concepts which will be briefly explained here:
 
 * **Dolmades:** Win apps which behave like containers. They can be created, deleted, executed and migrated.
-* **Recipes:** Also Dolmadefiles; specification files which define the building process of a dolmade.
-* **Ingredients:** Recipes require certain ingredients which can be ISO files, installers, images ...
-* **Binds:** Dolmades are isolated by default but can access files or directories on the host system using shared binds 
+* **Recipes:** Specification files similar to Dockerfiles which define the building process of a dolmade.
+* **Ingredients:** Recipes require certain ingredients which can be ISO files, installers, media files ...
+* **Binds:** Files contained in dolmades are isolated by default but access to files or directories on the host system can be configured using shared binds 
 
 ### Setup
 
 Either download the release tar ball
 ```
-curl -L -o dolmades.tgz https://github.com/dolmades/dolmades-cli/archive/v1.0.tar.gz
+curl -L -o dolmades.tgz https://github.com/dolmades/dolmades-cli/archive/v1.1.tar.gz
 tar -xzf dolmades.tgz
-cd dolmades-cli-1.0/
+cd dolmades-cli-1.1/
 ```
-or simply clone the latest master using git:
+or simply clone it using git:
 ```
-git clone https://github.com/dolmades/dolmades-cli.git
+git clone -b "v1.1" --single-branch --depth 1 https://github.com/dolmades/dolmades-cli.git
 cd dolmades-cli
 ```
 
 ### Cooking a dolmade
 
-Cooking describes the process of building a dolmade from a recipe and the required ingredients.
+Cooking describes the process of building a dolmade from a recipe given its required ingredients.
 To cook a dolmade use the very simple example:
 
 ```
-./cook Dolmadefile
+./cook recipe/ASD_LifeForce.dolmade
 ```
 
-At first the required ingredients will be downloaded. Then, the dolmade is being created and the installer is being run.
-Click straight through the installation process. This will install the free game Broken Sword 2.5 on your desktop. It can be started by double clicking the desktop icon:
+This will install the winning demo of Assembly 2007 by Andromeda Software Development.
+At first the required ingredients will be downloaded and verified by its checksum. 
+Then, the dolmade is being created and the installation procedure as defined in the recipe is being run.
+Next, a menu entry and a desktop symbol is being created. 
+Finally, the demo can be started either from the menu or by launching the desktop icon.
 
 <p align="center">
-  <img src="docs/shots/firstuse_0.png?raw=true" alt="screen shot 0"/>
+  <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="screen shot asd lifeforce"/>
 </p>
 
-or from terminal:
+Alternatively, the demo can be launched from the command line:
 ```
-./dolmades launch Broken_Sword
+./dolmades launch ASF_LifeForce
 ```
 
+Now try a second example: the free (as in beer) adventure game "Broken Sword":
+
+```
+./cook recipe/Broken_Sword.dolmade
+```
+
+Click yourself straight through the installation progress and start the game.
+
+<p align="center">
+  <img src="shots/firstuse_0.png?raw=true" alt="screen shot 0"/>
+</p>
+
+A launcher will appear and offer you multiple choices created by the installer.
 Select `Windowed Mode` in the launcher and click "Ok":
 
 <p align="center">
-  <img src="docs/shots/firstuse_1.png?raw=true" alt="screen shot 1"/>
+  <img src="shots/firstuse_1.png?raw=true" alt="screen shot 1"/>
 </p>
 
 This will launch the game:
 
 <p align="center">
-  <img src="docs/shots/firstuse_2.png?raw=true" alt="screen shot 2"/>
+  <img src="shots/firstuse_2.png?raw=true" alt="screen shot 2"/>
 </p>
 
 A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
@@ -121,14 +154,13 @@ More recipes for dolmades can be downloaded [here](https://github.com/dolmadefil
 
 ### Generating a GOG dolmade
 
-For this to work you need to be registered at [GOG](https://gog.com). They offer some items for free so you can test `goglizer` without purchasing a game. This is how to cook your favourite GOG win-only game using the script `goglizer`:
+For this to work you need to be registered at [GOG](https://gog.com). They offer some items for free so you can test `goglizer` without purchasing a game. If you have not done so already obtain the free item "Flight of the Amazon Queen" and verify that it is shown in your personal game collection. Retrieve a list of your games using the script `goglizer`:
 ```
 ./goglizer -u
 ```
 The `-u` parameter tells `goglizer` to retrieve the dolmades runtime container and your personal game list.
-At first, you will be asked to authorize using your GOG account. Since two-factor-authentication is mandatory you will need to check your email and enter the code that GOG sends to you. This needs to be done only once. 
-After that, the authorization credentials are being stored in your home directory for subsequent use.
-Finally a list of your games is being shown:
+At first, you will be asked to authorize using your GOG account. Since two-factor-authentication is mandatory you will need to check your email and enter the code that GOG has sent to you. This needs to be done only once since the authorization credentials are being stored in your home directory for subsequent use.
+Finally, a list of your games is displayed:
 
 ```
 Found dolmade repo under /home/stefan/.dolmades/repo
@@ -149,9 +181,11 @@ done!
 Windows games available on this account which have no linux installer available
 broken_sword_3__the_sleeping_dragon
 ...
+flight_of_the_amazon_queen
+...
 ```
 
-Note, that only games are being listed that have no corresponding linux installer. If you want linux games to be listed as well you need to use the `-l` parameter:
+Note, that only games are listed that have no linux installer. If you want linux games to be listed as well you need to use the `-l` parameter:
 
 ```
 ./goglizer -l
@@ -164,25 +198,25 @@ broken_sword_3__the_sleeping_dragon
 ...
 ```
 
-Now choose a game of your liking and instruct `goglizer` to download the ingredients and create a corresponding dolmade file using the `-d` parameter:
+Now choose a game of your liking and instruct `goglizer` to download the ingredients and create a corresponding recipe template using the `-d` parameter:
 ```
-./goglizer -d=broken_sword_3__the_sleeping_dragon
+./goglizer -d=flight_of_the_amazon_queen
 ```
-This will download its ingredients and prepare a Dolmadefile for installation. Now the dolmade can be installed:
+Now the dolmade can be installed:
 ```
-./cook "broken_sword_3__the_sleeping_dragon:en:1.0.dolmade"
+./cook "flight_of_the_amazon_queen:en:1.0.dolmade"
 ```
-After successful completion you will find a clickable icon on your desktop :)
+After successful completion you will find a clickable icon on your desktop and a menu entry :)
 
 ## Fixing issues
 
-As of now for many games the installation procedure fails or the installed game won't work properly.
-The goal of dolmades is to make it easy to find and apply fixes to the generated Dolmadefile in such cases. 
-Let's generate the dolmadefile:
+As of now for one out of two games the installation procedure fails or the installed game won't work properly.
+If that happens dolmades makes it easy to find and apply fixes to the generated Dolmadefile.
+Let's give an real example:
 ```
 ./goglizer -d=edna_harvey_the_breakout
 ```
-Then, we try to cook it:
+We try to cook it:
 ```
 ./cook edna_harvey_the_breakout:en.dolmade
 ```
@@ -191,18 +225,18 @@ First, we need to figure out interactively what needs to be done:
 ```
 ./dolmades debug edna_harvey_the_breakout:en.dolmade
 
-# THIS IS THE REQUIRED FIX: set windows version to WinXP
-winetricks winxp
+> # THIS IS THE REQUIRED FIX: set windows version to WinXP
+> winetricks winxp
 
-# rerun installer and ensure that it works now
-/install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
+> # rerun installer and ensure that it works now
+> /install/setup_edna_and_harvey_the_breakout_2.1.0.5.exe
 
 # test cooked dolmade, start in windowed mode
 targetSelector
 ```
 
 The previous changes are now applied permanently to the dolmade but will get lost if it will be recooked.
-That is why, secondly, we need to update the corresponing `dolmadefile`.
+That is why we ought to update the corresponing recipe to include that fix.
 Edit `edna_harvey_the_breakout:en.dolmade` and add the following section right before the `RunUser` command which launches the installer using `wine`:
 ```
 RunUser
@@ -295,7 +329,7 @@ A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/d
 * As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!
 * In wine the C and the Z drive are predefined. Utilize `/wineprefix/drive_x:/my/hostdir/` to bind to drive X.
 
-### Migration (experimental)
+### Migration
 
 It is possible to export and import a readily installed dolmade. 
 
@@ -307,7 +341,7 @@ It is possible to export and import a readily installed dolmade.
 ./dolmades import Broken_Sword
 ```
 
-The final goal is to be able to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. Currently, this feature is experimental, and will only work if the user name remains the same. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
+The final goal is to be able to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. Since the user name will likely change all users home directories are shared and being symlinked to `root`. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
 
 ### Serving
 
@@ -315,7 +349,7 @@ Last but not least the dolmade can be served on the desktop
 ```
 ./dolmades serve name-of-dolmade
 ```
-This will create a clickable short cut on the desktop which will launch the corresponding dolmade. It can be safely deleted and recreated any time.
+This will create a clickable short cut on the desktop and a sub-menu entry which will launch the corresponding dolmade. It can be safely deleted and recreated anytime.
 
 ## Advanced
 
@@ -423,7 +457,7 @@ RUNUSER
  cmdN
 ``` 
 This command is repeatable and optional. This command will be launched as the calling user in a bash environment inside the dolmade. [config.py:INST_PATH](https://github.com/dolmades/dolmades-cli/blob/d64513966aa3ba5b84dc22143ea527bde806683b/config.py#L80) will be the target directory.
-You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will terminate the execution.
+You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command, however, will terminate the execution. If all commands succeed a final `wineserver --wait` ensures the proper termination of all wine processes.
 
 ```
 RUNROOT
@@ -437,18 +471,33 @@ This command is repeatable and optional. This command will be launched as fake r
 You can cascade multiple commands by `&&` and they will be executed subsequently. The first failing command however will termine the execution. Usually `RUNUSER` should suffice but if you need to install some packages using `apt` `RUNROOT` will be required.
 
 ```
-SETTARGET
+TARGET
  targetCall
 ``` 
 
 This command is optional. If omitted the dolmade will launch using the target launcher and allow the user to select one of all installed targets i.e. lnk-files created during the installation. Sometimes it is desirable to launch a specific executable and then this option can be used to set the exe-binary.
 
 ```
-SETTARGETARGS
+TARGETARGS
  targetArgs
 ```
 
-This command is optional. Sometimes if `SETTARGET` is used it is still neccessary to specify also some arguments. This can be done using this command.
+This command is optional. Sometimes if `TARGET` is used it is neccessary to also specify arguments. This can be done using this command.
+
+```
+TARGETENV
+ targetEnv
+```
+
+This command is optional. Sometimes it is necessary to set some environment variables for an executable.
+For instance it is possible to force [DLL overrides](recipes/ASD_LifeForce.dolmade) or specific language settings.
+
+```
+TARGETPROLOGUE
+ targetPrologue
+```
+
+This command is optional. Sometimes it is necessary to call `wine` using a preceding command e.g. `taskset -c 0 wine` in order to limit the execution to a single CPU. This can help fix race conditions.
 
 ```
 ICON
@@ -468,12 +517,14 @@ If the icon filename is relative `/install` will be prepended. If the command is
 ## FAQ
 
  * Which distros have been tested? See [this issue](https://github.com/dolmades/dolmades-cli/issues/26)
- * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible
- * Will dolmade likely become a Linux distribution? No. I plan to support major distributions though.
- 
- * requirements, limits, caveats...
+ * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible. I plan to keep compatibility to major distributions though.
+ * Why does the syntax for the recipes change? As of now the syntax may change for **every** version. This does not matter since dolmades recipes will work when the `VERSION` of the recipe matches the `dolmades` run script. Exported dolmades will contain all scripts necessary to rebuild and rerun the dolmade.
+ * Will the syntax for the recipes be fixed anytime? Probably. But not in the prototypical implementation phase. 
+ * Will dolmades support ever MacOSX or Windows? Maybe. But not for the foreseeable future.
+ * Is it enough to lookup ingredients by SHA256? TODO
 
 ## Future
+
 Dolmades currently is a prototypical implementation done in python. 
 Once it is feature-complete I want to work on an enhanced followup version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
 
@@ -482,7 +533,7 @@ I figure some exciting use cases which would become addressable as well, e.g.
  * Automated deployment of windows software and complex development environments on large pools of computers
  * Cloud-based GUI applications based on Linux and VNC
  * Enhanced debugging and development for wine development
- * Fully automated dolmade cooking using Xvfb
+ * Fully automated dolmade cooking using Xvfb / AutoHotKey
  * Functional archival of legacy software
  * Support for complex Linux software setups
 
@@ -495,6 +546,6 @@ I figure some exciting use cases which would become addressable as well, e.g.
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32-bit windows
 * do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
 * sometimes `udocker` fails to pull some layers from the docker registry (timeouts). Simply repeating the commands should help.
-* GOG installer errors: many GOG games display error messages at the end of the installation process. I suspect some unsupported  facl commands are the source. The installed games seem to work anyways!
+* GOG installer errors: many GOG games display error messages at the end of the installation process. I suspect some failing installer script commands are the source. The installed games seem to work anyways! According to [this post](https://wp.xin.at/archives/tag/out-of-global-vars-range) these messages can even occur on Windows machines!
 
-Last but not least: if you are in trouble check out the issues and open a new one if applicable.
+Last but not least: if you are in trouble, check out the issues and open a new one if applicable.
