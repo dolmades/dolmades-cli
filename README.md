@@ -16,7 +16,7 @@ The focus of the v1.x release cycle will be put on support for gaming, the stand
   * **Creation:** cook your application using recipes and create a desktop symlink and menu entry
   * **Target launcher:** displays a selection of all installed applications and you choose which one to run
   * **Shares:** bind selected paths from the host system to internal windows drives
-  * **Import/Export:** share your cooked dolmades as standalone executables or import them elsewhere
+  * **Import&Export:** share your cooked dolmades as standalone executables or import them elsewhere
   
 * **Development:** 
   * **Create recipes:** use the existing recipes as template for your own win-only apps
@@ -25,7 +25,7 @@ The focus of the v1.x release cycle will be put on support for gaming, the stand
   * **GOG gaming support:** generate template recipes for your personal GOG collection
 
 Dolmades offer the following features over existing alternatives:
-* **Ease-of-use:** supports major linux distros and require no special permissions
+* **Ease of use:** supports major linux distros and requires no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
 * **Mobility:** cooked dolmades are designed to be executable across various distros and system hardware
 * **Safety&Security:** dolmades are isolated from each other and from the host system by default
@@ -35,20 +35,20 @@ The current implementation is a prototype in Python and focuses on basic feature
 
 As of now a collection of a few command line scripts represent the prototypical implementation of the underlying concepts:
 
-* `dolmades` - to maintain your installed windows application
-* `ingredients` - to maintain your recipes dependencies (installers, resource files, ...)
-* `cook` - cooks a dolmade given a Dolmadefile and its ingredients
-* `goglizer` - prepares win-only GOG games to be cooked; GOG account required
-* `config.py` - a configuration file provides important settings
+* `dolmades` - to maintain your installed windows applications
+* `cook` - cooks a dolmade given a recipe and its ingredients
+* `box` - creates a standalone installer from a cooked dolmade
+* `goglizer` - creates template recipes for win-only GOG games; GOG account required
+* `config.py` - a configuration file providing important settings
 
 ## Long-term Goal
 Once the prototype is feature-complete I want to work on an enhanced followup version based on Qt and a remote repository service where user can store their dolmades, ingredients and recipes.
 
 ### Requirements
 
-* x86-64 linux with X11
+* x86 Linux (32 or 64 bit) with X.Org and xdg-compliant desktop environment
 * Python 2.7
-* tar+curl
+* tar+gzip+curl
 
 ### Acknowledgements
 
@@ -59,19 +59,21 @@ Dolmades make heavy use of the following underlying technologies:
  * **wine:** for running windows application in Linux
  * **winetricks:** for installing most common ingredients
  * **lgogdownloader:** for GOG support
+ * **makeself:** for creating standalone installers
 
 ### Changelog
 
 v1.1 "From Blue To Green" - *TBD*
 
 * Support creation of self-installable dolmades
-* Import/Export working across changed user names
+* Import&Export working reliably now even when user name changes
+* Support for 32 bit kernels
 * Improved recipe specification
 * Improved ingredients handling
 * Lots of refactoring / bug fixing
 * Beautification (concept, textual output, code)
-* More documentation
-* Update base images to Wine 4
+* Improved documentation
+* Updated base images to Wine 4
 
 v1.0 "The Goglizer" - *2018-11-27*
 
@@ -105,31 +107,33 @@ Cooking describes the process of building a dolmade from a recipe given its requ
 To cook a dolmade use the very simple example:
 
 ```
-./cook recipe/ASD_LifeForce.dolmade
+./cook recipes/ASD_LifeForce.dolmade
 ```
 
 This will install the winning demo of Assembly 2007 by Andromeda Software Development.
 At first the required ingredients will be downloaded and verified by its checksum. 
 Then, the dolmade is being created and the installation procedure as defined in the recipe is being run.
-Next, a menu entry and a desktop symbol is being created. 
-Finally, the demo can be started either from the menu or by launching the desktop icon.
 
 <p align="center">
   <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="screen shot asd lifeforce"/>
 </p>
 
-Alternatively, the demo can be launched from the command line:
+The demo can now be launched from the command line:
 ```
-./dolmades launch ASF_LifeForce
+./dolmades launch LifeForce_ASD
+```
+
+A menu entry and a desktop symbol can be created with the following command:
+```
+./dolmades serve LifeForce_ASD
 ```
 
 Now try a second example: the free (as in beer) adventure game "Broken Sword":
 
 ```
-./cook recipe/Broken_Sword.dolmade
+./cook recipes/Broken_Sword.dolmade --serve
 ```
-
-Click yourself straight through the installation progress and start the game.
+This will already create the menu entries and desktop symbol to launch the game.
 
 <p align="center">
   <img src="shots/firstuse_0.png?raw=true" alt="screen shot 0"/>
@@ -142,13 +146,13 @@ Select `Windowed Mode` in the launcher and click "Ok":
   <img src="shots/firstuse_1.png?raw=true" alt="screen shot 1"/>
 </p>
 
-This will launch the game:
+The game will be started. You should be hearing sound unless your alsa device is wrongly detected by wine which may still happen on some hardware.
 
 <p align="center">
   <img src="shots/firstuse_2.png?raw=true" alt="screen shot 2"/>
 </p>
 
-A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case the app hangs itself. 
+A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case it hangs. 
 
 More recipes for dolmades can be downloaded [here](https://github.com/dolmadefiles)
 
@@ -204,9 +208,10 @@ Now choose a game of your liking and instruct `goglizer` to download the ingredi
 ```
 Now the dolmade can be installed:
 ```
-./cook "flight_of_the_amazon_queen:en:1.0.dolmade"
+./cook "flight_of_the_amazon_queen:en:1.1.dolmade" --serve
 ```
 After successful completion you will find a clickable icon on your desktop and a menu entry :)
+You can skip the `goglizer` run completely by using the recipe under `recipes/flight_of_the_amazon_queen:en:1.1.dolmade`.
 
 ## Fixing issues
 
@@ -273,7 +278,7 @@ Lists the locally available dolmades:
 
 ### Removal
 
-Removes the given dolmade and frees up the allocated space:
+Removes the given dolmade (data, menu entries and desktop symbols) and frees up the allocated space:
 ```
 ./dolmades del name-of-dolmade
 ```
@@ -295,7 +300,7 @@ Furthermore, the home directory of the calling user is available:
 ./dolmades debug name-of-dolmade
 ls -lad $HOME /wineprefix /install
 ```
-In rare cases you might to run as fake root, e.g. to install a missing package:
+In rare cases you might want to run as fake root, e.g. to install a missing package:
 ```
 ./dolmades root-debug runtime
 apt-get update && apt-get -y install vim
@@ -304,13 +309,13 @@ apt-get update && apt-get -y install vim
 If `name-of-dolmade` is given as argument the changes are being applied permanently.
 If `name-of-base` is given as argument a temporary dolmade is being created and destroyed after the shell is being closed. `name-of-base` is used as template and currently can be one of the following:
 * `runtime` - used internally by `dolmades`, `cook` and `goglizer`
-* `base` - Ubuntu 16.04 LTS prepared for the installation of wine
+* `base` - Ubuntu 18.04 LTS prepared for the installation of wine
 * `winestable` - `base` with wine stable added and preconfigured
 * `winedevel`- `base` with wine testing added and preconfigured
 
 ### Binding
 
-It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being executed but not when it is being debugged.
+It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being launched but not when it is being debugged.
 
 ```
 ./dolmades binds name-of-dolmade
@@ -343,31 +348,39 @@ It is possible to export and import a readily installed dolmade.
 
 The final goal is to be able to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. Since the user name will likely change all users home directories are shared and being symlinked to `root`. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
 
-### Serving
+### Menu entries and desktop symbols
 
 Last but not least the dolmade can be served on the desktop
 ```
 ./dolmades serve name-of-dolmade
 ```
-This will create a clickable short cut on the desktop and a sub-menu entry which will launch the corresponding dolmade. It can be safely deleted and recreated anytime.
+This will create a clickable icon on the desktop and a sub-menu entry which will launch the corresponding dolmade. In addition a menu entry for uninstallation is created.
+It is possible to remove the menu entries and the desktop symbol again without uninstalling the dolmade:
+```
+./dolmades clearaway name-of-dolmade
+```
 
 ## Advanced
 
 ### Base Images
-`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build are available at https://github.com/dolmades-docker. As of now three images are available:
+`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build are available at https://github.com/dolmades-docker. As of now four images are available:
 
 * winestable - current wine stable version
-* winedevel - current wine development version
+* winestable_i386 - current wine stable version (32 bit)
 * winestaging - current wine staging version: development version + custom patches
+* winestaging_i386 - current wine staging version: development version + custom patches (32  bit)
 
 The images for releases will be tagged accordingly and not being rebuilt in future. 
-Images with the `latest` tag will be used for development and occasionally being rebuilt. 
+Images with the `latest` tag are occasionally being rebuild, may break and are therefore reserved for internal development.
 This is what all images have in common:
 
-* Ubuntu LTS 16.04 64-bit base with wine PPA
+* Ubuntu LTS 18.04 base with wine PPA
 * Wine installation under `/wineprefix` with 32-bit prefix
-* targetLauncher GUI script under `/usr/local/bin`
+* `yad` for graphical installation/uninstallation
+* `targetLauncher` GUI script under `/usr/local/bin`
 * `wget curl less vim` for convenience 
+
+It is possible to create custom docker images on DockerHub as base for recipes which e.g. offer legacy wine, gallium9, pba or Proton support.
 
 ### Help
 
@@ -376,6 +389,7 @@ All available tools give help output:
 ./dolmades help
 ./dolmades help bind
 ./cook
+./box
 ./goglizer -h
 ```
 
@@ -383,7 +397,7 @@ All available tools give help output:
 
 Dolmades ships preconfigured but you may modify some settings to your liking in file `config.py`:
 
-* `VERSION = "1.0"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. It is set to `latest` in branches and omitted in the recipes, it will be just set for releases.
+* `VERSION = "1.1"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. It is set to `latest` in branches and omitted in the recipes, it will be just set for releases.
 
 * `DOLMADES_PATH = HOME + '/.dolmades'` - this is the base path where dolmades stores its runtime, base images, dolmades, meta data, icons and GOG games lists. Note: this affects which host directories you can bind. A bind is never allowed to contain `DOLMADES_PATH` since it would be a security issue!
 
@@ -417,7 +431,7 @@ This name is going to be used in the desktop symlink title with `_` characters c
 
 ```
 VERSION
- 1.0
+ 1.1
 ```
 This command is optional. It defines the tag of the base image pulled by the recipe, and has to match with the version reported by `cook`. Advised to be omitted in development, such that no version checking takes place, and the `latest` base image is being used.
 
@@ -542,10 +556,9 @@ I figure some exciting use cases which would become addressable as well, e.g.
 * `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
 * `udocker` requires tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137) which every recent distro should provide
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
-* 64bit linux kernel is needed due to the docker base images being built with x86-64 architecture. Technically it is possible to rebuild them using a 32bit linux kernel
 * wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32-bit windows
-* do not report issues to wine directly when `winetricks` has been used in the recipe, report them here instead!
-* sometimes `udocker` fails to pull some layers from the docker registry (timeouts). Simply repeating the commands should help.
-* GOG installer errors: many GOG games display error messages at the end of the installation process. I suspect some failing installer script commands are the source. The installed games seem to work anyways! According to [this post](https://wp.xin.at/archives/tag/out-of-global-vars-range) these messages can even occur on Windows machines!
+* do not report issues to wine directly when `winetricks` has been used in the recipe
+* sometimes `udocker` fails to pull some layers from the docker registry (timeouts) - simply repeating the commands should help.
+* GOG installer errors: many GOG games display error messages at the end of the installation process. I suspect some failing installer script commands are the source. The installed games seem to work anyways! According to [this post](https://wp.xin.at/archives/tag/out-of-global-vars-range) these messages even occur on Windows machines!
 
 Last but not least: if you are in trouble, check out the issues and open a new one if applicable.
