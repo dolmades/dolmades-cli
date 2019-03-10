@@ -52,7 +52,7 @@ Once the prototype is feature-complete I want to work on an enhanced version bas
 
 ### Acknowledgements
 
-Dolmades make heavy use of the following underlying technologies:
+Dolmades make use of the following underlying technologies:
 
  * **Docker + DockerHub:** for the dolmades base images
  * **udocker + proot:** for user-level containerization
