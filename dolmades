@@ -196,7 +196,8 @@ class Main(object):
                 f.write("[Desktop Entry]\nEncoding=UTF-8\nType=Directory\n")
                 f.write("Name=Dolmades v"+cfg.VERSION+"\n")
                 f.write("Comment=Windows Apps in Linux Containers\n")
-                f.write("Icon="+metaPath+"/icons/dolmade.png\n")
+                #f.write("Icon="+metaPath+"/icons/dolmade.png\n")
+                f.write("Icon=Dolmades_v"+cfg.VERSION+"-menu\n")
 
             with open(desktopFile, "w") as f:
                 f.write("[Desktop Entry]\nEncoding=UTF-8\nType=Application\n")
@@ -221,6 +222,10 @@ class Main(object):
             subprocess.call(cmdline, shell=True, close_fds=True)
 
             cmdline = "xdg-desktop-icon "+action+" --novendor "+desktopFile
+            print(cmdline)
+            subprocess.call(cmdline, shell=True, close_fds=True)
+
+            cmdline = "xdg-icon-resource "+action+" --novendor --size 22 "+metaPath+"/icons/dolmade.png Dolmades_v"+cfg.VERSION+"-menu"
             print(cmdline)
             subprocess.call(cmdline, shell=True, close_fds=True)
 
