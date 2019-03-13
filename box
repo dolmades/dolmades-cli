@@ -135,9 +135,12 @@ Furthermore, the Windows software shipping with this Dolmade contains the follow
 
     def start(self):
         try:
+            if (sys.argv[1]=="-h" or sys.argv[1]=="--help"):
+                print("Usage: "+sys.argv[0]+" dolmadename [licensefile]")
+                return
             dolmadeName = sys.argv[1]
         except:
-            print("Error: You need to pass a dolmadename!")
+            print("Usage: "+sys.argv[0]+" dolmadename [licensefile]")
             return
 
         workdir = tempfile.mkdtemp()
