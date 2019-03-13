@@ -421,18 +421,16 @@ All available tools give help output:
 
 ### Configuration
 
-Dolmades ships preconfigured but you may modify some settings to your liking in file `config.py`:
+Dolmades ships with preconfigured settings in `config.py`. These are the most important ones:
 
-* `VERSION = "1.1"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. It is set to `latest` in branches and omitted in the recipes, it will be just set for releases.
+* `VERSION = "1.1"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. In code branches it is set to `latest` and omitted in the recipes, it will be just set for releases.
 
-* `DOLMADES_PATH = HOME + '/.dolmades'` - this is the base path where dolmades stores its runtime, base images, dolmades, meta data, icons and GOG games lists. Note: this affects which host directories you can bind. A bind is never allowed to contain `DOLMADES_PATH` since it would be a security issue!
+* `DOLMADES_PATH = HOME + '/.dolmades'` - this is the base path where dolmades stores its runtime, base images, dolmades, meta data, icons and GOG games lists. Note: you could change this path, but this will affect which host directories you can bind. A bind is never allowed to contain `DOLMADES_PATH` since it would be a security issue!
 
-All other settings are advised to be kept!
+## Recipe Syntax
 
-## Dolmadefile Syntax
-
-A Dolmadefile is a specification which allows the guided build of the respective dolmade.
-Dolmadefiles are for dolmades what Dockerfiles are for Docker except that most dolmades are not built fully automated and hence require interaction if a graphical installer is being used. 
+A recipe is a specification which allows the guided build of the respective dolmade.
+Dolmadefiles are for dolmades what Dockerfiles are for Docker except that dolmades are not necessarily built fully automated and hence require interaction if a graphical installer is being used. 
 
 The structure of a `Dolmadefile` is:
 ```
@@ -453,7 +451,7 @@ DOLMADE
  Name_Of_The_Dolmade
 ```
 This command is mandatory. It defines the name of the dolmade used internally by `dolmades`. Whitespaces are not allowed. 
-This name is going to be used in the desktop symlink title with `_` characters converted into blanks.
+This name is going to be slightly converted and used in the desktop icon title.
 
 ```
 VERSION
