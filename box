@@ -25,7 +25,7 @@ export UDOCKER_TARBALL="$CURR_DIR/udocker-tarball-1.1.3.tar.gz"
 echo "Installing $DOLMADE_NAME into $INST_DIR..."
 
 UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker import "$CURR_DIR"/runtime.tar dolmades-runtime-image
-UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker create --name="dolmades-runtime" dolmades-runtime-image
+UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker --quiet create --name="dolmades-runtime" dolmades-runtime-image
 
 if [ -d "$INST_DIR" ]; then
         echo "Already installed, please remove it first!"
@@ -52,7 +52,7 @@ fi
 echo "License accepted, installing..."
 
 mkfifo "$CURR_DIR/progress_fifo"
-UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker run --user=$(whoami) --hostenv --hostauth --bindhome \
+UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker --quiet run --user=$(whoami) --hostenv --hostauth --bindhome \
   -v="$CURR_DIR/":/install dolmades-runtime sh -c \
     'exec 3<>/install/progress_fifo && yad --width=350 --sticky --on-top --center --progress --auto-close --window-icon=/install/icon.png --title "'$DOLMADE_NAME'" --no-buttons --text "Installing into '$INST_DIR'..." --undecorated <&3' &
 
@@ -115,19 +115,17 @@ fi
 """
 
     defaultLicense="""===DOLMADES LICENSE TEMPLATE===
-This Dolmade containing installable Windows software has been created using Dolmades v"""+cfg.VERSION+""". 
-It ships bundled with many software components licensed under a variety of open source licenses.
+This Dolmade contains installable Windows software and has been created using Dolmades v"""+cfg.VERSION+""". 
+It ships bundled with the following software components licensed under the following open source licenses:
 
-Core components are:
- * Dolmades - https://dolmades.org -- Apache
- * Docker - https://docker.io ...
- * Wine - https://winehq.org ...
- * UDocker - https://git ...
- * Proot - https://proot.me ...
- * Ubuntu - https://www.ubuntu.com ...
- * Yad - ...
- * ImageMagic - ...
- * Python 2.7 - ...
+ * Dolmades   - https://github.com/dolmades/dolmades-cli -- Apache 2.0
+ * Wine       - https://winehq.org                       -- LGPL v2.1
+ * UDocker    - https://github.com/indigo-dc/udocker     -- Apache 2.0
+ * Proot      - https://proot.me                         -- GPL v2.0
+ * Ubuntu     - https://www.ubuntu.com                   -- https://www.ubuntu.com/licensing
+ * Yad        - https://github.com/v1cont/yad            -- GPL v3.0
+ * ImageMagic -- https://raw.githubusercontent.com/ImageMagick/ImageMagick/master/LICENSE
+ * Python 2.7 -- https://www.python.org/download/releases/2.7/license/
 
 Furthermore, the Windows software shipping with this Dolmade contains the following licenses:
  * Unknown! Please add it here!
