@@ -54,7 +54,7 @@ echo "License accepted, installing..."
 mkfifo "$CURR_DIR/progress_fifo"
 UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker run --user=$(whoami) --hostenv --hostauth --bindhome \
   -v="$CURR_DIR/":/install dolmades-runtime sh -c \
-    'exec 3<>/install/progress_fifo && yad --width=350 --sticky --on-top --progress --auto-close --window-icon=/install/icon.png --title "'$DOLMADE_NAME'" --no-buttons --text "Installing into '$INST_DIR'..." --undecorated <&3' &
+    'exec 3<>/install/progress_fifo && yad --width=350 --sticky --on-top --center --progress --auto-close --window-icon=/install/icon.png --title "'$DOLMADE_NAME'" --no-buttons --text "Installing into '$INST_DIR'..." --undecorated <&3' &
 
 mkdir -p "$INST_DIR/cli"
 mkdir -p "$INST_DIR/res"
