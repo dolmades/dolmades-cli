@@ -556,15 +556,15 @@ If the icon filename is relative `/install` will be prepended. If the command is
 
  * Which distros have been tested? See [this issue](https://github.com/dolmades/dolmades-cli/issues/26)
  * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible. I plan to keep compatibility to major distributions though.
- * Why does the syntax for the recipes change? As of now the syntax may change for **every** version. This does not matter since dolmades recipes will work when the `VERSION` of the recipe matches the `dolmades` run script. Exported dolmades will contain all scripts necessary to rebuild and rerun the dolmade.
+ * Why does the syntax for the recipes change? So that it can evolve! As of now the syntax may change for **every** version. This does not matter since dolmades recipes will work when the `VERSION` of the recipe matches the `dolmades` run script. Exported dolmades will contain all scripts necessary to rebuild and rerun the dolmade.
  * Will the syntax for the recipes be fixed anytime? Probably. But not in the prototypical implementation phase. 
  * Will dolmades support ever MacOSX or Windows? Maybe. But not for the foreseeable future.
  * Is it enough to lookup ingredients by SHA256? TODO
 
 ## Future
 
-Dolmades currently is a prototypical implementation done in python. 
-Once it is feature-complete I want to work on an enhanced version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
+Dolmades currently are a prototypical implementation done in python. 
+Once feature-complete I want to work on an enhanced version based on Qt combining a remote repository service. The primary goal will be to create a powerful GUI to setup, maintain and run Windows software under Linux.
 
 I figure some exciting use cases which would become addressable as well, e.g.
 
