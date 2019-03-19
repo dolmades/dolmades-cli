@@ -28,7 +28,7 @@ Dolmades offer the following features over existing alternatives:
 * **Ease of use:** supports major linux distros and requires no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
 * **Mobility:** cooked dolmades are designed to be executable across various distros and system hardware
-* **Safety&Security:** dolmades are isolated from each other and from the host system by default
+* **Safety:** dolmades are isolated from each other and from the host system by default which prevents data loss
 
 ## Prototypical Implementation 
 The current implementation is a prototype in Python and focuses on basic features and GOG support. 
@@ -558,6 +558,7 @@ If the icon filename is relative `/install` will be prepended. If the command is
  * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible. I plan to keep compatibility to major distributions though.
  * Why does the syntax for the recipes change? So that it can evolve! As of now the syntax may change for **every** version. This does not matter since dolmades recipes will work when the `VERSION` of the recipe matches the `dolmades` run script. Exported dolmades will contain all scripts necessary to rebuild and rerun the dolmade.
  * Will the syntax for the recipes be fixed anytime? Probably. But not in the prototypical implementation phase. 
+ * How secure is the sandboxing? By default proot is used which is not really secure but more or less save since it prevents to accidentally destroy data on the host system. Later it will be possible to use singularity which is a real chroot environment, and this offers better security.
  * Will dolmades support ever MacOSX or Windows? Maybe. But not for the foreseeable future.
  * Is it enough to lookup ingredients by SHA256? TODO
 
