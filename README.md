@@ -28,7 +28,7 @@ Dolmades offer the following features over existing alternatives:
 * **Ease of use:** supports major linux distros and requires no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
 * **Mobility:** cooked dolmades are designed to be executable across various distros and system hardware
-* **Safety&Security:** dolmades are isolated from each other and from the host system by default
+* **Safety:** dolmades are isolated from each other and from the host system by default which prevents data loss
 
 ## Prototypical Implementation 
 The current implementation is a prototype in Python and focuses on basic features and GOG support. 
