@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation, usage and distribution of Windows applications in Linux environments to the utmost extent. 
+Dolmades are intended as a mean to ease packaging, installation, usage and distribution of Windows applications in Linux environments to the utmost extent. A dolmade is a containerized Windows app which runs on Linux.
 
 ### Features
 
@@ -14,9 +14,10 @@ The focus of the v1.x release cycle will be put on support for gaming, the stand
 
 * **Usage**
   * **Creation:** cook your application using recipes and create a desktop symlink and menu entry
-  * **Target launcher:** displays a selection of all installed applications and you choose which one to run
+  * **Target launcher:** displays a selection of all dolmades and you choose which one to run
   * **Shares:** bind selected paths from the host system to internal windows drives
-  * **Import&Export:** share your cooked dolmades as standalone executables or import them elsewhere
+  * **Import&Export:** share your dolmades and import them elsewhere
+  * **Distribute:** turn your dolmades into standalone installers
   
 * **Development:** 
   * **Create recipes:** use the existing recipes as template for your own win-only apps
@@ -28,12 +29,11 @@ Dolmades offer the following features over existing alternatives:
 * **Ease of use:** supports major linux distros and requires no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
 * **Mobility:** cooked dolmades are designed to be executable across various distros and system hardware
-* **Safety:** dolmades are isolated from each other and from the host system by default which prevents data loss
+* **Safety:** dolmades are isolated from each other and from the host system by default to prevent data loss
 
-## Prototypical Implementation 
-The current implementation is a prototype in Python and focuses on basic features and GOG support. 
-
-As of now a collection of a few command line scripts represent the prototypical implementation of the underlying concepts:
+## Implementation 
+The current implementation is done in Python and focuses on basic features and GOG support. 
+As of now the following command line scripts represent the prototypical implementation of the underlying concepts:
 
 * `dolmades` - to maintain your installed windows applications
 * `cook` - cooks a dolmade given a recipe and its ingredients
@@ -83,7 +83,7 @@ v1.0 "The Goglizer" - *2018-11-27*
 
 Dolmades makes use of several concepts which will be briefly explained here:
 
-* **Dolmades:** Win apps which behave like containers. They can be created, deleted, executed and migrated.
+* **Dolmades:** Win apps which behave like containers. They can be created, configured, executed and migrated.
 * **Recipes:** Specification files similar to Dockerfiles which define the building process of a dolmade.
 * **Ingredients:** Recipes require certain ingredients which can be ISO files, installers, media files ...
 * **Binds:** Files contained in dolmades are isolated by default but access to files or directories on the host system can be configured using shared binds 
@@ -269,32 +269,19 @@ Once a dolmade has been cooked and thoroughly tested it is possible to convert i
 ./box LifeForce_ASD
 ```
 This will package all dependencies and create an offline installer script based on `makeself` which installs on various Linux systems without special privileges.
-The approximate size overhead produced by the Ubuntu Base Image and the wineprefix will be 800M.
+The approximate size overhead produced by the Ubuntu Base Image and the wineprefix will be 800Mb.
 
-Users who download this file can select it in the "Downloads" folder, and open up a terminal via right click.
-The installer can then be run like this:
+Users who download this file should open a terminal at the location of the downloaded file and run the installer like this:
 ```
 sh LifeForce_ASD.dme.sh
 ```
-grant executable permissions via right click.
-Depending on the desktop environment it may be possible to execute the script when double clicked if executable permissions have been granted beforehand via right click.
-Unfortunately many desktop environments do not allow this. The method via terminal is more reliable.
+After accepting the license the dolmade will be installed under `$HOME/Dolmades-v1.1/LifeForce_ASD`. It can then be launched or removed again from the created menu entry or the desktop symbol.
 
-*Note: as of now self-installable Dolmades will require Python 2.7 on the host system. A future release will probably get rid of this requirement.*
+*Note: as of now self-installable Dolmades will require Python 2.7 and curl on the host system. A future release will probably get rid of this requirement.*
 
 ## Managing dolmades
 
 Your dolmades are managed by `dolmades`
-
-## Initialization
-
-Initialization does two things:
-* if it doesn't exist yet: initializing the dolmades directory under `DOLMADES_PATH`
-* downloading the docker `runtime` container with the matching version and (re)create it
-
-```
-./dolmades init
-```
 
 ### Listing
 Lists the locally available dolmades:
@@ -385,6 +372,19 @@ It is possible to remove the menu entries and the desktop symbol again without u
 ```
 ./dolmades clearaway name-of-dolmade
 ```
+
+## Initialization
+
+You should hardly need this command but better safe than sorry!
+
+Initialization does two things:
+* if it doesn't exist yet: initializing the dolmades directory under `DOLMADES_PATH`
+* downloading the `dolmades-runtime` container with the matching version and (re)create it
+
+```
+./dolmades init
+```
+
 
 ## Advanced
 
