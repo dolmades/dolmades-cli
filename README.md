@@ -277,7 +277,7 @@ sh LifeForce_ASD.dme.sh
 ```
 After accepting the license the dolmade will be installed under `$HOME/Dolmades-v1.1/LifeForce_ASD`. It can then be launched or removed again from the created menu entry or the desktop symbol.
 
-*Note: as of now self-installable Dolmades will require Python 2.7 and curl on the host system. A future release will probably get rid of this requirement.*
+*Note: as of now self-installable dolmades will require Python 2.7 and curl on the host system. A future release will probably get rid of this requirement.*
 
 ## Managing dolmades
 
