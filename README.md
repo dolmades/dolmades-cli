@@ -558,6 +558,7 @@ If the icon filename is relative `/install` will be prepended. If the command is
  * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible. I plan to keep compatibility to major distributions though.
  * Why does the syntax for the recipes change? So that it can evolve! As of now the syntax may change for **every** version. This does not matter since dolmades recipes will work when the `VERSION` of the recipe matches the `dolmades` run script. Exported dolmades will contain all scripts necessary to rebuild and rerun the dolmade.
  * Will the syntax for the recipes be fixed anytime? Probably. But not in the prototypical implementation phase. 
+ * How secure is the sandboxing? By default proot is used which is not really secure but more or less save since it prevents to accidentally destroy data on the host system. Later it will be possible to use singularity which is a real chroot environment, and this offers better security.
  * Will dolmades support ever MacOSX or Windows? Maybe. But not for the foreseeable future.
  * Is it enough to lookup ingredients by SHA256? TODO
 
