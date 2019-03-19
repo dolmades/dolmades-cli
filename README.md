@@ -10,26 +10,27 @@ Dolmades are intended as a mean to ease packaging, installation, usage and distr
 
 ### Features
 
-Dolmades offer the following features over existing alternatives:
+* **Usage**
+  * **Installation:** build your application using recipes and create a desktop symlink and menu entry
+  * **Target launcher:** choose between installed binaries which one to run
+  * **Shares:** bind selected paths from the host system to internal Windows drives
+  * **Import&Export:** share your dolmades between multiple Linux systems
+  
+* **Development:** 
+  * **Create recipes:** use the existing recipes as template and derive your own Windows apps
+  * **Create installers:** distribute your dolmades as standalone installers
+  * **Debug mode:** examine problems, add fixes and instantly rebuild the app
+  * **Selectable base:** choose between between several Wine versions
+  * **GOG gaming support:** generate template recipes for your personal GOG collection
+
+The focus of the v1.x release cycle will be put on support for gaming, the standardization of the recipe specification used to create dolmades, ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
+
+### Advantages
+
 * **Ease of use:** standalone installable on major Linux distros while requiring no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
 * **Mobility:** designed to be executable across various distros and system hardware
 * **Safety:** isolated from each other and from the host system by default to prevent data loss
-
-The focus of the v1.x release cycle will be put on support for gaming, the standardization of the recipe specification used to create dolmades, ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
-
-* **Usage**
-  * **Creation:** cook your application using recipes and create a desktop symlink and menu entry
-  * **Target launcher:** displays a selection of all dolmades and you choose which one to run
-  * **Shares:** bind selected paths from the host system to internal windows drives
-  * **Import&Export:** share your dolmades and import them elsewhere
-  
-* **Development:** 
-  * **Create recipes:** use the existing recipes as template for your own win-only apps
-  * **Create installers:** distribute your dolmades as standalone installers
-  * **Debug mode:** examine problems, add fixes and instantly rebuild the application
-  * **Selectable base:** choose between between several wine versions
-  * **GOG gaming support:** generate template recipes for your personal GOG collection
 
 ## Implementation 
 The current implementation is done in Python and focuses on basic features and GOG support. 
