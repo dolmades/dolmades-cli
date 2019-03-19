@@ -44,21 +44,29 @@ cd "$INST_DIR/cli"
 echo "Installation completed!"
 """
 
-    defaultLicense="""===DOLMADES LICENSE TEMPLATE===
-This Dolmade contains installable Windows software and has been created using Dolmades v"""+cfg.VERSION+""". 
-It ships bundled with the following software components licensed under the following open source licenses:
+    dolmadeLicense="""---===== END USER LICENSE AGREEMENT =====---
+
+This Dolmade contains installable Windows software and has been created 
+using Dolmades v"""+cfg.VERSION+""". 
+It ships bundled with the following software components licensed under the 
+following open source licenses:
 
  * Dolmades   - https://github.com/dolmades/dolmades-cli -- Apache 2.0
- * Wine       - https://winehq.org                       -- LGPL v2.1
  * UDocker    - https://github.com/indigo-dc/udocker     -- Apache 2.0
- * Proot      - https://proot.me                         -- GPL v2.0
- * Ubuntu     - https://www.ubuntu.com                   -- https://www.ubuntu.com/licensing
- * Yad        - https://github.com/v1cont/yad            -- GPL v3.0
- * ImageMagic -- https://raw.githubusercontent.com/ImageMagick/ImageMagick/master/LICENSE
- * Python 2.7 -- https://www.python.org/download/releases/2.7/license/
+ * Wine       - https://winehq.org                       --  LGPL v2.1
+ * Proot      - https://proot.me                         --   GPL v2.0
+ * makeself   - https://github.com/megastep/makeself     --   GPL v2.0
+ * Yad        - https://github.com/v1cont/yad            --   GPL v3.0
+ * Ubuntu     
+   https://www.ubuntu.com/licensing
+ * Python 2.7
+   https://www.python.org/download/releases/2.7/license/
+ * ImageMagic 
+   https://raw.githubusercontent.com/ImageMagick/ImageMagick/master/LICENSE
 
-Furthermore, the Windows software shipping with this Dolmade contains the following licenses:
- * Unknown! Please add it here!
+Furthermore, the Windows software shipping with this Dolmade contains the 
+following licenses:
+
 """
 
     def start(self):
@@ -73,21 +81,25 @@ Furthermore, the Windows software shipping with this Dolmade contains the follow
 
         workdir = tempfile.mkdtemp()
         
+        f=open(workdir+"/license.txt",'w')
+        f.write(self.dolmadeLicense)
+
         try:
             licenseFile = sys.argv[2]
-            shutil.copy(licenseFile, workdir+"/license.txt")
+            f2=open(licenseFile, 'r')
             print("Using license file given as argument")
+            f.write(f2.read())
         except:
             print("No license file argument, trying to find the license in the meta data")
             try:
-                shutil.copy(metaDir+"/"+licenseFile, "./license.txt")
+                f3=open(metaDir+"/license.txt", 'r')
                 print("Using license from meta data")
+                f.write(f3.read())
             except:
-                print("Warning: no license found, we do not allow boxing without a license!\nTherefore a default license will be shipped!\nThis is NOT recommended!")
-                f=open(workdir+"/license.txt",'w')
-                f.write(self.defaultLicense)
-                f.close()
+                print("Warning: no license found, we do not allow boxing without a license!\nThis is NOT recommended!")
+                f.write("\nNo custom license defined!")
 
+        f.close()
         cwd = os.getcwd()
         os.chdir(workdir)
 
@@ -103,9 +115,9 @@ Furthermore, the Windows software shipping with this Dolmade contains the follow
         subprocess.call(cmd, shell=True, close_fds=True)
 
         # retrieve makeself 2.4.0 and revert commit 48304a7d9a423a54d9a92c3ac5701f91e83b454c to fix progress indication
-        cmd="wget https://dolmades.org/mirror/udocker/udocker-tarball-1.1.3.tar.gz && \
-             wget https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself.sh && \
-             wget https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself-header.sh && \
+        cmd="curl -L -o udocker-tarball-1.1.3.tar.gz https://dolmades.org/mirror/udocker/udocker-tarball-1.1.3.tar.gz && \
+             curl -L -o makeself.sh https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself.sh && \
+             curl -L -o makeself-header.sh https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself-header.sh && \
              sed -i 's#dd ibs=\\\$offset skip=1 2>/dev/null#dd bs=\\\$offset count=0 skip=1 2>/dev/null#' makeself-header.sh && \
              sed -i 's#| more#| more -d#' makeself-header.sh"
 
