@@ -166,14 +166,6 @@ class Main(object):
                         os.remove(pl)
                     os.symlink("../drive_"+drvletter,pl)
 
-        if (cmd=="del"):
-            if os.path.isfile(cfg.SELF_PATH+"/../uninstall.sh"):
-                print("External uninstaller script found, delegating...")
-                subprocess.call(cfg.SELF_PATH+"/../uninstall.sh", shell=True, close_fds=True)
-                return
-            else:
-                print("No uninstaller found. Delete this dolmade by myself!")
-
         if (cmd=="serve" or cmd=="clearaway" or cmd=="del"):
             name = sys.argv[2]
             metaPath=cfg.DOLMADES_PATH+"/containers/"+name+"/ROOT/.dolmades"
@@ -225,9 +217,14 @@ class Main(object):
             print(cmdline)
             subprocess.call(cmdline, shell=True, close_fds=True)
 
-            cmdline = "xdg-icon-resource "+action+" --novendor --size 22 "+metaPath+"/icons/dolmade.png Dolmades_v"+cfg.VERSION+"-menu"
-            print(cmdline)
-            subprocess.call(cmdline, shell=True, close_fds=True)
+            if (action=="install"):
+                shutil.copy(metaPath+"/icons/dolmade.png",cfg.DOLMADES_PATH+"/dolmade.png")
+                cmdline = "xdg-icon-resource "+action+" --novendor --size 22 "+cfg.DOLMADES_PATH+"/dolmade.png Dolmades_v"+cfg.VERSION+"-menu"
+                print(cmdline)
+                subprocess.call(cmdline, shell=True, close_fds=True)
+            
+            else:
+                print("NOTE: menu icon is never to be uninstalled")
 
             #os.remove(directoryFile)
             #os.remove(desktopFile)
@@ -238,6 +235,13 @@ class Main(object):
             cmd=cfg.UDOCKERCMD_QUIET+" rm "+cn
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
+            try:
+                boxedPath=cfg.BOXED_PATH
+                print("This is a boxed dolmade, delete entire installation path "+boxedPath+"...")
+                shutil.rmtree(boxedPath)
+                print("Done")
+            except:
+                pass
 
         if (cmd=="help"):
             print("Usage: dolmades [init|launch|list|del|debug|debug-root|import|export|bind|binds|serve|clearaway] options")

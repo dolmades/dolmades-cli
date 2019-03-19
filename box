@@ -9,6 +9,7 @@ import subprocess
 import os
 import re
 import hashlib
+import datetime
 
 import config as cfg
 
@@ -24,94 +25,23 @@ export UDOCKER_TARBALL="$CURR_DIR/udocker-tarball-1.1.3.tar.gz"
 
 echo "Installing $DOLMADE_NAME into $INST_DIR..."
 
-UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker import "$CURR_DIR"/runtime.tar dolmades-runtime-image
-UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker --quiet create --name="dolmades-runtime" dolmades-runtime-image
-
-if [ -d "$INST_DIR" ]; then
-        echo "Already installed, please remove it first!"
-        UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker --quiet run   -v $CURR_DIR:/install --user=$(whoami) --bindhome --hostenv dolmades-runtime \
-            sh -c 'yad --item-separator="|" --window-icon=/install/icon.png --sticky --on-top --center \
-            --text="The installation directory '$INST_DIR' exists already.\n In case you installed this dolmade already, uninstall it first, or delete this directory manually!" \
-            --button="Cancel|install/cancel.svg|Cancel the installation":0 --image=/install/icon.png --title "'$DOLMADE_NAME'"'
-        exit 1
-fi
-
-UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker --quiet run \
-  -v $CURR_DIR:/install --user=$(whoami) --bindhome --hostenv dolmades-runtime \
-    sh -c 'yad --item-separator="|" --window-icon=/install/icon.png --sticky --on-top --width=500 --height=300 --center --form \
-    --field="Please read and accept the license in order to install and use this software! $1:TXT" \
-    "$(cat /install/license.txt)" \
-    --button="Cancel|/install/cancel.svg|Cancel the installation":1 --button="Accept|/install/ok.svg|Proceed with the installation":0\
-    --image=/install/icon.png --title "'$DOLMADE_NAME'"'
-
-ret="$?"
-if [ "$ret" -ne "0" ]; then
-        echo "License declined, installation cancelled!"
-        exit 1
-fi
-echo "License accepted, installing..."
-
-mkfifo "$CURR_DIR/progress_fifo"
-UDOCKER_DIR="$CURR_DIR/.dolmades" "$CURR_DIR/cli"/udocker --quiet run --user=$(whoami) --hostenv --hostauth --bindhome \
-  -v="$CURR_DIR/":/install dolmades-runtime sh -c \
-    'exec 3<>/install/progress_fifo && yad --width=350 --sticky --on-top --center --progress --auto-close --window-icon=/install/icon.png --title "'$DOLMADE_NAME'" --no-buttons --text "Installing into '$INST_DIR'..." --undecorated <&3' &
-
 mkdir -p "$INST_DIR/cli"
 mkdir -p "$INST_DIR/res"
-
-echo "5" > "$CURR_DIR/progress_fifo"
-sleep 1
 
 cp -p "$CURR_DIR/cli/dolmades" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/udocker" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/prettyprint.py" "$INST_DIR/cli"
-cp -p "$CURR_DIR/"*.svg "$INST_DIR/res"
-cp -p "$CURR_DIR/"*.png "$INST_DIR/res"
 cp -p "$CURR_DIR/license.txt" "$INST_DIR"
 
-echo "10" > "$CURR_DIR/progress_fifo"
-sleep 1
-
 cat "$CURR_DIR/cli/config.py" | sed "s#^DOLMADES_PATH = HOME + '/.dolmades-' + VERSION#DOLMADES_PATH = '"$INST_DIR"/.dolmades'#" > "$INST_DIR/cli/config.py"
-cat "$CURR_DIR/uninstall.sh" | sed "s#DOLMADE_NAME#$DOLMADE_NAME#g" > "$INST_DIR/uninstall.sh"
+echo >> "$INST_DIR/cli/config.py"
+echo "BOXED_PATH=\'$INST_DIR\'" >> "$INST_DIR/cli/config.py"
 
-echo "15" > "$CURR_DIR/progress_fifo"
-sleep 1
-
-chmod u+x "$INST_DIR/uninstall.sh"
 cd "$INST_DIR/cli"
-
-echo "20" > "$CURR_DIR/progress_fifo"
-
 ./dolmades import "$CURR_DIR/$DOLMADE_FNAME"
-
-echo "90" > "$CURR_DIR/progress_fifo"
-sleep 1
-
 ./dolmades serve $DOLMADE_NAME
 
-echo "100" > "$CURR_DIR/progress_fifo"
-
-UDOCKER_DIR="$INST_DIR/.dolmades" "$INST_DIR/cli"/udocker --quiet run -v $INST_DIR/res:/install --user=$(whoami) --bindhome --hostenv "$DOLMADE_NAME" sh -c '\
-  yad --item-separator="|" --window-icon=/install/icon.png --sticky --on-top --center --title "'$DOLMADE_NAME'" \
-      --image=/install/icon.png --text "Installation into '$INST_DIR' finished successfully" --button="Okay|/install/ok.svg":0'
-"""
-
-    uninstallScript="""#!/bin/sh  
-OWNDIR=`dirname "$(readlink -f "$0")"`
-cd "$OWNDIR"
-
-export UDOCKER_DIR="$(readlink -f $OWNDIR/.dolmades/)"
-
-cli/udocker --quiet run --user=$(whoami) --volume=$OWNDIR:/install --bindhome --hostenv "DOLMADE_NAME" sh -c \
-  'yad --width=500 --height=100 --window-icon=/install/res/icon.png --image=/install/res/icon.png --sticky--on-top --center \
-  --title "Uninstallation of DOLMADE_NAME" --text "This will remove the dolmade DOLMADE_NAME and all associated data from this machine! Are you sure?" \
-  --item-separator="|" --button="No|/install/res/cancel.svg|Leave the dolmade installed":1 --button="Yes|/install/res/ok.svg|Proceed with the removal of the dolmade":0'
-
-if [ "$?" -eq "0" ]; then
-        cli/dolmades clearaway "DOLMADE_NAME"
-        rm -rf $(readlink -f .)
-fi
+echo "Installation completed!"
 """
 
     defaultLicense="""===DOLMADES LICENSE TEMPLATE===
@@ -168,14 +98,6 @@ Furthermore, the Windows software shipping with this Dolmade contains the follow
         shutil.copy(cfg.SELF_PATH+"/prettyprint.py","./cli/prettyprint.py")
 
         metaDir=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmadeName)+"/ROOT/.dolmades/"
-        shutil.copy(metaDir+"icon.png","./icon.png")
-        shutil.copy(metaDir+"icons/ok.svg","ok.svg")
-        shutil.copy(metaDir+"icons/cancel.svg","cancel.svg")
-
-        cmd=cfg.SELF_PATH+"/udocker export -o ./runtime.tar dolmades-runtime"
-        print(cmd)
-        subprocess.call(cmd, shell=True, close_fds=True)
-
         cmd=cfg.SELF_PATH+"/dolmades export '"+dolmadeName+"'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
@@ -184,7 +106,8 @@ Furthermore, the Windows software shipping with this Dolmade contains the follow
         cmd="wget https://dolmades.org/mirror/udocker/udocker-tarball-1.1.3.tar.gz && \
              wget https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself.sh && \
              wget https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself-header.sh && \
-             sed -i 's#dd ibs=\\\$offset skip=1 2>/dev/null#dd bs=\\\$offset count=0 skip=1 2>/dev/null#' makeself-header.sh"
+             sed -i 's#dd ibs=\\\$offset skip=1 2>/dev/null#dd bs=\\\$offset count=0 skip=1 2>/dev/null#' makeself-header.sh && \
+             sed -i 's#| more#| more -d#' makeself-header.sh"
 
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
@@ -194,13 +117,9 @@ Furthermore, the Windows software shipping with this Dolmade contains the follow
         f.close()
         st=os.stat("./install.sh")
         os.chmod("./install.sh", st.st_mode|stat.S_IEXEC)
-        f=open("./uninstall.sh",'w')
-        f.write(self.uninstallScript)
-        f.close()
-        st=os.stat("./uninstall.sh")
-        os.chmod("./uninstall.sh", st.st_mode|stat.S_IEXEC)
 
-        cmd="sh makeself.sh --nox11 "+workdir+" "+cwd+"/"+dolmadeName+".dme.sh '"+dolmadeName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
+        packagingDate=datetime.datetime.fromtimestamp(os.path.getmtime(metaDir)).isoformat()
+        cmd="sh makeself.sh --packaging-date '"+packagingDate+"' --license ./license.txt "+workdir+" "+cwd+"/"+dolmadeName+".dme.sh '"+dolmadeName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
