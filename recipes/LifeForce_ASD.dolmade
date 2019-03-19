@@ -13,6 +13,10 @@ BASE
 VERSION
     1.1
 
+# Describing this Dolmade
+DESCRIPTION
+    1st place on Assembly 2007
+
 # Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
 INGREDIENT
     d7500dffbb63292af3ba608a0651b3463cf1ff8f53cbcc115ebbe32e2d5440f8
