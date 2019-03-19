@@ -96,7 +96,7 @@ following licenses:
                 print("Using license from meta data")
                 f.write(f3.read())
             except:
-                print("Warning: no license found, we do not allow boxing without a license!\nThis is NOT recommended!")
+                print("Warning: no license found, we do not recommend boxing without a license!")
                 f.write("\nNo custom license defined!")
 
         f.close()
