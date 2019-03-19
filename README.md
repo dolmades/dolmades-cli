@@ -10,6 +10,12 @@ Dolmades are intended as a mean to ease packaging, installation, usage and distr
 
 ### Features
 
+Dolmades offer the following features over existing alternatives:
+* **Ease of use:** standalone installable on major Linux distros while requiring no special permissions
+* **Compatibility:** recipes create functional dolmades across various distros and system hardware
+* **Mobility:** designed to be executable across various distros and system hardware
+* **Safety:** isolated from each other and from the host system by default to prevent data loss
+
 The focus of the v1.x release cycle will be put on support for gaming, the standardization of the recipe specification used to create dolmades, ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
 * **Usage**
@@ -17,19 +23,13 @@ The focus of the v1.x release cycle will be put on support for gaming, the stand
   * **Target launcher:** displays a selection of all dolmades and you choose which one to run
   * **Shares:** bind selected paths from the host system to internal windows drives
   * **Import&Export:** share your dolmades and import them elsewhere
-  * **Distribute:** turn your dolmades into standalone installers
   
 * **Development:** 
   * **Create recipes:** use the existing recipes as template for your own win-only apps
+  * **Create installers:** distribute your dolmades as standalone installers
   * **Debug mode:** examine problems, add fixes and instantly rebuild the application
   * **Selectable base:** choose between between several wine versions
   * **GOG gaming support:** generate template recipes for your personal GOG collection
-
-Dolmades offer the following features over existing alternatives:
-* **Ease of use:** supports major linux distros and requires no special permissions
-* **Compatibility:** recipes create functional dolmades across various distros and system hardware
-* **Mobility:** cooked dolmades are designed to be executable across various distros and system hardware
-* **Safety:** dolmades are isolated from each other and from the host system by default to prevent data loss
 
 ## Implementation 
 The current implementation is done in Python and focuses on basic features and GOG support. 
