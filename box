@@ -1,5 +1,8 @@
 #!/usr/bin/env python2
 
+# This file is exclusively licensed under GPL 3.0
+# Please check the file gpl.txt in this directory
+
 import tempfile
 import shutil
 import stat
