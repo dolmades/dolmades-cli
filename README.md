@@ -403,11 +403,11 @@ This is what all images have in common:
 
 * Ubuntu LTS 18.04 base with wine PPA
 * Wine installation under `/wineprefix` with 32-bit prefix
-* `yad` for graphical installation/uninstallation
 * `targetLauncher` GUI script under `/usr/local/bin`
+* `yad` required by `targetLauncher`
 * `wget curl less vim` for convenience 
 
-It is possible to create custom docker images on DockerHub as base for recipes which e.g. offer legacy wine, gallium9, pba or Proton support.
+It is possible to create custom docker images on DockerHub as base for recipes which e.g. offer legacy wine, pba or Proton support.
 
 ### Help
 
