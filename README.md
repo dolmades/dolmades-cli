@@ -64,7 +64,7 @@ Dolmades make use of the following underlying technologies:
 
 ### Changelog
 
-v1.1 "From Blue To Green" - *TBD*
+v1.1 "From Blue To Green"
 
 * Support creation of self-installable dolmades
 * Import&Export working reliably now even when user name changes
