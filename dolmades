@@ -4,6 +4,7 @@ import shutil
 import stat
 import sys
 import subprocess
+import shlex
 import os
 import re
 import hashlib
@@ -11,6 +12,17 @@ import hashlib
 import config as cfg
 
 class Main(object):
+
+    def handlePulseAudio(self):
+        cmd = "which pasuspender"
+        save_cmd=shlex.split(cmd)
+        proc=subprocess.Popen(save_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = proc.communicate()
+        self.paCmd=""
+
+        if (proc.returncode==0):
+            self.paCmd=out.split('\n')[0]
+            print("Found PulseAudio, will use "+self.paCmd)
 
     def start(self):
         try:
@@ -22,12 +34,6 @@ class Main(object):
             cfg.INIT(True)
 
         if (cmd=='launch'):
-
-            try:
-                subprocess.call("pulseaudio -k", shell=True, close_fds=True)
-                print("PulseAudio suspended")
-            except:
-                pass
 
             containerPath=cfg.DOLMADES_PATH+"/containers/"+sys.argv[2]
 
@@ -62,8 +68,9 @@ class Main(object):
             if os.path.exists(cfg.HOME+"/.Xauthority"):
                 cmd_bind=cmd_bind+" --volume="+cfg.HOME+"/.Xauthority"
 
-            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER\
-                    +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
+            self.handlePulseAudio()
+            cmd=self.paCmd+" -- "+cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER\
+                    +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -x -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -73,14 +80,9 @@ class Main(object):
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=='debug'):
+            self.handlePulseAudio()
 
-            try:
-                subprocess.call("pulseaudio -k", shell=True, close_fds=True)
-                print("PulseAudio suspended")
-            except:
-                pass
-
-            cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+\
+            cmd=self.paCmd+" -- "+cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+\
                 " --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+\
                 " --bindhome --hostenv --env='WINEDLLOVERRIDES=winemenubuilder.exe=d' --hostauth --dri '"+sys.argv[2]+"' bash"
             print(cmd)
