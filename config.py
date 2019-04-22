@@ -121,7 +121,7 @@ def INIT(force):
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        self.SETUP("dolmades-runtime")
+        SETUP("dolmades-runtime")
 
     if (not os.path.exists(DOLMADES_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR)):
         os.mkdir(DOLMADES_PATH+"/containers/dolmades-runtime/ROOT/"+META_DIR, 0755)
