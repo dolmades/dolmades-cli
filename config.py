@@ -65,7 +65,7 @@ def SETUP(dolmaname, mode=None):
                    mode=engine
                    print("Success using "+mode)
                    return
-                raise Exception("None of the available container engines is usable")
+            raise Exception("None of the available container engines is usable")
         if mode not in enginePreference:
             raise Exception("Unsupported container engine: " + mode)
         else:
@@ -88,7 +88,7 @@ def INIT(force):
         os.mkdir(INST_PATH, 0755)
 
     printitb("Storing dolmades python runscripts...")
-    cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" dolmades udocker cook goglizer config.py"
+    cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" dolmades udocker cook goglizer config.py prettyprint.py box"
     subprocess.call(cmd, shell=True, close_fds=True)
 
     force_runtime_rebuild=False
