@@ -9,7 +9,7 @@ import re
 import hashlib
 
 import config as cfg
-from prettyprint import color, printb, printit, printitb, printu
+from prettyprint import color, printb, printit, printitb, printu, printx
 
 class Ingredient(object):
 
@@ -232,6 +232,10 @@ class Dolmade(object):
         cmd = cfg.UDOCKERCMD_QUIET+" create "+self.baseImg+cfg.DOLMADE_SUFFIX+":"+self.version
         self.sha256 = subprocess.check_output(cmd, shell=True, close_fds=True).strip()
 
+        # use proot without seccomp filtering
+        # which is slower but works everywhere
+        cfg.SETUP(self.sha256, "P2")
+
         if (not os.path.exists(self.metaPath())):
             os.mkdir(self.metaPath(), 0755)
         
@@ -280,6 +284,9 @@ class Dolmade(object):
                     self.targetPath = '/'.join(outp.split('/')[:-1])
                 except:
                     printitb("ERROR: could not determine target path!")
+
+        # now setting optimal engine
+        cfg.SETUP(self.sha256)
 
         descInContainer = self.metaPath()+"/description.txt"
         f = open(descInContainer, 'w')

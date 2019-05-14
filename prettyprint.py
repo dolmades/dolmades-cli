@@ -13,6 +13,9 @@ class color:
    UNDERLINE = '\033[4m'
    END = '\033[0m'
 
+def printx(e):
+    print("Caught " + color.BOLD+ repr(e) + color.END)
+
 def printb(str):
     print(color.BOLD + str + color.END)
 
