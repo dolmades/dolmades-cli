@@ -227,9 +227,11 @@ class Main(object):
 
             if (cmd=="serve"):
                 action="install"
+                cmdline = "xdg-desktop-menu "+action+" --novendor "+directoryFile+" "+desktopFile+" "+desktopUninstFile
             else:
                 action="uninstall"
-            cmdline = "xdg-desktop-menu "+action+" --novendor "+desktopFile+" "+desktopUninstFile
+                cmdline = "xdg-desktop-menu "+action+" --novendor "+desktopFile+" "+desktopUninstFile
+
             print(cmdline)
             subprocess.call(cmdline, shell=True, close_fds=True)
 
