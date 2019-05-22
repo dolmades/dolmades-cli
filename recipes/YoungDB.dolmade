@@ -1,5 +1,4 @@
-# This dolmade supposedly needs dotnet45
-# Source: http://www.pouet.net/prod.php?which=31571
+# FIXME: access export fails (mdac,jet40?)
 
 # Name of the dolmade (very restricted by udocker)
 DOLMADE
@@ -21,8 +20,9 @@ INGREDIENT
   http://klassenkarte.de/wp-content/uploads/2015/02/YoungDB-2015-02-13.zip
 
 # Install German language settings / locale
+# Install fonts-liberation2 as substitute for MSFF "Courier New" truetype font which is needed for MySQL export scheme
 RUNROOT
-  apt-get update && apt-get -y install locales language-pack-de-base && apt-get clean && rm -rf /var/lib/apt/lists/*
+  apt-get update && apt-get -y install locales language-pack-de-base fonts-liberation2 && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Run a command inside the dolmade
 # PWD is the /install folder
@@ -30,19 +30,8 @@ RUNUSER
   unzip -o YoungDB-2015-02-13.zip &&
   cp YoungDB.exe /wineprefix/drive_c
 
-# needed for mysql scheme export
 RUNUSER
-  winetricks -q corefonts
-
-# needed for YoungDB app
-RUNUSER
-  winetricks -q dotnet40 ; 
-  sleep 0
-
-# needed for access export
-RUNUSER
-  winetricks -q jet40 ;
-  sleep 0
+  winetricks -q dotnet40 jet40
 
 # Set icon for the Desktop shortcut
 #ICON
