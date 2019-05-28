@@ -18,11 +18,46 @@ import config as cfg
 
 class Main(object):
 
+
+    requirementsScript="""#!/usr/bin/env python2
+
+import os
+import sys
+
+if sys.version_info[:2] == (2, 7):
+    print("Found Python 2.7")
+else:
+    print("Found Python "+sys.version+", let's hope dolmades will work!")
+
+try:
+    import pycurl
+    has_pycurl=True
+except:
+    has_pycurl=False
+
+if has_pycurl or os.system('which curl')==0:
+    print("Found curl")
+    sys.exit(0)
+else:
+    print("Could not find curl or pycurl!")
+    sys.exit(1)
+"""
+
     installScript="""#!/bin/sh
 CURR_DIR="$PWD"
 DOLMADE_FNAME="$(ls *.dme|head -n1)"
 DOLMADE_NAME="$(echo $DOLMADE_FNAME|sed 's/\.dme$//')"
 INST_DIR="$HOME/Dolmades/"""+cfg.VERSION+"""/$DOLMADE_NAME"
+
+echo "Checking requirements..."
+"$CURR_DIR/check_requirements"
+if [ "$?" != "0" ]; then
+    echo "Requirements not fulfilled! Please install Python 2.7 and pycurl/curl!"
+    echo "Aborting installation!"
+    exit 1
+else
+    echo "Good: requirements fulfilled!"
+fi
 
 export UDOCKER_TARBALL="$CURR_DIR/udocker-tarball-1.1.3.tar.gz"
 
@@ -47,7 +82,7 @@ cd "$INST_DIR/cli"
 echo "Installation completed!"
 """
 
-    dolmadeLicense="""---===== END USER LICENSE AGREEMENT =====---
+    dolmaLicense="""---===== END USER LICENSE AGREEMENT =====---
 
 This Dolmade contains installable Windows software and has been created 
 using Dolmades v"""+cfg.VERSION+""". 
@@ -72,37 +107,41 @@ following licenses:
 
 """
 
+    def writeFile(self, content, filename, isExec=False):
+        f=open(filename,'w')
+        f.write(content)
+        f.close()
+        if isExec==True:
+            st=os.stat(filename)
+            os.chmod(filename, st.st_mode|stat.S_IEXEC)
+
     def start(self):
         try:
             if (sys.argv[1]=="-h" or sys.argv[1]=="--help"):
-                print("Usage: "+sys.argv[0]+" dolmadename [licensefile]")
+                print("Usage: "+sys.argv[0]+" dolmaname [licensefile]")
                 return
-            dolmadeName = sys.argv[1]
+            dolmaName = sys.argv[1]
         except:
-            print("Usage: "+sys.argv[0]+" dolmadename [licensefile]")
+            print("Usage: "+sys.argv[0]+" dolmaname [licensefile]")
             return
 
         workdir = tempfile.mkdtemp()
         
-        f=open(workdir+"/license.txt",'w')
-        f.write(self.dolmadeLicense)
-
         try:
             licenseFile = sys.argv[2]
             f2=open(licenseFile, 'r')
             print("Using license file given as argument")
-            f.write(f2.read())
+            self.dolmaLicense=self.dolmaLicense+f2.read()
         except:
             print("No license file argument, trying to find the license in the meta data")
             try:
                 f3=open(metaDir+"/license.txt", 'r')
                 print("Using license from meta data")
-                f.write(f3.read())
+                self.dolmaLicense=self.dolmaLicense+f3.read()
             except:
                 print("Warning: no license found, we do not recommend boxing without a license!")
-                f.write("\nNo custom license defined!")
+                self.dolmaLicense=self.dolmaLicense+"\nNo custom license defined!"
 
-        f.close()
         cwd = os.getcwd()
         os.chdir(workdir)
 
@@ -112,8 +151,8 @@ following licenses:
         shutil.copy(cfg.SELF_PATH+"/config.py","./cli/config.py")
         shutil.copy(cfg.SELF_PATH+"/prettyprint.py","./cli/prettyprint.py")
 
-        metaDir=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmadeName)+"/ROOT/.dolmades/"
-        cmd=cfg.SELF_PATH+"/dolmades export '"+dolmadeName+"'"
+        metaDir=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmaName)+"/ROOT/.dolmades/"
+        cmd=cfg.SELF_PATH+"/dolmades export '"+dolmaName+"'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -127,14 +166,12 @@ following licenses:
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        f=open("./install.sh",'w')
-        f.write(self.installScript)
-        f.close()
-        st=os.stat("./install.sh")
-        os.chmod("./install.sh", st.st_mode|stat.S_IEXEC)
+        self.writeFile(self.dolmaLicense, "./license.txt")
+        self.writeFile(self.requirementsScript, "./check_requirements", True)
+        self.writeFile(self.installScript, "./install.sh", True)
 
         packagingDate=datetime.datetime.fromtimestamp(os.path.getmtime(metaDir)).isoformat()
-        cmd="sh makeself.sh --packaging-date '"+packagingDate+"' --license ./license.txt "+workdir+" "+cwd+"/"+dolmadeName+".dme.sh '"+dolmadeName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
+        cmd="sh makeself.sh --packaging-date '"+packagingDate+"' --license ./license.txt "+workdir+" "+cwd+"/"+dolmaName+".dme.sh '"+dolmaName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
