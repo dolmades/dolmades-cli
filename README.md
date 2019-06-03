@@ -105,6 +105,8 @@ cd dolmades-cli
 
 ### Cooking a dolmade
 
+[![asciicast](https://asciinema.org/a/THJaF5llZtkRK0nH3AU4yqRWt.svg)](https://asciinema.org/a/THJaF5llZtkRK0nH3AU4yqRWt)
+
 Cooking describes the process of building a dolmade from a recipe given its required ingredients.
 To cook a dolmade use the very simple example:
 
