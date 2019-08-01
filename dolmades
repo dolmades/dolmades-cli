@@ -8,11 +8,20 @@ import shlex
 import os
 import re
 import hashlib
+import random
 
 import config as cfg
 from prettyprint import color, printb, printit, printitb, printu, printx
 
 class Main(object):
+
+    def randHex(self, size):
+        return "".join(random.sample("0123456789abcdef", size))
+
+    def randUUID(self):
+        return (("%s-%s-%s-%s-%s") % (self.randHex(8), 
+            self.randHex(4), self.randHex(4), self.randHex(4),
+            self.randHex(12)))
 
     def handlePulseAudio(self):
         cmd = "which pasuspender"
@@ -109,18 +118,20 @@ class Main(object):
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=='import'):
+            dn=sys.argv[2].split('/')[-1].split('.')[0]
+            # FIXME check whether a container name 'dn' exists already
+            uuid=self.randUUID()
             fn=os.path.realpath(sys.argv[2])
-            path=os.path.realpath(cfg.DOLMADES_PATH+"/containers")
+            path=os.path.realpath(cfg.DOLMADES_PATH+"/containers/"+uuid)
             cmd="mkdir -p "+path+" && cd "+path+" && tar -xzmvf "+fn
             print(cmd)
-            shasum=subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT).split('\n')[0].replace('/','')
-            dn=sys.argv[2].split('/')[-1].split('.')[0]
-            cmd=cfg.UDOCKERCMD_QUIET+" name "+shasum+" "+dn
+            subprocess.call(cmd, shell=True, close_fds=True)
+            cmd=cfg.UDOCKERCMD_QUIET+" name "+uuid+" "+dn
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
             # set to a supported engine
-            cfg.SETUP(shasum)
+            cfg.SETUP(uuid)
 
             cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" --hostenv '"+dn+"""' bash -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --update && wineserver -w"'"""
             print(cmd)
@@ -129,8 +140,8 @@ class Main(object):
         if (cmd=='export'):
             fn=sys.argv[2]
             path=os.path.realpath(cfg.DOLMADES_PATH+"/containers/"+fn)
-            cmd="""sh -c "tar --sort=name --mtime='@0' --format=gnu --owner=0 --group=0 --numeric-owner --directory="""+cfg.DOLMADES_PATH+\
-                    "/containers/ -cp "+path.split("/")[-1]+" | gzip -9 --no-name > "+fn+""".dme" """
+            cmd="""sh -c "tar --sort=name --mtime='@0' --format=gnu --owner=0 --group=0 --numeric-owner --directory="""+path+\
+                    " -cp . | gzip -9 --no-name > "+fn+""".dme" """
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -236,10 +247,6 @@ class Main(object):
             print(cmdline)
             subprocess.call(cmdline, shell=True, close_fds=True)
 
-            cmdline = "xdg-desktop-icon "+action+" --novendor "+desktopFile
-            print(cmdline)
-            subprocess.call(cmdline, shell=True, close_fds=True)
-
             if (action=="install"):
                 shutil.copy(metaPath+"/icons/dolmade.png",cfg.DOLMADES_PATH+"/dolmade.png")
                 cmdline = "xdg-icon-resource "+action+" --novendor --size 22 "+cfg.DOLMADES_PATH+"/dolmade.png Dolmades_v"+cfg.VERSION+"-menu"
@@ -248,6 +255,10 @@ class Main(object):
             
             else:
                 print("NOTE: menu icon is never to be uninstalled")
+
+            cmdline = "xdg-desktop-icon "+action+" --novendor "+desktopFile
+            print(cmdline)
+            subprocess.call(cmdline, shell=True, close_fds=True)
 
             #os.remove(directoryFile)
             #os.remove(desktopFile)
