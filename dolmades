@@ -105,6 +105,7 @@ class Main(object):
         if (cmd=='debug-root'):
             cmd=cfg.UDOCKERCMD_QUIET+" run --user=root '"+sys.argv[2]+"' bash"
             print(cmd)
+            print("HINT: if package installation fails it might not be supported by the execution engine!")
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=='import'):
