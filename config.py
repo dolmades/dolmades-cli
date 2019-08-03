@@ -11,7 +11,11 @@ from prettyprint import printx
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 
-VERSION = "1.1"
+VERSION = "1.1.2"
+
+def MAJOR_VERSION():
+    return '.'.join(VERSION.split('.')[0:2])
+
 META_DIR = ".dolmades"
 INST_DIR = "install"
 INGR_DIR = "ingredients"
@@ -20,7 +24,7 @@ SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 HOME = os.path.expanduser('~')
 USER = getpass.getuser()
 
-DOLMADES_PATH = HOME + '/.dolmades-' + VERSION
+DOLMADES_PATH = HOME + '/.dolmades-' + MAJOR_VERSION()
 INST_PATH = DOLMADES_PATH + "/" + INST_DIR
 INGREDIENTS_PATH = DOLMADES_PATH + "/" + INGR_DIR
 
@@ -38,10 +42,10 @@ os.environ["BASH_ENV"]="/.dolmades/start.env"
 
 if architecture()[0]=="32bit":
     RUNTIME_IMAGE="dolmades/runtime_i386"
-    DOLMADE_SUFFIX="_i386"
+    DOLMA_SUFFIX="_i386"
 else:
     RUNTIME_IMAGE="dolmades/runtime"
-    DOLMADE_SUFFIX=""
+    DOLMA_SUFFIX=""
 
 
 def SETUP(dolmaname, mode=None):
@@ -102,7 +106,7 @@ def INIT(force):
 
     if force_runtime_rebuild or force:
         printitb("Rebuilding dolmades runtime...")
-        cmd = UDOCKERCMD_QUIET+" pull "+RUNTIME_IMAGE+":"+VERSION
+        cmd = UDOCKERCMD_QUIET+" pull "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
         print(cmd)
         printitb("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
@@ -117,7 +121,7 @@ def INIT(force):
         except:
             pass
 
-        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime "+RUNTIME_IMAGE+":"+VERSION
+        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 

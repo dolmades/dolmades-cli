@@ -141,7 +141,7 @@ class Main(object):
             fn=sys.argv[2]
             path=os.path.realpath(cfg.DOLMADES_PATH+"/containers/"+fn)
             cmd="""sh -c "tar --sort=name --mtime='@0' --format=gnu --owner=0 --group=0 --numeric-owner --directory="""+path+\
-                    " -cp . | gzip -9 --no-name > "+fn+""".dme" """
+                    " -cp . | gzip -9 --no-name > "+fn+""".dma" """
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -199,6 +199,7 @@ class Main(object):
                     os.symlink("../drive_"+drvletter,pl)
 
         if (cmd=="serve" or cmd=="clearaway" or cmd=="del"):
+            # TODO create temporary files inside a temporary directory
             name = sys.argv[2]
             metaPath=cfg.DOLMADES_PATH+"/containers/"+name+"/ROOT/.dolmades"
 
@@ -220,7 +221,6 @@ class Main(object):
                 f.write("[Desktop Entry]\nEncoding=UTF-8\nType=Directory\n")
                 f.write("Name=Dolmades v"+cfg.VERSION+"\n")
                 f.write("Comment=Windows Apps in Linux Containers\n")
-                #f.write("Icon="+metaPath+"/icons/dolmade.png\n")
                 f.write("Icon=Dolmades_v"+cfg.VERSION+"-menu\n")
 
             with open(desktopFile, "w") as f:
@@ -260,9 +260,10 @@ class Main(object):
             print(cmdline)
             subprocess.call(cmdline, shell=True, close_fds=True)
 
-            #os.remove(directoryFile)
-            #os.remove(desktopFile)
-            #os.remove(desktopUninstFile)
+            # FIXME removes these files again as keeping them would unintentionally alter the dolma's state
+            os.remove(directoryFile)
+            os.remove(desktopFile)
+            os.remove(desktopUninstFile)
 
         if (cmd=="del"):
             cn=sys.argv[2]
@@ -271,7 +272,8 @@ class Main(object):
             subprocess.call(cmd, shell=True, close_fds=True)
             try:
                 boxedPath=cfg.BOXED_PATH
-                print("This is a boxed dolmade, delete entire installation path "+boxedPath+"...")
+                # FIXME add some sanity checking there before we blindly delete the crap out of our users' data!!!
+                print("This is a boxed dolma, deleting entire installation path "+boxedPath+"...")
                 shutil.rmtree(boxedPath)
                 print("Done")
             except:
@@ -286,29 +288,29 @@ class Main(object):
             if cmd=="init":
                 print(" init : initialize the dolmades runtime, DOLMADES_PATH")
             if cmd=="launch":
-                print(" launch DOLMADENAME : launch the autostart script")
+                print(" launch DOLMANAME : launch the autostart script")
             if cmd=="list":
                 print(" list : lists all available dolmades")
             if cmd=="del":
-                print(" del DOLMADENAME : clears away and deletes the given dolmade")
+                print(" del DOLMANAME : clears away and deletes the given dolma")
             if cmd=="debug":
-                print(" debug DOLMADENAME : enters a bash shell as $USER. $HOME and INSTALL_PATH under /install are available.")
+                print(" debug DOLMANAME : enters a bash shell as $USER. $HOME and INSTALL_PATH under /install are available.")
             if cmd=="debug-root":
-                print(" debug-root DOLMADENAME : enters a bash shell as root. No binds and host environment variables are available.")
+                print(" debug-root DOLMANAME : enters a bash shell as root. No binds and host environment variables are available.")
             if cmd=="import":
-                print(" import DOLMADE.DME : imports a previously exported image. The image can be executed standalone (requires python 2 and gzip).")
+                print(" import DOLMA.DMA : imports a previously exported image. The image can be executed standalone (requires python 2 and gzip).")
             if cmd=="export":
-                print(" export DOLMADE DOLMADE.DME : exports a cooked dolmade image")
+                print(" export DOLMANAME DOLMA.DMA : exports a cooked dolma image")
             if cmd=="bind":
-                print(" bind DOLMADE bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:~/Documents/'")
+                print(" bind DOLMANAME bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:~/Documents/'")
             if cmd=="binds":
-                print(" binds DOLMADENAME : list active binds")
+                print(" binds DOLMANAME : list active binds")
             if cmd=="serve":
-                print(" serve DOLMADENAME : create a menu entry and a desktop symbol")
+                print(" serve DOLMANAME : create a menu entry and a desktop symbol")
             if cmd=="clearaway":
-                print(" clearaway DOLMADENAME: remove menu entry and desktop symbol")
+                print(" clearaway DOLMANAME: remove menu entry and desktop symbol")
             if cmd=="setup":
-                print("Usage: setup [--mode] DOLMADENAME: utilize the selected container engine\n        mode = [S1|P1|P2|auto], S1=singularity P1=proot with seccomp, P2=proot without seccomp, auto: test S1/P1/P2 and use the first one which works")
+                print("Usage: setup [--mode] DOLMANAME: utilize the selected container engine\n        mode = [S1|P1|P2|auto], S1=singularity P1=proot with seccomp, P2=proot without seccomp, auto: test S1/P1/P2 and use the first one which works")
 
 if __name__ == "__main__":
     sys.exit(Main().start())

@@ -107,7 +107,7 @@ class Ingredient(object):
         return False
 
 
-class Dolmade(object):
+class Dolma(object):
 
     iconfn = None
     name = None
@@ -131,15 +131,15 @@ class Dolmade(object):
 
     def checkVersion(self, version):
         self.version=''.join(version)
-        if self.version == cfg.VERSION:
-            printitb("Good! The dolmadefile and this script both match version "+self.version)
+        if self.version == cfg.MAJOR_VERSION():
+            printitb("Good! The dolmafile and this script both match major version "+self.version)
         else:
-            printitb("Bad! The dolmadefile is for version "+self.version+", but this script for version "+cfg.VERSION)
+            printitb("Bad! The dolmafile is for major version "+self.version+", but this script for major version "+cfg.MAJOR_VERSION())
             sys.exit(1)
 
-    def setupDolmade(self, cmdp):
+    def setupDolma(self, cmdp):
         self.name = ' '.join(cmdp)
-        print(color.BOLD + "Setting Dolmade Name to " + color.END + self.name)
+        print(color.BOLD + "Setting Dolma Name to " + color.END + self.name)
 
     def setupBase(self, cmdp):
         self.baseImg = ''.join(cmdp)
@@ -207,7 +207,7 @@ class Dolmade(object):
         if self.sha256:
             return cfg.DOLMADES_PATH+"/containers/"+self.sha256+"/ROOT/"
         else:
-            printitb("Error: Dolmade has not been created yet!")
+            printitb("Error: Dolma has not been created yet!")
             return None
 
     def metaPath(self):
@@ -221,15 +221,15 @@ class Dolmade(object):
         return self.path()+"/"+cfg.INST_DIR
 
     def build(self, options):
-        printitb("Performing the dolmade build...")
+        printitb("Performing the dolma build...")
         for i in self.ingredients: 
             i.retrieve()
 
-        cmd = cfg.UDOCKERCMD_VERBOSE+" pull "+self.baseImg+cfg.DOLMADE_SUFFIX+":"+self.version
+        cmd = cfg.UDOCKERCMD_VERBOSE+" pull "+self.baseImg+cfg.DOLMA_SUFFIX+":"+self.version
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = cfg.UDOCKERCMD_QUIET+" create "+self.baseImg+cfg.DOLMADE_SUFFIX+":"+self.version
+        cmd = cfg.UDOCKERCMD_QUIET+" create "+self.baseImg+cfg.DOLMA_SUFFIX+":"+self.version
         self.sha256 = subprocess.check_output(cmd, shell=True, close_fds=True).strip()
 
         # use proot without seccomp filtering
@@ -239,7 +239,7 @@ class Dolmade(object):
         if (not os.path.exists(self.metaPath())):
             os.mkdir(self.metaPath(), 0755)
         
-        printitb("Installing the sucessfully built dolmade...")
+        printitb("Installing the sucessfully built dolma...")
 
         cmd = cfg.UDOCKERCMD_QUIET+" rm "+self.name
         print(cmd)
@@ -333,7 +333,7 @@ class Dolmade(object):
         except:
             shutil.copy(self.metaPath()+"/icons/dolmade.png", iconInContainer)
 
-        shutil.copy(self.inputFileName, self.metaPath()+"/Dolmadefile")
+        shutil.copy(self.inputFileName, self.metaPath()+"/Dolmafile")
         shutil.copy(cfg.DOLMADES_PATH+"/dolmades-bin.tgz", self.metaPath()+"/dolmades-bin.tgz")
 
         runscriptInContainer = self.metaPath()+"/start.sh"
@@ -359,20 +359,20 @@ class Dolmade(object):
 class Main(object):
     def executeCmd(self, cmdarg):
         """all supported commands"""
-        cmds = { '': self.dolmade.dumpComment,
-                 '#': self.dolmade.dumpComment,
-                 'VERSION': self.dolmade.checkVersion,
-                 'DOLMADE': self.dolmade.setupDolmade, 
-                 'BASE': self.dolmade.setupBase,
-                 'DESCRIPTION': self.dolmade.setupDescription,
-                 'INGREDIENT': self.dolmade.setupIngredient,
-                 'RUNUSER': self.dolmade.runUser,
-                 'RUNROOT': self.dolmade.runRoot,
-                 'ICON': self.dolmade.icon,
-                 'TARGET': self.dolmade.setTarget,
-                 'TARGETARGS': self.dolmade.setTargetArgs,
-                 'TARGETENV': self.dolmade.setTargetEnv,
-                 'TARGETPROLOGUE': self.dolmade.setTargetPrologue}
+        cmds = { '': self.dolma.dumpComment,
+                 '#': self.dolma.dumpComment,
+                 'VERSION': self.dolma.checkVersion,
+                 'DOLMA': self.dolma.setupDolma, 
+                 'BASE': self.dolma.setupBase,
+                 'DESCRIPTION': self.dolma.setupDescription,
+                 'INGREDIENT': self.dolma.setupIngredient,
+                 'RUNUSER': self.dolma.runUser,
+                 'RUNROOT': self.dolma.runRoot,
+                 'ICON': self.dolma.icon,
+                 'TARGET': self.dolma.setTarget,
+                 'TARGETARGS': self.dolma.setTargetArgs,
+                 'TARGETENV': self.dolma.setTargetEnv,
+                 'TARGETPROLOGUE': self.dolma.setTargetPrologue}
 
         if len(cmdarg)<1:
             return
@@ -387,7 +387,7 @@ class Main(object):
 
     def execute(self):
         if (len(sys.argv)<2):
-            print("Usage: cook [--serve|--no-download|--no-validate|--hard-validate] Dolmadefile")
+            print("Usage: cook [--serve|--no-download|--no-validate|--hard-validate] Dolmafile")
             print("       --serve: generates a desktop icon and menu entries")
             print("       --no-download: use only local ingredients [NOT IMPLEMENTED YET]")
             print("       --no-validate: do not validate ingredients using their checksums [NOT IMPLEMENTED YET]")
@@ -402,13 +402,13 @@ class Main(object):
             else:
                 inputFileName = a
         
-        self.dolmade = Dolmade(inputFileName)
+        self.dolma = Dolma(inputFileName)
 
         try:
-            with open(inputFileName, "r") as dolmadeFile:
+            with open(inputFileName, "r") as dolmaFile:
                 cmdarg = list()
                 while True:
-                    line = dolmadeFile.readline();
+                    line = dolmaFile.readline();
                     if line:
                         if line.strip().startswith('#'):
                             continue
@@ -426,7 +426,7 @@ class Main(object):
         except (IOError, OSError):
             print("ERROR: Cannot open " + inputFileName)
 
-        self.dolmade.build(options)
+        self.dolma.build(options)
 
     def start(self):
         """Program start and exception handling"""

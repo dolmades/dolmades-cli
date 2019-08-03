@@ -46,9 +46,9 @@ else:
 
     installScript="""#!/bin/sh
 CURR_DIR="$PWD"
-DOLMADE_FNAME="$(ls *.dme|head -n1)"
-DOLMADE_NAME="$(echo $DOLMADE_FNAME|sed 's/\.dme$//')"
-INST_DIR="$HOME/Dolmades/"""+cfg.VERSION+"""/$DOLMADE_NAME"
+DOLMA_FNAME="$(ls *.dma|head -n1)"
+DOLMA_NAME="$(echo $DOLMA_FNAME|sed 's/\.dma$//')"
+INST_DIR="$HOME/Dolmades/"""+cfg.VERSION+"""/$DOLMA_NAME"
 
 echo "Checking requirements..."
 "$CURR_DIR/check_requirements"
@@ -62,7 +62,7 @@ fi
 
 export UDOCKER_TARBALL="$CURR_DIR/udocker-tarball-1.1.3.tar.gz"
 
-echo "Installing $DOLMADE_NAME into $INST_DIR..."
+echo "Installing $DOLMA_NAME into $INST_DIR..."
 
 mkdir -p "$INST_DIR/cli"
 mkdir -p "$INST_DIR/res"
@@ -77,15 +77,15 @@ echo >> "$INST_DIR/cli/config.py"
 echo "BOXED_PATH=\'$INST_DIR\'" >> "$INST_DIR/cli/config.py"
 
 cd "$INST_DIR/cli"
-./dolmades import "$CURR_DIR/$DOLMADE_FNAME"
-./dolmades serve $DOLMADE_NAME
+./dolmades import "$CURR_DIR/$DOLMA_FNAME"
+./dolmades serve $DOLMA_NAME
 
 echo "Installation completed!"
 """
 
     dolmaLicense="""---===== END USER LICENSE AGREEMENT =====---
 
-This Dolmade contains installable Windows software and has been created 
+This Dolma contains installable Windows software and has been created 
 using Dolmades v"""+cfg.VERSION+""". 
 It ships bundled with the following software components licensed under the 
 following open source licenses:
@@ -171,11 +171,12 @@ following licenses:
         print("Last modification date is "+modDate)
 
         tar_extra="--numeric-owner --owner=0 --group=0 --format=pax --pax-option=exthdr.name=%d/PaxHeaders.0/%f --pax-option=delete=atime --pax-option=delete=ctime --pax-option=delete=mtime --mtime=@0"
-        cmd="sh makeself.sh --target '"+tgtdir+"' --nocomp --packaging-date @0 --tar-extra '"+tar_extra+"' --license ./license.txt . "+cwd+"/"+dolmaName+".dme.sh '"+dolmaName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
+        cmd="sh makeself.sh --target '"+tgtdir+"' --nocomp --packaging-date @0 --tar-extra '"+tar_extra+"' --license ./license.txt . "+cwd+"/"+dolmaName+".dma.sh '"+dolmaName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
+
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
         print("Renaming archive to "+dolmaName+"_"+modDate+".dme.sh in order to reflect the packaging date")
-        shutil.move(cwd+"/"+dolmaName+".dme.sh", cwd+"/"+dolmaName+"_"+modDate+".dme.sh")
+        shutil.move(cwd+"/"+dolmaName+".dma.sh", cwd+"/"+dolmaName+"_"+modDate+".dma.sh")
 
         shutil.rmtree(workdir)
         print("Done!")
