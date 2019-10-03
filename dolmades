@@ -280,35 +280,40 @@ class Main(object):
                 pass
 
         if (cmd=="help"):
-            print("Usage: dolmades [init|launch|list|del|debug|debug-root|import|export|bind|binds|serve|clearaway] options")
             try:
                 cmd = sys.argv[2]
             except:
                 cmd = ""
+                print("     Usage: dolmades [init|help|launch|list|del|debug|debug-root|import|export|bind|binds|serve|clearaway] options")
+                print("   Version: "+cfg.VERSION)
+                print("Docker Tag: "+cfg.MAJOR_VERSION())
+
+            if cmd=="help":
+                print("help: print list of available commands, version number and docker tag of base images")
             if cmd=="init":
-                print(" init : initialize the dolmades runtime, DOLMADES_PATH")
+                print("init: initialize the dolmades runtime, DOLMADES_PATH")
             if cmd=="launch":
-                print(" launch DOLMANAME : launch the autostart script")
+                print("launch DOLMANAME : launch the autostart script")
             if cmd=="list":
-                print(" list : lists all available dolmades")
+                print("list : lists all available dolmades")
             if cmd=="del":
-                print(" del DOLMANAME : clears away and deletes the given dolma")
+                print("del DOLMANAME : clears away and deletes the given dolma")
             if cmd=="debug":
-                print(" debug DOLMANAME : enters a bash shell as $USER. $HOME and INSTALL_PATH under /install are available.")
+                print("debug DOLMANAME : enters a bash shell as $USER. $HOME and INSTALL_PATH under /install are available.")
             if cmd=="debug-root":
-                print(" debug-root DOLMANAME : enters a bash shell as root. No binds and host environment variables are available.")
+                print("debug-root DOLMANAME : enters a bash shell as root. No binds and host environment variables are available.")
             if cmd=="import":
-                print(" import DOLMA.DMA : imports a previously exported image. The image can be executed standalone (requires python 2 and gzip).")
+                print("import DOLMA.DMA : imports a previously exported image. The image can be executed standalone (requires python 2 and gzip).")
             if cmd=="export":
-                print(" export DOLMANAME DOLMA.DMA : exports a cooked dolma image")
+                print("export DOLMANAME DOLMA.DMA : exports a cooked dolma image")
             if cmd=="bind":
-                print(" bind DOLMANAME bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:~/Documents/'")
+                print("bind DOLMANAME bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:~/Documents/'")
             if cmd=="binds":
-                print(" binds DOLMANAME : list active binds")
+                print("binds DOLMANAME : list active binds")
             if cmd=="serve":
-                print(" serve DOLMANAME : create a menu entry and a desktop symbol")
+                print("serve DOLMANAME : create a menu entry and a desktop symbol")
             if cmd=="clearaway":
-                print(" clearaway DOLMANAME: remove menu entry and desktop symbol")
+                print("clearaway DOLMANAME: remove menu entry and desktop symbol")
             if cmd=="setup":
                 print("Usage: setup [--mode] DOLMANAME: utilize the selected container engine\n        mode = [S1|P1|P2|auto], S1=singularity P1=proot with seccomp, P2=proot without seccomp, auto: test S1/P1/P2 and use the first one which works")
 
