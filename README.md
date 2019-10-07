@@ -118,6 +118,9 @@ To cook a dolmade use the very simple example:
 ```
 ./cook recipes/ASD_LifeForce.dolmade
 ```
+<p align="center">
+  <img src="shots/cooking_cast.gif?raw=true" alt="cooking asd lifeforce"/>
+</p>
 
 This will install the winning demo of Assembly 2007 by Andromeda Software Development.
 At first the required ingredients will be downloaded and verified by its checksum. 
@@ -128,7 +131,7 @@ Finally, you can run the installed dolmade:
 ```
 
 <p align="center">
-  <img src="shots/cooking_cast.gif?raw=true" alt="cooking asd lifeforce"/>
+  <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="running asd lifeforce"/>
 </p>
 
 The dolmade can now be uninstalled again:
