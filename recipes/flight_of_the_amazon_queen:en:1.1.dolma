@@ -1,0 +1,49 @@
+# Name of the Dolmade
+# generated using ./goglizer -d=flight_of_the_amazon_queen
+DOLMA
+    Flight_of_the_Amazon_Queen:en
+
+# The version of `cook` that must be used to build this dolmade
+VERSION
+    1.2
+
+# Docker image used as a base with VERSION defining its tag
+BASE
+    dolmades/winestable
+
+# A description of the installed software
+#DESCRIPTION
+#    TODO: please add a synopsis about the game...
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+    58d68217a25d038b6bad176922ae6c73010cf7fabf565eaea7b84bf3ed863151
+    eedc3e47ab5c6622c5c5cf3d6a71044ef23ea49228b7b148be365c1c2d9e11e9.png
+    Game Icon
+    https://images-4.gog.com/eedc3e47ab5c6622c5c5cf3d6a71044ef23ea49228b7b148be365c1c2d9e11e9.png
+
+INGREDIENT
+    5c2c218d35d44e9741114dbdc88df7406c70716bec0e9d1ff3c13e9deb2e0262
+    setup_flight_of_the_amazon_queen_1.0_(20270).exe
+    Flight of the Amazon Queen
+    gog://flight_of_the_amazon_queen/en1installer0
+
+# Post-install custom packages like so
+#RUNROOT
+#    apt-get update && apt-get -y install custompkg && && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Adapt some presets, for instance when a certain windows version must be enforced
+#RUNUSER
+#    winetricks winxp
+
+# Perform installation
+RUNUSER
+    wine "setup_flight_of_the_amazon_queen_1.0_(20270).exe"
+
+# Set icon for the Desktop shortcut
+ICON
+    eedc3e47ab5c6622c5c5cf3d6a71044ef23ea49228b7b148be365c1c2d9e11e9.png
+
+# Set the executable if you know its name. If omitted a target selector will be launched
+#SETTARGET
+#    echo "$(find /wineprefix/ -name BSTSD.exe)"
