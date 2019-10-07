@@ -128,7 +128,7 @@ Finally, you can run the installed dolmade:
 ```
 
 <p align="center">
-  <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="screen shot asd lifeforce"/>
+  <img src="shots/cooking_cast.gif?raw=true" alt="cooking asd lifeforce"/>
 </p>
 
 The dolmade can now be uninstalled again:
