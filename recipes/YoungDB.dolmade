@@ -1,7 +1,7 @@
 # FIXME: access export fails (mdac,jet40?)
 
 # Name of the dolmade (very restricted by udocker)
-DOLMADE
+DOLMA
   YoungDB
 
 # Docker image to use as a base
@@ -10,7 +10,7 @@ BASE
 
 # Use this version
 VERSION
-  1.1
+  1.2
 
 # Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
 INGREDIENT

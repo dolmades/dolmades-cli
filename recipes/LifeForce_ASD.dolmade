@@ -2,7 +2,7 @@
 # Source: http://www.pouet.net/prod.php?which=31571
 
 # Name of the dolmade (very restricted by udocker)
-DOLMADE
+DOLMA
     LifeForce_ASD
 
 # Docker image to use as a base
@@ -11,7 +11,7 @@ BASE
 
 # Use this version
 VERSION
-    1.1
+    1.2
 
 # Describing this Dolmade
 DESCRIPTION

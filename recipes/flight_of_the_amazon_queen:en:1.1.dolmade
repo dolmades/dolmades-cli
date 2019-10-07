@@ -1,11 +1,11 @@
 # Name of the Dolmade
 # generated using ./goglizer -d=flight_of_the_amazon_queen
-DOLMADE
+DOLMA
     Flight_of_the_Amazon_Queen:en
 
 # The version of `cook` that must be used to build this dolmade
 VERSION
-    1.1
+    1.2
 
 # Docker image used as a base with VERSION defining its tag
 BASE

@@ -1,10 +1,10 @@
 # Name of the dolmade (very restricted by udocker)
-DOLMADE
+DOLMA
     Broken_Sword
 
 # The version of `cook` that must be used for this dolmade
 VERSION
-    1.1
+    1.2
 
 # Docker image to use as a base with VERSION defining its tag
 BASE
