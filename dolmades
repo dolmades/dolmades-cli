@@ -287,6 +287,7 @@ class Main(object):
                 print("     Usage: dolmades [init|help|launch|list|del|debug|debug-root|import|export|bind|binds|serve|clearaway] options")
                 print("   Version: "+cfg.VERSION)
                 print("Docker Tag: "+cfg.MAJOR_VERSION())
+                print("DOLMADES_PATH = "+cfg.DOLMADES_PATH)
 
             if cmd=="help":
                 print("help: print list of available commands, version number and docker tag of base images")
