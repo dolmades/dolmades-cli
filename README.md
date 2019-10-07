@@ -64,6 +64,13 @@ Dolmades make use of the following underlying technologies:
 
 ### Changelog
 
+v1.2 ""
+ * Refactoring / bug fixing / beautification
+ * New `dolmades help` subcommand
+ * Fix broken menu entry deinstallation
+ * Make `dolmades export` reproducible
+ * Updated `winestaging` base image to Wine 4.17
+
 v1.1 "From Blue To Green"
 
 * Support creation of self-installable dolmades
