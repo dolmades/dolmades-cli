@@ -64,7 +64,7 @@ Dolmades make use of the following underlying technologies:
 
 ### Changelog
 
-v1.2 ""
+v1.2 "Soap-free Cleanser"
  * Refactoring / bug fixing / beautification
  * New `dolmades help` subcommand
  * Fix broken menu entry deinstallation
