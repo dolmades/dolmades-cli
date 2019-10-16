@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="https://dolmades.org/files/dolmade_xxl.png" width="140" alt="screen shot asd lifeforce"/>
-</p>
-
-# Dolmades v1.1 - "From Blue to Green"
+# Dolmades v1.2 - "Soap-free Cleanser"
 
 ## Introduction
 
