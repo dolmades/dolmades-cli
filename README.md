@@ -10,16 +10,16 @@ Dolmades are intended as a mean to ease packaging, installation, usage and distr
   * **Installation:** build your application using recipes and create a desktop symlink and menu entry
   * **Target launcher:** choose between installed binaries which one to run
   * **Shares:** bind selected paths from the host system to internal Windows drives
-  * **Import&Export:** share your dolmades between multiple Linux systems
+  * **Import and Export:** share your applications across Linux systems
   
 * **Development:** 
-  * **Create recipes:** use the existing recipes as template and derive your own Windows apps
+  * **Create recipes:** use the existing recipes as template and derive your own for a specific Windows apps
   * **Create installers:** distribute your dolmades as standalone installers
   * **Debug mode:** examine problems, add fixes and instantly rebuild the app
-  * **Selectable base:** choose between between several Wine versions
+  * **Selectable base:** choose between several Wine versions
   * **GOG gaming support:** generate template recipes for your personal GOG collection
 
-The focus of the v1.x release cycle will be put on support for well-behaved applications, the standardization of the recipe specification used to create dolmades, ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
+The focus of the v1.x release cycle will be put on support for latest vanilla wine stable and staging, the standardization of the recipe specification used to create dolmades, proper ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
 ### Advantages
 
@@ -29,8 +29,7 @@ The focus of the v1.x release cycle will be put on support for well-behaved appl
 * **Safety:** isolated from each other and from the host system by default to prevent data loss
 
 ## Implementation 
-The current implementation is done in Python and focuses on basic features and GOG support. 
-As of now the following command line scripts represent the prototypical implementation of the underlying concepts:
+The current prototypical implementation is done in form of the following Python scripts:
 
 * `dolmades` - to maintain your installed windows applications
 * `cook` - cooks a dolma given a recipe and its ingredients
@@ -43,7 +42,7 @@ Once the prototype is feature-complete I want to work on an enhanced version bas
 
 ### Requirements
 
-* x86 Linux (32 or 64 bit) with X.Org and xdg-compliant desktop environment
+* x86 Linux (32 or 64 bit) with X.Org and XDG-compliant desktop environment
 * Python 2.7
 * tar+gzip+curl
 
