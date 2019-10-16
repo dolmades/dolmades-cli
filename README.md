@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation, usage and distribution of Windows applications in Linux environments to the utmost extent. A dolma is a containerized Windows app which runs on Linux.
+Dolmades are intended as a mean to ease packaging, installation, usage and distribution of Windows applications in Linux environments to the utmost extent. A dolma is a containerized Windows app which runs on Linux without external dependencies.
 
 ### Features
 
