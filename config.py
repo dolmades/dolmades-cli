@@ -48,9 +48,8 @@ else:
     DOLMA_SUFFIX=""
 
 
-def INIT_INSTALL_PATH(dolmaname, sha256):
+def INIT_INSTALL_PATH(dolmaname, sha256=None):
     namedpath=INST_PATH+'/'+dolmaname
-    linkedpath=INST_PATH+'/'+sha256
 
     # ensure this being a dir not a file
     if os.path.isfile(namedpath):
@@ -59,8 +58,12 @@ def INIT_INSTALL_PATH(dolmaname, sha256):
     # on first run create it
     if not os.path.exists(namedpath):
         os.mkdir(namedpath)
-        os.symlink(linkedpath, namedpath)
         printitb("Created shared installation directory "+namedpath)
+
+    if sha256 == None:
+        return
+
+    linkedpath=INST_PATH+'/'+sha256
 
     # if said link exists already remove it
     if os.path.islink(linkedpath):

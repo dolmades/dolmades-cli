@@ -231,6 +231,9 @@ class Dolma(object):
             return cfg.INST_PATH+"/"+self.sha256
 
     def build(self, options):
+        printitb("Preparing installation path...")
+        cfg.INIT_INSTALL_PATH(self.name)
+
         printitb("Performing the dolma build...")
         for i in self.ingredients: 
             i.retrieve()
@@ -241,6 +244,9 @@ class Dolma(object):
 
         cmd = cfg.UDOCKERCMD_QUIET+" create "+self.baseImg+cfg.DOLMA_SUFFIX+":"+self.version
         self.sha256 = subprocess.check_output(cmd, shell=True, close_fds=True).strip()
+
+        # prepare installation directory symlink
+        cfg.INIT_INSTALL_PATH(self.name, self.sha256)
 
         # use proot without seccomp filtering
         # which is slower but works everywhere
@@ -266,9 +272,6 @@ class Dolma(object):
         cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.name+""" sh -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --init && wineserver -w"'"""
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
-
-        printitb("Preparing installation path...")
-        cfg.INIT_INSTALL_PATH(self.name, self.sha256)
 
         printitb("Running installation...")
         for r in self.runs:
