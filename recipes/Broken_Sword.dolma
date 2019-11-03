@@ -57,8 +57,9 @@ RUNUSER
     unzip -o dvd-cover.zip DVD_Label/English/label_bs25.jpg
 
 # Set icon for the Desktop shortcut
+# DVD_Label/English/label_bs25.jpg
 ICON
-    DVD_Label/English/label_bs25.jpg
+    label_bs25.jpg
 
 #SETTARGET
 #    echo "$(find /wineprefix/ -name bsengine.exe)"
