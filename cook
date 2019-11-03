@@ -183,7 +183,7 @@ class Dolma(object):
         self.runs.append(('root',cmdp))
 
     def icon(self, cmdp):
-        self.iconfn = ''.join(cmdp)
+        self.iconfn=''.join(cmdp)
         print(color.BOLD + "Selecting Icon:" + color.END + self.iconfn)
 
     def setTarget(self, cmdp):
@@ -321,16 +321,40 @@ class Dolma(object):
         iconInContainer = self.metaPath()+"/icon.png"
         open(iconInContainer, 'w+')
         try:
-            if self.iconfn.startswith('/'):
-                iconAbsPath=cfg.INST_PATH+"/.."+self.iconfn
+            name=self.iconfn.split('/')[-1]
+            if not self.iconfn.startswith('/'):
+                self.iconfn=None
+                # case "icon resides somewhere under the installation directory"
+                for root, dirs, files in os.walk(cfg.INST_PATH):
+                    if name in files:
+                        print("Found icon under installation directory...")
+                        self.iconfn=os.path.join(root, name)
+                        break
+                # case "icon resides somewhere under drive C"
+                for root, dirs, files in os.walk(self.path()+'/wineprefix/drive_c'):
+                    if name in files:
+                        print("Found icon under drive C...")
+                        self.iconfn=os.path.join(root, name)
+                        break
+                if self.iconfn==None:
+                    printitb("Error: icon file name nowhere found!")
             else:
-                iconAbsPath=cfg.INST_PATH+"/"+self.iconfn
-            cmd = cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" -v=" + cfg.INST_PATH+"/"+self.iconfn+":/"+self.iconfn.split('/')[-1]+\
+                print("Absolute location for icon file given")
+                self.iconfn=self.path()+self.iconfn
+
+            print(self.iconfn)
+            print(cfg.INST_PATH+"/"+name)
+            # put icon file directly under installation path
+            if not self.iconfn == cfg.INST_PATH+"/"+name:
+                shutil.copy(self.iconfn, cfg.INST_PATH+"/"+name)
+            cmd = cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" -v=" + cfg.INST_PATH+"/"+name+":/"+name+\
                   " -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+\
-                  self.iconfn.split('/')[-1] + "[0] " + "/wineprefix/icon.png'"
+                  name+"[0] "+"/wineprefix/icon.png'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
-        except:
+            printb("Success preparing icon!")
+        except Exception as error:
+            printb("Error preparing icon: "+repr(error))
             shutil.copy(self.metaPath()+"/icons/dolmade.png", iconInContainer)
 
         shutil.copy(self.inputFileName, self.metaPath()+"/Dolmafile")
