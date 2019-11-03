@@ -48,6 +48,27 @@ else:
     DOLMA_SUFFIX=""
 
 
+def INIT_INSTALL_PATH(dolmaname, sha256):
+    namedpath=INST_PATH+'/'+dolmaname
+    linkedpath=INST_PATH+'/'+sha256
+
+    # ensure this being a dir not a file
+    if os.path.isfile(namedpath):
+        os.remove(namedpath)
+    
+    # on first run create it
+    if not os.path.exists(namedpath):
+        os.mkdir(namedpath)
+        os.symlink(linkedpath, namedpath)
+        printitb("Created shared installation directory "+namedpath)
+
+    # if said link exists already remove it
+    if os.path.islink(linkedpath):
+        os.unlink(namedpath)
+
+    # create link
+    os.symlink(namedpath, linkedpath)
+
 def SETUP(dolmaname, mode=None):
     enginePreference=UDOCKER_ENGINE_PREFERENCE
     if (mode == None):
