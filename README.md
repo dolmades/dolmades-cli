@@ -548,8 +548,9 @@ ICON
  iconFileName
 ```
 
-This command is optional. It specifies the icon file to be used for the desktop symbol and the target launcher.
-If the icon filename is relative `/install` will be prepended. If the command is omitted it defaults to the dolma icon.
+This command is optional. It specifies the icon file to be used for the desktop symbol and the target launcher with absolute path and file name.
+If an absolute path is ommitted the `/install` and `/wineprefix/drive_c` directories will be browsed and the first occurrence of the given icon file name will be used. 
+If the command is omitted or the given file name cannot be found it defaults to the dolma icon.
 
 **FINAL NOTES**
 
