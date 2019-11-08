@@ -93,7 +93,7 @@ class Main(object):
 
             self.handlePulseAudio()
             cmd=self.paCmd+" -- "+cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER\
-                    +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -x -c '/.dolmades/start.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
+                    +cmd_bind+" --hostenv --dri '"+sys.argv[2]+"' sh -x -c '/usr/local/bin/wrapper.sh \""+"\" \"".join(sys.argv[3:])+"\"'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
