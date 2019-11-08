@@ -4,7 +4,7 @@ DOLMA
 
 # Docker image to use as a base
 BASE
-    dolmades/winestable
+    dolmades/winestaging
 
 # Use this version
 VERSION
@@ -24,7 +24,7 @@ INGREDIENT
 # Run a command inside the dolmade
 # PWD is the install folder
 RUNUSER
-    winetricks -q dotnet30 && 
+    winetricks -q dotnet20 && 
     wine Setup_nccad9.exe
 
 # Set icon for the Desktop shortcut
