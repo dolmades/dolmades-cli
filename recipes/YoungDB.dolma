@@ -31,7 +31,7 @@ RUNUSER
   cp YoungDB.exe /wineprefix/drive_c
 
 RUNUSER
-  winetricks -q dotnet40 jet40
+  xvfb-run sh -c "winetricks -q dotnet40 jet40 && wineserver --wait"
 
 # Set icon for the Desktop shortcut
 #ICON
