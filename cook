@@ -327,8 +327,8 @@ class Dolma(object):
             printitb("Predefined target is "+self.target+", target path is "+self.targetPath+tgtArgsAppendix)
         else:
             printitb("No target predefined. Target launcher will be used.")
-            self.target="./targetLauncher"
-            self.targetPath="/usr/local/bin"
+            self.target=None
+            self.targetPath=None
 
         with open(self.metaPath()+"/start.env", "a") as env_file:
             for e in self.targetEnvs:
@@ -374,18 +374,19 @@ class Dolma(object):
         shutil.copy(self.inputFileName, self.metaPath()+"/Dolmafile")
         shutil.copy(cfg.DOLMADES_PATH+"/dolmades-bin.tgz", self.metaPath()+"/dolmades-bin.tgz")
 
-        runscriptInContainer = self.metaPath()+"/start.sh"
+        if ( self.targetPath!=None and self.target!=None):
+            runscriptInContainer = self.metaPath()+"/start.sh"
 
-        with open(runscriptInContainer, "w") as f:
-            f.write("#!/bin/bash\n")
-            f.write('cd "'+self.targetPath+'"\n')
-            if self.targetArgs:
-                f.write(self.target+" "+self.targetArgs+"\n")
-            else:
-                f.write(self.target+"\n")
+            with open(runscriptInContainer, "w") as f:
+                f.write("#!/bin/bash\n")
+                f.write('cd "'+self.targetPath+'"\n')
+                if self.targetArgs:
+                    f.write(self.target+" "+self.targetArgs+"\n")
+                else:
+                    f.write(self.target+"\n")
 
-        st = os.stat(runscriptInContainer)
-        os.chmod(runscriptInContainer, st.st_mode | stat.S_IEXEC)
+            st = os.stat(runscriptInContainer)
+            os.chmod(runscriptInContainer, st.st_mode | stat.S_IEXEC)
 
         if "--serve" in options:
             cmd = cfg.SELF_PATH+"/dolmades serve '"+self.name+"'"
