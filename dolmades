@@ -140,8 +140,16 @@ class Main(object):
         if (cmd=='export'):
             fn=sys.argv[2]
             path=os.path.realpath(cfg.DOLMADES_PATH+"/containers/"+fn)
+
+            gzipper="gz"
+            try:
+                subprocess.call(["pigz","--version"])
+                gzipper="pigz"
+            except:
+                pass 
+
             cmd="""sh -c "tar --sort=name --mtime='@0' --format=gnu --owner=0 --group=0 --numeric-owner --directory="""+path+\
-                    " -cp . | gzip -9 --no-name > "+fn+""".dma" """
+                    " --exclude='./ROOT/tmp/*' --exclude='./ROOT/tmp/.*' -cp . | "+gzipper+" --no-name > "+fn+""".dma" """
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
