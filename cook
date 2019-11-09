@@ -268,8 +268,8 @@ class Dolma(object):
         self.target = None
         self.targetPath = None
 
-        printitb("Initializing wine prefix...")
-        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.sha256+""" sh -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "WINEDLLOVERRIDES=mscoree,mshtml= wineboot --init && wineserver -w"'"""
+        printitb("Initializing wine prefix using mono/gecko...")
+        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.sha256+""" sh -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --init && wineserver -w"'"""
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
