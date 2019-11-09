@@ -172,7 +172,7 @@ following licenses:
 
         #tar_extra="--numeric-owner --owner=0 --group=0 --format=pax --pax-option=exthdr.name=%d/PaxHeaders.0/%f --pax-option=delete=atime --pax-option=delete=ctime --pax-option=delete=mtime --mtime=@0"
         tar_extra="--sort=name --mtime='@0' --format=gnu --owner=0 --group=0 --numeric-owner"
-        cmd="sh makeself.sh --target '"+tgtdir+"' --nocomp --packaging-date @0 --tar-extra '"+tar_extra+"' --license ./license.txt . "+cwd+"/"+dolmaName+".dma.sh '"+dolmaName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
+        cmd="sh makeself.sh --target '/tmp/"+tgtdir+"' --nocomp --packaging-date @0 --tar-extra '"+tar_extra+"' --license ./license.txt . "+cwd+"/"+dolmaName+".dma.sh '"+dolmaName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
 
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
