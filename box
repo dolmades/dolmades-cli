@@ -175,7 +175,7 @@ following licenses:
 
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
-        print("Renaming archive to "+dolmaName+"_"+modDate+".dme.sh in order to reflect the packaging date")
+        print("Renaming archive to "+dolmaName+"_"+modDate+".dma.sh in order to reflect the packaging date")
         shutil.move(cwd+"/"+dolmaName+".dma.sh", cwd+"/"+dolmaName+"_"+modDate+".dma.sh")
 
         shutil.rmtree(workdir)
