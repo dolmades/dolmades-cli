@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="209.28571"
+   height="209.28571"
+   viewBox="0 0 55.373508 55.373508"
+   version="1.1"
+   id="svg8">
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(-102.62529,-92.370657)">
+    <circle
+       id="path12"
+       cx="130.31204"
+       cy="120.05741"
+       r="27.686754"
+       style="stroke-width:0.51001918" />
+  </g>
+  <g
+     id="text292"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.01014328px;line-height:1.25;font-family:'Abyssinica SIL';-inkscape-font-specification:'Abyssinica SIL, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.57522643"
+     transform="matrix(1.0413008,0,0,0.9603373,0.46926702,-1.1132679)"
+     aria-label="?">
+    <path
+       id="path1126"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.01014328px;font-family:'Abyssinica SIL';-inkscape-font-specification:'Abyssinica SIL, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:1.57522643"
+       d="m 36.433869,18.825686 q 0,1.969066 -0.6461,3.5997 -0.615333,1.599867 -1.5691,3.045901 -0.953767,1.415266 -2.061367,2.707467 -1.1076,1.2922 -2.061367,2.5844 -0.953767,1.261434 -1.599867,2.5844 -0.615334,1.322967 -0.615334,2.799768 0,0.1846 0.03077,0.4615 0.03077,0.246133 0.0923,0.492266 l 0.123067,0.615334 -3.845834,-0.06153 q -0.5538,-1.138366 -0.923,-2.369033 -0.338434,-1.261434 -0.338434,-3.107434 0,-1.230667 0.3692,-2.430567 0.3692,-1.230667 0.923,-2.369034 0.553801,-1.169133 1.199901,-2.245967 0.6461,-1.076833 1.1999,-2.0306 0.5538,-0.984534 0.923,-1.846 0.3692,-0.861467 0.3692,-1.599867 0,-1.630634 -1.076833,-2.707467 -1.076834,-1.076834 -3.015134,-1.076834 -0.923,0 -1.599867,0.246133 -0.6461,0.215367 -1.1076,0.584567 -0.430734,0.3692 -0.707634,0.8307 -0.2769,0.430734 -0.430733,0.861467 h -2.276734 q -0.707633,-0.615333 -1.1076,-1.538333 -0.399967,-0.923001 -0.399967,-1.630634 0,-0.923 0.523034,-1.969067 0.5538,-1.076834 1.692167,-1.969067 1.169133,-0.892233 2.984367,-1.4768003 1.815233,-0.6153334 4.368867,-0.6153334 2.553634,0 4.522701,0.8306997 1.999833,0.799934 3.3228,2.153667 1.353734,1.353734 2.030601,3.107434 0.707633,1.722934 0.707633,3.538168 z m -5.599534,26.643937 q 0,1.0153 -0.3692,1.907534 -0.3692,0.892233 -1.0153,1.538333 -0.6461,0.6461 -1.538334,1.046067 -0.861467,0.3692 -1.846,0.3692 -1.0153,0 -1.907534,-0.3692 -0.892233,-0.399967 -1.538333,-1.046067 -0.646101,-0.6461 -1.046067,-1.538333 -0.3692,-0.892234 -0.3692,-1.907534 0,-0.984533 0.3692,-1.846 0.399966,-0.892234 1.046067,-1.538334 0.6461,-0.6461 1.538333,-1.0153 0.892234,-0.3692 1.907534,-0.3692 0.984533,0 1.846,0.3692 0.892234,0.3692 1.538334,1.0153 0.6461,0.6461 1.0153,1.538334 0.3692,0.861467 0.3692,1.846 z" />
+  </g>
+</svg>

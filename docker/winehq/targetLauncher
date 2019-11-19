@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# Author: Stefan Kombrink <stefan.kombrink@gmail.com>
+#
+# Icons are licensed under https://creativecommons.org/licenses/by-nd/3.0/
+# and are available under https://icons8.com
+#
+
+# Metadata resides there
+metadir="/.dolmades"
+icondir="$metadir/icons"
+
+# scan just c:
+# else we will scan bind mounts if any are configured
+# and we consider this a security leak
+scandir='/wineprefix/dosdevices/c:/'
+dolmadeName="$(cat $metadir/Dolmafile | grep -A1 DOLMA | tail -n1 | tr -cd '[:print:]' | sed 's/^ *//g')"
+separator='|'
+dolmadeIcon="$metadir/icon.png"
+lnkTargets=$(find $scandir -name '*.lnk' -exec winepath -w  {} \; | sed 's/\\/\\\\/g' | tr -s '\n' "$separator")
+
+# create a FIFO file, used to manage the I/O redirection from shell
+PIPE=$(mktemp -u --tmpdir ${0##*/}.XXXXXXXX)
+mkfifo $PIPE
+
+# attach a file descriptor to the file
+exec 3<> $PIPE
+
+# add handler for tray icon left click
+function on_click() {
+    yad --window-icon="$dolmadeIcon" --sticky --on-top --center --form --text="Please select a target to run for $dolmadeName!" --button="OK!$icondir/ok.svg" --auto-close --kill-parent --image="$dolmadeIcon"
+}
+
+function on_click2() {
+    yad --window-icon="$dolmadeIcon" --sticky --on-top --width=600 --height=400 --center --form --field="$dolmadeName is running $1:TXT" "$(cat $metadir/run.log)" --button="OK!$icondir/ok.svg" --auto-close --kill-parent --image="$dolmadeIcon"
+}
+
+export -f on_click
+export -f on_click2
+export dolmadeName
+export dolmadeIcon
+export metadir
+export icondir
+
+# install a notification icon for the duration of the run
+yad --notification --image="$icondir/dolmade.png" --listen \
+    --text "Dolmades Target Selector has been started" \
+    --no-middle \
+    --command="bash -c on_click" \
+    <&3 &
+# add handler to manage process shutdown
+function on_exit() {
+    echo "quit" >&3
+    rm -f $PIPE
+}
+trap on_exit EXIT
+
+selection=$(yad --window-icon="$dolmadeIcon" --sticky --on-top --title="$dolmadeName" --image="$dolmadeIcon" --button="OK|$icondir/ok.svg":0 --button="Cancel|$icondir/cancel.svg":1 --form --item-separator="$separator" --separator="$separator" --field="Select Target":CB "${lnkTargets%$separator}")
+if [ "$?" == 0 ]; then
+        selection="${selection%$separator}"
+	selectionstr="$(echo $selection|sed 's/\\/\\\\/g')"
+        export selectionstr
+	echo "Running $selection..."
+
+	echo "icon:$icondir/run.svg" >&3
+        echo "tooltip:$selectionstr is running..." >&3
+        selectionstr="$(echo $selectionstr|sed 's/\\/\\\\/g')"
+        echo "action:bash -c 'on_click2 \"$selectionstr\"'" >&3
+        echo 'menu:Kill it!wineserver --kill!'$icondir'/cancel.svg' >&3
+	
+        wine start "$selection" &> "$metadir/run.log"
+
+        # and wait until wineserver has stopped all processes and is shut down
+	wineserver -w
+	echo "icon:$icondir/cancel.svg" >&3
+	echo "tooltip:Shutting down $dolmadeName..." >&3
+
+fi

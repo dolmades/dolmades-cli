@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# expand the trailing list as required
+if [ $(basename $0) = mono_version ]; then
+    cat $(readlink -f $0) | grep $1 | awk -F= '{print $3}' | awk '{print $1}';
+fi
+if [ $(basename $0) = gecko_version ]; then
+    cat $(readlink -f $0) | grep $1 | awk -F= '{print $4}' | awk '{print $1}';
+fi
+
+if [ $(basename $0) = winedeps ]; then
+    if [ "$1" = "" ]; then
+        cat $(readlink -f $0) | awk '{if (tail) print;}/^exit/{tail=1}';
+    else
+        cat $(readlink -f $0) | grep $1;
+    fi
+fi
+
+exit
+
+winehq_stable=4.0.2 mono=4.7.5 gecko=2.47
+winehq_stable=4.0.1 mono=4.7.5 gecko=2.47
+winehq_stable=4.0 mono=4.7.5 gecko=2.47
+winehq_staging=4.20 mono=4.9.4 gecko=2.47
+
