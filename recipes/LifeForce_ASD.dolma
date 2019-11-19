@@ -7,7 +7,7 @@ DOLMA
 
 # Docker image to use as a base
 BASE
-    dolmades/winestaging
+    dolmades/winehq-staging-bionic
 
 # Use this version
 VERSION
