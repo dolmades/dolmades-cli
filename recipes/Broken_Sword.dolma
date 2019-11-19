@@ -8,7 +8,7 @@ VERSION
 
 # Docker image to use as a base with VERSION defining its tag
 BASE
-    dolmades/winestable
+    dolmades/winehq-stable-bionic
 
 # A description of the installed software
 DESCRIPTION
