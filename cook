@@ -141,7 +141,8 @@ class Dolma(object):
             sys.exit(1)
 
     def setupDolma(self, cmdp):
-        self.name = ' '.join(cmdp)
+        # FIXME throw exception when these names are being used thus effectively prohibiting them
+        self.name = ' '.join(cmdp).replace(':','-').replace('(','_').replace(')','_').replace('&','_n_')
         print(color.BOLD + "Setting Dolma Name to " + color.END + self.name)
 
     def setupBase(self, cmdp):
