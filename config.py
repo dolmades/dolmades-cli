@@ -83,8 +83,8 @@ def SETUP(dolmaname, mode=None):
                 cmdline=UDOCKERCMD_QUIET+" setup --execmode="+engine+" "+dolmaname
                 print(cmdline)
                 subprocess.call(cmdline, shell=True, close_fds=True)
-                cmdline=UDOCKERCMD_QUIET+" run --user=$(whoami) "+dolmaname+" sleep 0"
-                print(cmdline)
+                cmdline="sh -c '"+UDOCKERCMD_QUIET+" run --user=$(whoami) "+dolmaname+" sleep 0 2>/dev/null'"
+                #print(cmdline)
                 subprocess.call(cmdline, shell=True, close_fds=True)
                 safe_cmd=shlex.split(cmdline)
                 proc=subprocess.Popen(safe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
