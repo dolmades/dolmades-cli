@@ -1,13 +1,10 @@
-# This dolmade supposedly needs dotnet45
-# Source: http://www.pouet.net/prod.php?which=31571
-
 # Name of the dolmade (very restricted by udocker)
 DOLMA
   Notepad++
 
 # Docker image to use as a base
 BASE
-  dolmades/winestable
+  dolmades/winehq-stable-bionic
 
 # Use this version
 VERSION
