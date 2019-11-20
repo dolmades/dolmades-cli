@@ -268,7 +268,7 @@ class Main(object):
             print(cmdline)
             subprocess.call(cmdline, shell=True, close_fds=True)
 
-            # FIXME removes these files again as keeping them would unintentionally alter the dolma's state
+            # removes these files again as keeping them would unintentionally alter the dolma's state
             os.remove(directoryFile)
             os.remove(desktopFile)
             os.remove(desktopUninstFile)
