@@ -6,6 +6,10 @@ icondir="$metadir/icons"
 dolmaName="$(cat $metadir/Dolmafile | grep -A1 DOLMA | tail -n1 | tr -cd '[:print:]' | sed 's/^ *//g')"
 dolmaIcon="$metadir/icon.png"
 
+# gives trouble with some applications
+# and it is needed for winetricks only
+unset $XDG_CACHE_HOME
+
 if [ -f $metadir/start.sh ]; then
    echo "Start script found, using it in combination with taskbar wrapper..."
 else
