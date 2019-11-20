@@ -252,11 +252,6 @@ class Dolma(object):
         # which is slower but works everywhere
         cfg.SETUP(self.sha256, "P2")
 
-        if (not os.path.exists(self.metaPath())):
-            os.mkdir(self.metaPath(), 0755)
-        
-        printitb("Installing the sucessfully built dolma...")
-
         cmd = cfg.UDOCKERCMD_QUIET+" rm "+self.name
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
@@ -268,8 +263,20 @@ class Dolma(object):
         self.target = None
         self.targetPath = None
 
+        printitb("Preparing environment and copying resouces...")
+
+        shutil.copytree("resources/.dolmades", self.metaPath())
+        shutil.copy("resources/targetLauncher", self.path()+"/usr/local/bin/")
+        shutil.copy("resources/taskbarWrapper", self.path()+"/usr/local/bin/")
+
+        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.sha256+\
+                """ sh -c 'echo "source /"""+cfg.META_DIR+"""/start.env" >> /etc/bash.bashrc'"""
+        print(cmd)
+        subprocess.call(cmd, shell=True, close_fds=True)
+
         printitb("Initializing wine prefix using mono/gecko...")
-        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.sha256+""" sh -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --init && wineserver -w"'"""
+        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.sha256+\
+                """ sh -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --init && wineserver --wait"'"""
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 

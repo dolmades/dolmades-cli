@@ -1,22 +1,8 @@
 # use xenial (16.04), bionic (18.04) or eoan (20.04) 
-ARG DISTRO_TAG
-FROM ubuntu:$DISTRO_TAG
+ARG DISTRO_SUFFIX
+FROM dolmades/base-$DISTRO_SUFFIX
 
 MAINTAINER Stefan Kombrink <info@dolmades.org>
-
-# we need win 32bit application support
-RUN dpkg --add-architecture i386
-
-# base installation (Xorg / mesa / tools)
-RUN apt-get update && \
-    apt-get -y install yad wget less vim \
-      software-properties-common python3-software-properties apt-transport-https winbind \
-      p7zip-full x11-xserver-utils wmctrl xvfb xosd-bin language-pack-en-base \
-      && apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN wget https://dl.winehq.org/wine-builds/winehq.key && apt-key add winehq.key && apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/ && rm winehq.key
-
-# use identical setting as $DISTRO_TAG
-ARG UBUNTU_VERSION
 
 # use stable, devel, staging
 ARG WINE_BRANCH
@@ -31,46 +17,23 @@ ARG GECKO_VERSION
 
 # info for preservation purposes
 ARG BUILD_DATE
-ARG DOLMADES_VER
-
-# initialize a few other important environment variables
-ENV WINEPREFIX /wineprefix
-ENV WINEARCH win32
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-
-# install yad & winetricks
-COPY deb/ /deb
-RUN apt-get update && apt-get install -y binutils cabextract p7zip unzip && dpkg -i /deb/*.deb && winetricks --self-update && apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf /deb
-
-# initialize environment
-# install resources: icons & taskbarWrapper & targetLauncher
-RUN mkdir -p $WINEPREFIX && chmod +rwx $WINEPREFIX && echo 'source /.dolmades/start.env' >> /etc/bash.bashrc
-COPY taskbarWrapper /usr/local/bin/taskbarWrapper
-COPY targetLauncher /usr/local/bin/targetLauncher
-COPY .dolmades /.dolmades
 
 # keep the utilized versions as environment variables
 ENV DOLMADES_BUILDDATE=$BUILD_DATE
-ENV DOLMADES_VERSION=$DOLMADES_VER
-ENV DOLMADES_UBUNTUVERSION=$UBUNTU_VERSION
 ENV DOLMADES_WINEBRANCH=$WINE_BRANCH
 ENV DOLMADES_WINEVERSION=$WINE_VERSION
 ENV DOLMADES_MONOVERSION=$MONO_VERSION
 ENV DOLMADES_GECKOVERSION=$GECKO_VERSION
 
-# store Dockerfile
-COPY Dockerfile /.dolmades/Dockerfile
-# staging recently needs new libfaudio
-RUN if [ $WINE_BRANCH = "staging" ] ; then add-apt-repository -y ppa:cybermax-dexter/sdl2-backport; fi
-# install wine 
-RUN apt-get update && apt-get install -y winehq-${WINE_BRANCH}=${WINE_VERSION}~${UBUNTU_VERSION} && apt-get clean && rm -rf /var/lib/apt/lists/*
-# install mono
-RUN mkdir -p /opt/wine-${WINE_BRANCH}/share/wine/mono && \
+# install wine & winetricks & old yad & mono & gecko
+# winehq-staging requires faudio from PPA
+RUN if [ $DOLMADES_WINEBRANCH = "staging" ]; then apt-add-repository -y ppa:cybermax-dexter/sdl2-backport; fi && \
+    apt-get update && apt-get install -y winehq-${WINE_BRANCH}=${WINE_VERSION}~${DOLMADES_UBUNTUVERSION} && \
+    dpkg -i /deb/*.deb && winetricks --self-update && \ 
+    mkdir -p /opt/wine-${WINE_BRANCH}/share/wine/mono && \
     wget http://dl.winehq.org/wine/wine-mono/$MONO_VERSION/wine-mono-$MONO_VERSION.msi \
-    -O /opt/wine-${WINE_BRANCH}/share/wine/mono/wine-mono-$MONO_VERSION.msi
-# install gecko
-RUN mkdir -p /opt/wine-${WINE_BRANCH}/share/wine/gecko && cd /opt/wine-${WINE_BRANCH}/share/wine/gecko && \
+    -O /opt/wine-${WINE_BRANCH}/share/wine/mono/wine-mono-$MONO_VERSION.msi && \
+    mkdir -p /opt/wine-${WINE_BRANCH}/share/wine/gecko && cd /opt/wine-${WINE_BRANCH}/share/wine/gecko && \
     wget http://dl.winehq.org/wine/wine-gecko/$GECKO_VERSION/wine_gecko-${GECKO_VERSION}-x86.msi && \
-    wget http://dl.winehq.org/wine/wine-gecko/$GECKO_VERSION/wine_gecko-${GECKO_VERSION}-x86_64.msi
-
+    wget http://dl.winehq.org/wine/wine-gecko/$GECKO_VERSION/wine_gecko-${GECKO_VERSION}-x86_64.msi && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
