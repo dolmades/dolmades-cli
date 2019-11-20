@@ -319,7 +319,7 @@ class Main(object):
 
         dolmafile.write("# Docker image used as a base with VERSION defining its tag\n")
         dolmafile.write("BASE\n")
-        dolmafile.write("    dolmades/winestable\n\n")
+        dolmafile.write("    dolmades/winehq-stable-bionic\n\n")
 
         dolmafile.write("# A description of the installed software\n")
         dolmafile.write("#DESCRIPTION\n")
