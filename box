@@ -83,6 +83,9 @@ cd "$INST_DIR/cli"
 # make sure we can uninstall later
 chmod -R u+rw "$INST_DIR/data"
 
+# we are done, clean up
+rm -rf "$CURR_DIR"
+
 echo "Installation completed!"
 """
 
