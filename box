@@ -80,6 +80,9 @@ cd "$INST_DIR/cli"
 ./dolmades import "$CURR_DIR/$DOLMA_FNAME" > /dev/null
 ./dolmades serve $DOLMA_NAME
 
+# make sure we can uninstall later
+chmod -R u+rw "$INST_DIR/data"
+
 echo "Installation completed!"
 """
 
