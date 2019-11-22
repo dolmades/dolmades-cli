@@ -60,11 +60,12 @@ Dolmades make use of the following underlying technologies:
 ### Changelog
 
 v1.2 "Soap-free Cleanser"
- * Refactoring / bug fixing / beautification
+ * Wine 4.0.2 / 4.20
+ * Refactored docker base images: winehq-stable-xenial, winehq-stable-bionic, winehq-staging-bionic
+ * Code cleanup / bug fixing / beautification
  * New `dolmades help` subcommand
  * Fix broken menu entry deinstallation
  * Make `dolmades export` reproducible
- * Updated `winestaging` base image to Wine 4.17
 
 v1.1 "From Blue To Green"
 
@@ -95,13 +96,13 @@ Dolmades makes use of several concepts which will be briefly explained here:
 
 Either download the release tar ball
 ```
-curl -L -o dolmades.tgz https://github.com/dolmades/dolmades-cli/archive/v1.1.tar.gz
+curl -L -o dolmades.tgz https://github.com/dolmades/dolmades-cli/archive/v1.2.tar.gz
 tar -xzf dolmades.tgz
-cd dolmades-cli-1.1/
+cd dolmades-cli-1.2/
 ```
 or simply clone it using git:
 ```
-git clone -b "v1.1" --single-branch --depth 1 https://github.com/dolmades/dolmades-cli.git
+git clone -b "v1.2" --single-branch --depth 1 https://github.com/dolmades/dolmades-cli.git
 cd dolmades-cli
 ```
 
@@ -395,22 +396,36 @@ Initialization does two things:
 ## Advanced
 
 ### Base Images
-`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build are available at https://github.com/dolmades-docker. As of now four images are available:
+`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build and the build script are to be found in the `docker` subdirectory. 
 
-* winestable - current wine stable version
-* winestable_i386 - current wine stable version (32 bit)
-* winestaging - current wine staging version: development version + custom patches
-* winestaging_i386 - current wine staging version: development version + custom patches (32  bit)
+* winehq-stable-xenial - current wine stable version with mesa 18
+* winehq-stable-bionic - current wine stable version with mesa 19
+* winehq-staging-bionic - current wine staging version: development version + custom patches with mesa 19
 
-The images for releases will be tagged accordingly and not being rebuilt in future. 
-Images with the `latest` tag are occasionally being rebuild, may break and are therefore reserved for internal development.
+As of dolmades 1.2 all immages are for 64-bit linux only. If you need a 32-bit image you can modify the Dockerfiles and easily build them yourself.
+These images for releases will be tagged accordingly and not being rebuilt in future. 
 This is what all images have in common:
 
-* Ubuntu LTS 18.04 base with wine PPA
-* Wine installation under `/wineprefix` with 32-bit prefix
+* Ubuntu LTS base with wine PPA
+* Wine installation under `$WINEPREFIX` with 32-bit prefix
 * `targetLauncher` GUI script under `/usr/local/bin`
 * `yad` required by `targetLauncher`
-* `wget curl less vim` for convenience 
+* `wget curl less vim` for convenience
+
+The following environment variables are available in a dolma (these are example values):
+```
+DOLMADES_BUILDDATE=2019-11-20
+DOLMADES_GECKOVERSION=2.47
+DOLMADES_WINEVERSION=4.0.2
+DOLMADES_WINEBRANCH=stable
+DOLMADES_VERSION=1.2
+DOLMADES_UBUNTUVERSION=bionic
+DOLMADES_MONOVERSION=4.7.5
+LC_ALL=en_US.UTF-8
+LANG=en_US.UTF-8
+WINEARCH=win32
+WINEPREFIX=/wineprefix
+```
 
 It is possible to create custom docker images on DockerHub as base for recipes which e.g. offer legacy wine, pba or Proton support.
 
@@ -467,7 +482,7 @@ This command is optional. It defines the tag of the base image pulled by the rec
 
 ```
 BASE
- dolmades/winestable
+ dolmades/winehq-stable-bionic
 ```
 
 This command is mandatory. It defines the DockerHub repository to be used. The tag of the image used is defined by `VERSION`.
