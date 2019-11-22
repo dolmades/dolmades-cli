@@ -155,6 +155,7 @@ following licenses:
         shutil.copy(cfg.SELF_PATH+"/udocker","./cli/udocker")
         shutil.copy(cfg.SELF_PATH+"/config.py","./cli/config.py")
         shutil.copy(cfg.SELF_PATH+"/prettyprint.py","./cli/prettyprint.py")
+        shutil.copy(cfg.SELF_PATH+"/resources/udocker-tarball-1.1.3.tar.gz"."/udocker-tarball-1.1.3.tar.gz")
         shutil.copy(cfg.SELF_PATH+"/makeself-header.sh", "./makeself-header.sh")
         shutil.copy(cfg.SELF_PATH+"/makeself.sh", "./makeself.sh")
 
