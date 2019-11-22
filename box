@@ -71,7 +71,8 @@ cp -p "$CURR_DIR/cli/udocker" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/prettyprint.py" "$INST_DIR/cli"
 cp -p "$CURR_DIR/license.txt" "$INST_DIR"
 
-cat "$CURR_DIR/cli/config.py" | sed "s#^DOLMADES_PATH = HOME + '/.dolmades-' + """ + cfg.MAJOR_VERSION() + """#DOLMADES_PATH = '"$INST_DIR"/data'#" > "$INST_DIR/cli/config.py"
+# FIXME implement this more flexible!
+cat "$CURR_DIR/cli/config.py" | sed "s#^DOLMADES_PATH = HOME + '/.dolmades-' + MAJOR_VERSION()#DOLMADES_PATH = '"$INST_DIR"/data'#" > "$INST_DIR/cli/config.py"
 echo >> "$INST_DIR/cli/config.py"
 echo "BOXED_PATH=\'$INST_DIR\'" >> "$INST_DIR/cli/config.py"
 
