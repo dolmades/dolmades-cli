@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+# Author: Stefan Kombrink <stefan.kombrink@gmail.com>
 # This file is exclusively licensed under GPL 3.0
 # Please check the file gpl.txt in this directory
 
@@ -18,15 +19,50 @@ import config as cfg
 
 class Main(object):
 
+
+    requirementsScript="""#!/usr/bin/env python2
+
+import os
+import sys
+
+if sys.version_info[:2] == (2, 7):
+    print("Found Python 2.7")
+else:
+    print("Found Python "+sys.version+", let's hope dolmades will work!")
+
+try:
+    import pycurl
+    has_pycurl=True
+except:
+    has_pycurl=False
+
+if has_pycurl or os.system('which curl')==0:
+    print("Found curl")
+    sys.exit(0)
+else:
+    print("Could not find curl or pycurl!")
+    sys.exit(1)
+"""
+
     installScript="""#!/bin/sh
 CURR_DIR="$PWD"
-DOLMADE_FNAME="$(ls *.dme|head -n1)"
-DOLMADE_NAME="$(echo $DOLMADE_FNAME|sed 's/\.dme$//')"
-INST_DIR="$HOME/Dolmades/"""+cfg.VERSION+"""/$DOLMADE_NAME"
+DOLMA_FNAME="$(ls *.dma|head -n1)"
+DOLMA_NAME="$(echo $DOLMA_FNAME|sed 's/\.dma$//')"
+INST_DIR="$HOME/Dolmades/"""+cfg.VERSION+"""/$DOLMA_NAME"
+
+echo "Checking requirements..."
+"$CURR_DIR/check_requirements"
+if [ "$?" != "0" ]; then
+    echo "Requirements not fulfilled! Please install Python 2.7 and pycurl/curl!"
+    echo "Aborting installation!"
+    exit 1
+else
+    echo "Good: requirements fulfilled!"
+fi
 
 export UDOCKER_TARBALL="$CURR_DIR/udocker-tarball-1.1.3.tar.gz"
 
-echo "Installing $DOLMADE_NAME into $INST_DIR..."
+echo "Installing $DOLMA_NAME into $INST_DIR..."
 
 mkdir -p "$INST_DIR/cli"
 mkdir -p "$INST_DIR/res"
@@ -41,15 +77,15 @@ echo >> "$INST_DIR/cli/config.py"
 echo "BOXED_PATH=\'$INST_DIR\'" >> "$INST_DIR/cli/config.py"
 
 cd "$INST_DIR/cli"
-./dolmades import "$CURR_DIR/$DOLMADE_FNAME"
-./dolmades serve $DOLMADE_NAME
+./dolmades import "$CURR_DIR/$DOLMA_FNAME"
+./dolmades serve $DOLMA_NAME
 
 echo "Installation completed!"
 """
 
-    dolmadeLicense="""---===== END USER LICENSE AGREEMENT =====---
+    dolmaLicense="""---===== END USER LICENSE AGREEMENT =====---
 
-This Dolmade contains installable Windows software and has been created 
+This Dolma contains installable Windows software and has been created 
 using Dolmades v"""+cfg.VERSION+""". 
 It ships bundled with the following software components licensed under the 
 following open source licenses:
@@ -72,37 +108,45 @@ following licenses:
 
 """
 
+    def writeFile(self, content, filename, isExec=False):
+        f=open(filename,'w')
+        f.write(content)
+        f.close()
+        if isExec==True:
+            st=os.stat(filename)
+            os.chmod(filename, st.st_mode|stat.S_IEXEC)
+
     def start(self):
+
         try:
             if (sys.argv[1]=="-h" or sys.argv[1]=="--help"):
-                print("Usage: "+sys.argv[0]+" dolmadename [licensefile]")
+                print("Usage: "+sys.argv[0]+" dolmaname [licensefile]")
                 return
-            dolmadeName = sys.argv[1]
+            dolmaName = sys.argv[1]
         except:
-            print("Usage: "+sys.argv[0]+" dolmadename [licensefile]")
+            print("Usage: "+sys.argv[0]+" dolmaname [licensefile]")
             return
 
+        tgtdir = "/tmp/dolmades---"+dolmaName
+        print("Target directory is "+tgtdir)
         workdir = tempfile.mkdtemp()
+        metaDir=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmaName)+"/ROOT/.dolmades/"
         
-        f=open(workdir+"/license.txt",'w')
-        f.write(self.dolmadeLicense)
-
         try:
             licenseFile = sys.argv[2]
             f2=open(licenseFile, 'r')
             print("Using license file given as argument")
-            f.write(f2.read())
+            self.dolmaLicense=self.dolmaLicense+f2.read()
         except:
             print("No license file argument, trying to find the license in the meta data")
             try:
                 f3=open(metaDir+"/license.txt", 'r')
                 print("Using license from meta data")
-                f.write(f3.read())
+                self.dolmaLicense=self.dolmaLicense+f3.read()
             except:
                 print("Warning: no license found, we do not recommend boxing without a license!")
-                f.write("\nNo custom license defined!")
+                self.dolmaLicense=self.dolmaLicense+"\nNo custom license defined!"
 
-        f.close()
         cwd = os.getcwd()
         os.chdir(workdir)
 
@@ -111,32 +155,29 @@ following licenses:
         shutil.copy(cfg.SELF_PATH+"/udocker","./cli/udocker")
         shutil.copy(cfg.SELF_PATH+"/config.py","./cli/config.py")
         shutil.copy(cfg.SELF_PATH+"/prettyprint.py","./cli/prettyprint.py")
+        shutil.copy(cfg.SELF_PATH+"/makeself-header.sh", "./makeself-header.sh")
+        shutil.copy(cfg.SELF_PATH+"/makeself.sh", "./makeself.sh")
 
-        metaDir=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmadeName)+"/ROOT/.dolmades/"
-        cmd=cfg.SELF_PATH+"/dolmades export '"+dolmadeName+"'"
+        metaDir=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmaName)+"/ROOT/.dolmades/"
+        cmd=cfg.SELF_PATH+"/dolmades export '"+dolmaName+"'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        # retrieve makeself 2.4.0 and revert commit 48304a7d9a423a54d9a92c3ac5701f91e83b454c to fix progress indication
-        cmd="curl -L -o udocker-tarball-1.1.3.tar.gz https://dolmades.org/mirror/udocker/udocker-tarball-1.1.3.tar.gz && \
-             curl -L -o makeself.sh https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself.sh && \
-             curl -L -o makeself-header.sh https://raw.githubusercontent.com/megastep/makeself/release-2.4.0/makeself-header.sh && \
-             sed -i 's#dd ibs=\\\$offset skip=1 2>/dev/null#dd bs=\\\$offset count=0 skip=1 2>/dev/null#' makeself-header.sh && \
-             sed -i 's#| more#| more -d#' makeself-header.sh"
+        self.writeFile(self.dolmaLicense, "./license.txt")
+        self.writeFile(self.requirementsScript, "./check_requirements", True)
+        self.writeFile(self.installScript, "./install.sh", True)
+
+        modDate='-'.join( [str(i) for i in datetime.datetime.fromtimestamp(os.path.getmtime(metaDir)).isocalendar()] )
+        print("Last modification date is "+modDate)
+
+        #tar_extra="--numeric-owner --owner=0 --group=0 --format=pax --pax-option=exthdr.name=%d/PaxHeaders.0/%f --pax-option=delete=atime --pax-option=delete=ctime --pax-option=delete=mtime --mtime=@0"
+        tar_extra="--sort=name --mtime='@0' --format=gnu --owner=0 --group=0 --numeric-owner"
+        cmd="sh makeself.sh --target '"+tgtdir+"' --nocomp --packaging-date @0 --tar-extra '"+tar_extra+"' --license ./license.txt . "+cwd+"/"+dolmaName+".dma.sh '"+dolmaName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
 
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
-
-        f=open("./install.sh",'w')
-        f.write(self.installScript)
-        f.close()
-        st=os.stat("./install.sh")
-        os.chmod("./install.sh", st.st_mode|stat.S_IEXEC)
-
-        packagingDate=datetime.datetime.fromtimestamp(os.path.getmtime(metaDir)).isoformat()
-        cmd="sh makeself.sh --packaging-date '"+packagingDate+"' --license ./license.txt "+workdir+" "+cwd+"/"+dolmadeName+".dme.sh '"+dolmadeName+" packaged by Dolmades v"+cfg.VERSION+" -- https://dolmades.org' ./install.sh"
-        print(cmd)
-        subprocess.call(cmd, shell=True, close_fds=True)
+        print("Renaming archive to "+dolmaName+"_"+modDate+".dma.sh in order to reflect the packaging date")
+        shutil.move(cwd+"/"+dolmaName+".dma.sh", cwd+"/"+dolmaName+"_"+modDate+".dma.sh")
 
         shutil.rmtree(workdir)
         print("Done!")

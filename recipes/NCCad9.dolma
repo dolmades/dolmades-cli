@@ -1,0 +1,35 @@
+# Name of the dolmade (very restricted by udocker)
+DOLMA
+    NCCad9
+
+# Docker image to use as a base
+BASE
+    dolmades/winehq-stable-xenial
+
+# Use this version
+VERSION
+    1.2
+
+# Describing this Dolmade
+DESCRIPTION
+    CAD Software for CNC cutters
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+    79013fd4261b9210e6b4d677d159b59870c11bfc541fc28e27b4a081c68f10e5
+    Setup_nccad9.exe
+    Installer for NCCad Version 9
+    http://www.max-computer.de/files/MAX/Mill/nccad9profi/Setup_nccad9_9_29_68_06_profi_191009.exe
+
+# Run a command inside the dolmade
+# PWD is the install folder
+RUNUSER
+    winetricks -q dotnet20 &&
+    wine Setup_nccad9.exe
+
+# Set icon for the Desktop shortcut
+ICON
+    Slic3r.ico
+
+TARGET
+    echo "$(find /wineprefix -name nccad9.exe)"

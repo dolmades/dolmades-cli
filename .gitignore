@@ -1,3 +1,7 @@
 install/
 *.pyc
+*.dolma
 *.dolmade
+*.dma
+*.dma.sh
+*.license

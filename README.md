@@ -1,12 +1,8 @@
-<p align="center">
-  <img src="https://dolmades.org/files/dolmade_xxl.png" width="140" alt="screen shot asd lifeforce"/>
-</p>
-
-# Dolmades v1.1 - "From Blue to Green"
+# Dolmades v1.2 - "Soap-free Cleanser"
 
 ## Introduction
 
-Dolmades are intended as a mean to ease packaging, installation, usage and distribution of Windows applications in Linux environments to the utmost extent. A dolmade is a containerized Windows app which runs on Linux.
+Dolmades are intended as a mean to ease packaging, installation, usage and distribution of Windows applications in Linux environments to the utmost extent. A dolma is a containerized Windows app which runs on Linux without external dependencies.
 
 ### Features
 
@@ -14,16 +10,16 @@ Dolmades are intended as a mean to ease packaging, installation, usage and distr
   * **Installation:** build your application using recipes and create a desktop symlink and menu entry
   * **Target launcher:** choose between installed binaries which one to run
   * **Shares:** bind selected paths from the host system to internal Windows drives
-  * **Import&Export:** share your dolmades between multiple Linux systems
+  * **Import and Export:** share your applications across Linux systems
   
 * **Development:** 
-  * **Create recipes:** use the existing recipes as template and derive your own Windows apps
+  * **Create recipes:** use the existing recipes as template and derive your own for a specific Windows apps
   * **Create installers:** distribute your dolmades as standalone installers
   * **Debug mode:** examine problems, add fixes and instantly rebuild the app
-  * **Selectable base:** choose between between several Wine versions
+  * **Selectable base:** choose between several Wine versions
   * **GOG gaming support:** generate template recipes for your personal GOG collection
 
-The focus of the v1.x release cycle will be put on support for gaming, the standardization of the recipe specification used to create dolmades, ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
+The focus of the v1.x release cycle will be put on support for latest vanilla wine stable and staging, the standardization of the recipe specification used to create dolmades, proper ingredients handling, the protoypical implementation of the basic concepts and the completion of major unresolved issues.
 
 ### Advantages
 
@@ -33,12 +29,11 @@ The focus of the v1.x release cycle will be put on support for gaming, the stand
 * **Safety:** isolated from each other and from the host system by default to prevent data loss
 
 ## Implementation 
-The current implementation is done in Python and focuses on basic features and GOG support. 
-As of now the following command line scripts represent the prototypical implementation of the underlying concepts:
+The current prototypical implementation is done in form of the following Python scripts:
 
 * `dolmades` - to maintain your installed windows applications
-* `cook` - cooks a dolmade given a recipe and its ingredients
-* `box` - creates a standalone installer from a cooked dolmade
+* `cook` - cooks a dolma given a recipe and its ingredients
+* `box` - creates a standalone installer from a cooked dolma
 * `goglizer` - creates template recipes for win-only GOG games; GOG account required
 * `config.py` - a configuration file providing important settings
 
@@ -47,7 +42,7 @@ Once the prototype is feature-complete I want to work on an enhanced version bas
 
 ### Requirements
 
-* x86 Linux (32 or 64 bit) with X.Org and xdg-compliant desktop environment
+* x86 Linux (32 or 64 bit) with X.Org and XDG-compliant desktop environment
 * Python 2.7
 * tar+gzip+curl
 
@@ -112,12 +107,15 @@ cd dolmades-cli
 
 ### Cooking a dolmade
 
-Cooking describes the process of building a dolmade from a recipe given its required ingredients.
-To cook a dolmade use the very simple example:
+Cooking describes the process of building a dolma from a recipe given its required ingredients.
+To cook a dolma use the very simple example:
 
 ```
-./cook recipes/ASD_LifeForce.dolmade
+./cook recipes/ASD_LifeForce.dolma
 ```
+<p align="center">
+  <img src="shots/cooking_cast.gif?raw=true" alt="cooking asd lifeforce"/>
+</p>
 
 This will install the winning demo of Assembly 2007 by Andromeda Software Development.
 At first the required ingredients will be downloaded and verified by its checksum. 
@@ -128,10 +126,10 @@ Finally, you can run the installed dolmade:
 ```
 
 <p align="center">
-  <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="screen shot asd lifeforce"/>
+  <img src="shots/firstuse_asd_lifeforce.png?raw=true" alt="running asd lifeforce"/>
 </p>
 
-The dolmade can now be uninstalled again:
+The dolma can now be uninstalled again:
 ```
 ./dolmades del LifeForce_ASD
 ```
@@ -139,10 +137,10 @@ The dolmade can now be uninstalled again:
 Now a second example: the free (as in beer) adventure game "Broken Sword":
 
 ```
-./cook recipes/Broken_Sword.dolmade --serve
+./cook recipes/Broken_Sword.dolma --serve
 ```
 
-This will create the dolmade and add menu entries and a desktop symbol.
+This will create the dolma and add menu entries and a desktop symbol.
 
 ```
 ./cook launch Broken_Sword
@@ -165,8 +163,8 @@ The game will be started. You should be hearing sound unless wine detects the wr
   <img src="shots/firstuse_2.png?raw=true" alt="screen shot 2"/>
 </p>
 
-A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolmade in case it hangs. 
-The dolmade can be removed via the corresponding menu entry.
+A system tray icon indicates the running dolmade. On left click you can access the run log, on right click you can forcibly terminate the running dolma in case it hangs. 
+The dolma can be removed via the corresponding menu entry.
 
 More recipes for dolmades can be downloaded [here](https://github.com/dolmadefiles)
 
@@ -181,7 +179,7 @@ At first, you will be asked to authorize using your GOG account. Since two-facto
 Finally, a list of your games is displayed:
 
 ```
-Found dolmade repo under /home/stefan/.dolmades/repo
+Found dolmades repo under /home/stefan/.dolmades/repo
 Pulling dolmades runtime container...
 da4bf27d-3bf2-3436-916a-e1bc83098523
 done
@@ -207,7 +205,7 @@ Note, that only games are listed that have no linux installer. If you want linux
 
 ```
 ./goglizer -l
-Found dolmade repo under /home/stefan/.dolmades/repo
+Found dolmades repo under /home/stefan/.dolmades/repo
 Windows games available on this account (bold: no linux installer available)
 akalabeth_world_of_doom
 beneath_a_steel_sky
@@ -220,12 +218,12 @@ Now choose a game of your liking and instruct `goglizer` to download the ingredi
 ```
 ./goglizer -d=flight_of_the_amazon_queen
 ```
-Now the dolmade can be installed:
+Now the dolma can be installed:
 ```
-./cook "flight_of_the_amazon_queen:en:1.1.dolmade" --serve
+./cook "flight_of_the_amazon_queen:en:1.1.dolma" --serve
 ```
 After successful completion you will find a clickable icon on your desktop and a menu entry :)
-You can skip the `goglizer` run completely by using the recipe under `recipes/flight_of_the_amazon_queen:en:1.1.dolmade`.
+You can skip the `goglizer` run completely by using the recipe under `recipes/flight_of_the_amazon_queen:en:1.1.dolma`.
 
 ## Fixing issues
 
@@ -237,12 +235,12 @@ Let's give an real example:
 ```
 We try to cook it:
 ```
-./cook edna_harvey_the_breakout:en.dolmade
+./cook edna_harvey_the_breakout:en.dolma
 ```
 The java installation will fail and leave a broken dolmade.
 First, we need to figure out interactively what needs to be done:
 ```
-./dolmades debug edna_harvey_the_breakout:en.dolmade
+./dolmades debug edna_harvey_the_breakout:en.dolma
 
 > # THIS IS THE REQUIRED FIX: set windows version to WinXP
 > winetricks winxp
@@ -254,24 +252,24 @@ First, we need to figure out interactively what needs to be done:
 targetSelector
 ```
 
-The previous changes are now applied permanently to the dolmade but will get lost if it will be recooked.
+The previous changes are now applied permanently to the dolma but will get lost if it will be recooked.
 That is why we ought to update the corresponing recipe to include that fix.
-Edit `edna_harvey_the_breakout:en.dolmade` and add the following section right before the `RunUser` command which launches the installer using `wine`:
+Edit `edna_harvey_the_breakout:en.dolma` and add the following section right before the `RunUser` command which launches the installer using `wine`:
 ```
 RunUser
  winetricks winxp
 
 ```
 
-Finally, the dolmade can be cooked once more:
+Finally, the dolma can be cooked once more:
 ```
-./cook edna_harvey_the_breakout:en.dolmade
+./cook edna_harvey_the_breakout:en.dolma
 ```
 
-This erases the previous dolmade and helps keeping recipe and cooked dolmade in sync with each other.
+This erases the previous dolma and helps keeping recipe and cooked dolma in sync with each other.
 
 ## Installable Dolmades
-Once a dolmade has been cooked and thoroughly tested it is possible to convert it into a standalone installer:
+Once a dolma has been cooked and thoroughly tested it is possible to convert it into a standalone installer:
 
 ```
 ./box LifeForce_ASD
@@ -281,9 +279,9 @@ The approximate size overhead produced by the Ubuntu Base Image and the winepref
 
 Users who download this file should open a terminal at the location of the downloaded file and run the installer like this:
 ```
-sh LifeForce_ASD.dme.sh
+sh LifeForce_ASD.dma.sh
 ```
-After accepting the license the dolmade will be installed under `$HOME/Dolmades-v1.1/LifeForce_ASD`. It can then be launched or removed again from the created menu entry or the desktop symbol.
+After accepting the license the dolma will be installed under `$HOME/Dolmades-v1.1/LifeForce_ASD`. It can then be launched or removed again from the created menu entry or the desktop symbol.
 
 *Note: as of now self-installable dolmades will require Python 2.7 and curl on the host system. A future release will probably get rid of this requirement.*
 
@@ -299,18 +297,18 @@ Lists the locally available dolmades:
 
 ### Removal
 
-Removes the given dolmade (data, menu entries and desktop symbols) and frees up the allocated space:
+Removes the given dolma (data, menu entries and desktop symbols) and frees up the allocated space:
 ```
-./dolmades del name-of-dolmade
+./dolmades del name-of-dolma
 ```
-You can pass multiple dolmade names or sha256 container ids.
+You can pass multiple dolma names or sha256 container ids.
 
 ### Execution
 
-Executes the `/.dolmades/start.sh` script which either runs the executable defined via `SetTarget` in the `dolmadefile`
+Executes the `/.dolmades/start.sh` script which either runs the executable defined via `SetTarget` in the `dolmafile`
 or the target selector script which lets you choose between all installed targets.
 ```
-./dolmades launch name-of-dolmade
+./dolmades launch name-of-dolma
 ```
 ### Debugging
 
@@ -318,7 +316,7 @@ It is possible to launch a bash inside the container.
 The installation directory will be available under `/install` and installed windows applications under `/wineprefix`.
 Furthermore, the home directory of the calling user is available:
 ```
-./dolmades debug name-of-dolmade
+./dolmades debug name-of-dolma
 ls -lad $HOME /wineprefix /install
 ```
 In rare cases you might want to run as fake root, e.g. to install a missing package:
@@ -327,8 +325,8 @@ In rare cases you might want to run as fake root, e.g. to install a missing pack
 apt-get update && apt-get -y install vim
 ```
 
-If `name-of-dolmade` is given as argument the changes are being applied permanently.
-If `name-of-base` is given as argument a temporary dolmade is being created and destroyed after the shell is being closed. `name-of-base` is used as template and currently can be one of the following:
+If `name-of-dolma` is given as argument the changes are being applied permanently.
+If `name-of-base` is given as argument a temporary dolma is being created and destroyed after the shell is being closed. `name-of-base` is used as template and currently can be one of the following:
 * `runtime` - used internally by `dolmades`, `cook` and `goglizer`
 * `base` - Ubuntu 18.04 LTS prepared for the installation of wine
 * `winestable` - `base` with wine stable added and preconfigured
@@ -336,7 +334,7 @@ If `name-of-base` is given as argument a temporary dolmade is being created and 
 
 ### Binding
 
-It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolmade is being launched but not when it is being debugged.
+It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolma is being launched but not when it is being debugged.
 
 ```
 ./dolmades binds name-of-dolmade
@@ -344,14 +342,14 @@ It is possible to make files or directories of the host file system accessible f
 ```
 
 ```
-./dolmades bind name-of-dolmade bind1 bind2 ...
+./dolmades bind name-of-dolma bind1 bind2 ...
 ```
 
 A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/dolmadedir/:/hostdir/`
 
 *Notes* 
-* This will create an empty file/directory in the dolmade if those do not exist already.
-* The created files/directories in the dolmade persist even after the corresponding binds have been removed.
+* This will create an empty file/directory in the dolma if those do not exist already.
+* The created files/directories in the dolma persist even after the corresponding binds have been removed.
 * As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!
 * In wine the C and the Z drive are predefined. Utilize `/wineprefix/drive_x:/my/hostdir/` to bind to drive X.
 
@@ -367,11 +365,11 @@ It is possible to export and import a readily installed dolmade.
 ./dolmades import Broken_Sword
 ```
 
-The final goal is to be able to export the dolmade on some linux system running under some hardware and import it on another linux system running another hardware. Since the user name will likely change all users home directories are shared and being symlinked to `root`. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
+The final goal is to be able to export the dolma on some linux system running under some hardware and import it on another linux system running another hardware. Since the user name will likely change all users home directories are shared and being symlinked to `root`. Also, things can stop working if the hardware changes, e.g. sound stops working, but can be fixed easily by running `winecfg` in debug mode.
 
 ### Menu entries and desktop symbols
 
-Last but not least the dolmade can be served on the desktop
+Last but not least the dolma can be served on the desktop
 ```
 ./dolmades serve name-of-dolmade
 ```
@@ -431,16 +429,16 @@ All available tools give help output:
 
 Dolmades ships with preconfigured settings in `config.py`. These are the most important ones:
 
-* `VERSION = "1.1"` - this is the utilized version of dolmades. It serves also as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmadefile. In code branches it is set to `latest` and omitted in the recipes, it will be just set for releases.
+* `VERSION = "1.2.0"` - this is the utilized version of dolmades. It derives the `MAJOR_VERSION = 1.2` which serves as tag to be used for base docker images and it has to match the `VERSION` setting in the Dolmafile. The syntax used in Dolmafiles is compatible across all versions sharing a common major versions.
 
-* `DOLMADES_PATH = HOME + '/.dolmades'` - this is the base path where dolmades stores its runtime, base images, dolmades, meta data, icons and GOG games lists. Note: you could change this path, but this will affect which host directories you can bind. A bind is never allowed to contain `DOLMADES_PATH` since it would be a security issue!
+* `DOLMADES_PATH = HOME + '/.dolmades-MAJOR_VERSION'` - this is the base path where dolmades stores its runtime, base images, dolmades, meta data, icons and GOG games lists. Note: you could change this path, but this will affect which host directories you can bind. A bind is never allowed to contain `DOLMADES_PATH` since it would be a security issue!
 
 ## Recipe Syntax
 
 A recipe is a specification which allows the guided build of the respective dolmade.
-Dolmadefiles are for dolmades what Dockerfiles are for Docker except that dolmades are not necessarily built fully automated and hence require interaction if a graphical installer is being used. 
+Dolmafiles are for dolmades what Dockerfiles are for Docker except that dolmades are not necessarily built fully automated and hence require interaction if a graphical installer is being used. 
 
-The structure of a `Dolmadefile` is:
+The structure of a `Dolmafile` is:
 ```
 # Arbitrary comment...
 COMMAND1
@@ -455,15 +453,15 @@ COMMAND2
 ### Commands
 
 ```
-DOLMADE
- Name_Of_The_Dolmade
+DOLMA
+ Name_Of_The_Dolma
 ```
-This command is mandatory. It defines the name of the dolmade used internally by `dolmades`. Whitespaces are not allowed. 
+This command is mandatory. It defines the name of the dolma used internally by `dolmades`. Whitespaces are not allowed. 
 This name is going to be slightly converted and used in the desktop icon title.
 
 ```
 VERSION
- 1.1
+ 1.2
 ```
 This command is optional. It defines the tag of the base image pulled by the recipe, and has to match with the version reported by `cook`. Advised to be omitted in development, such that no version checking takes place, and the `latest` base image is being used.
 
@@ -476,7 +474,7 @@ This command is mandatory. It defines the DockerHub repository to be used. The t
 
 ```
 DESCRIPTION
- A description of the contents of this dolmade
+ A description of the contents of this dolma
 ```
 
 This command is optional. This description is stored inside the container and it is not being used yet.
@@ -521,7 +519,7 @@ TARGET
  targetCall
 ``` 
 
-This command is optional. If omitted the dolmade will launch using the target launcher and allow the user to select one of all installed targets i.e. lnk-files created during the installation. Sometimes it is desirable to launch a specific executable and then this option can be used to set the exe-binary.
+This command is optional. If omitted the dolma will launch using the target launcher and allow the user to select one of all installed targets i.e. lnk-files created during the installation. Sometimes it is desirable to launch a specific executable and then this option can be used to set the exe-binary.
 
 ```
 TARGETARGS
@@ -550,8 +548,9 @@ ICON
  iconFileName
 ```
 
-This command is optional. It specifies the icon file to be used for the desktop symbol and the target launcher.
-If the icon filename is relative `/install` will be prepended. If the command is omitted it defaults to the dolmade icon.
+This command is optional. It specifies the icon file to be used for the desktop symbol and the target launcher with absolute path and file name.
+If an absolute path is ommitted the `/install` and `/wineprefix/drive_c` directories will be browsed and the first occurrence of the given icon file name will be used. 
+If the command is omitted or the given file name cannot be found it defaults to the dolma icon.
 
 **FINAL NOTES**
 
@@ -580,7 +579,7 @@ I figure some exciting use cases which would become addressable as well, e.g.
  * Automated deployment of windows software and complex development environments on large pools of computers
  * Cloud-based GUI applications based on Linux and VNC
  * Enhanced debugging and development for wine development
- * Fully automated dolmade cooking using Xvfb / AutoHotKey
+ * Fully automated dolma cooking using Xvfb / AutoHotKey
  * Functional archival of legacy software
  * Support for complex Linux software setups
 

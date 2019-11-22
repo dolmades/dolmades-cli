@@ -1,0 +1,45 @@
+# Name of the dolmade (very restricted by udocker)
+DOLMA
+  Notepad++
+
+# Docker image to use as a base
+BASE
+  dolmades/winehq-stable-bionic
+
+# Use this version
+VERSION
+  1.2
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+  3e95ce4191b73c755a3139c4df5039b255069eadda57ae827cbf843c60836157
+  npp.7.6.4.Installer.exe
+  Advanced Editor
+  https://notepad-plus-plus.org/repository/7.x/7.6.4/npp.7.6.4.Installer.exe
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+  b14b30443eb00598bae5adb8903e02be99a42b3982d18474831e517c588c2ab6
+  Notepad++.png
+  Icon - CC Attribution Non-Commercial No Derivatives
+  http://www.icons101.com/icon_png/size_512/id_81388/Notepad2.png
+
+# Install German language settings / locale
+RUNROOT
+  apt-get update && apt-get -y install locales language-pack-de-base && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Run a command inside the dolmade
+# PWD is the /install folder
+RUNUSER
+  wine npp.7.6.4.Installer.exe
+
+# Set icon for the Desktop shortcut
+ICON
+  Notepad++.png
+
+# Comment out the following two lines to fall back to the target selector
+TARGET
+  echo "$(find /wineprefix -name notepad++.exe)"
+
+TARGETENV
+  LC_ALL=de_DE.UTF-8

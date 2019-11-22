@@ -11,7 +11,11 @@ from prettyprint import printx
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 
-VERSION = "1.1"
+VERSION = "1.2.0"
+
+def MAJOR_VERSION():
+    return '.'.join(VERSION.split('.')[0:2])
+
 META_DIR = ".dolmades"
 INST_DIR = "install"
 INGR_DIR = "ingredients"
@@ -20,7 +24,7 @@ SELF_PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
 HOME = os.path.expanduser('~')
 USER = getpass.getuser()
 
-DOLMADES_PATH = HOME + '/.dolmades-' + VERSION
+DOLMADES_PATH = HOME + '/.dolmades-' + MAJOR_VERSION()
 INST_PATH = DOLMADES_PATH + "/" + INST_DIR
 INGREDIENTS_PATH = DOLMADES_PATH + "/" + INGR_DIR
 
@@ -38,11 +42,35 @@ os.environ["BASH_ENV"]="/.dolmades/start.env"
 
 if architecture()[0]=="32bit":
     RUNTIME_IMAGE="dolmades/runtime_i386"
-    DOLMADE_SUFFIX="_i386"
+    DOLMA_SUFFIX="_i386"
 else:
     RUNTIME_IMAGE="dolmades/runtime"
-    DOLMADE_SUFFIX=""
+    DOLMA_SUFFIX=""
 
+
+def INIT_INSTALL_PATH(dolmaname, sha256=None):
+    namedpath=INST_PATH+'/'+dolmaname
+
+    # ensure this being a dir not a file
+    if os.path.isfile(namedpath):
+        os.remove(namedpath)
+    
+    # on first run create it
+    if not os.path.exists(namedpath):
+        os.mkdir(namedpath)
+        printitb("Created shared installation directory "+namedpath)
+
+    if sha256 == None:
+        return
+
+    linkedpath=INST_PATH+'/'+sha256
+
+    # if said link exists already remove it
+    if os.path.islink(linkedpath):
+        os.unlink(namedpath)
+
+    # create link
+    os.symlink(namedpath, linkedpath)
 
 def SETUP(dolmaname, mode=None):
     enginePreference=UDOCKER_ENGINE_PREFERENCE
@@ -55,8 +83,8 @@ def SETUP(dolmaname, mode=None):
                 cmdline=UDOCKERCMD_QUIET+" setup --execmode="+engine+" "+dolmaname
                 print(cmdline)
                 subprocess.call(cmdline, shell=True, close_fds=True)
-                cmdline=UDOCKERCMD_QUIET+" run --user=$(whoami) "+dolmaname+" sleep 0"
-                print(cmdline)
+                cmdline="sh -c '"+UDOCKERCMD_QUIET+" run --user=$(whoami) "+dolmaname+" sleep 0 2>/dev/null'"
+                #print(cmdline)
                 subprocess.call(cmdline, shell=True, close_fds=True)
                 safe_cmd=shlex.split(cmdline)
                 proc=subprocess.Popen(safe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -102,7 +130,7 @@ def INIT(force):
 
     if force_runtime_rebuild or force:
         printitb("Rebuilding dolmades runtime...")
-        cmd = UDOCKERCMD_QUIET+" pull "+RUNTIME_IMAGE+":"+VERSION
+        cmd = UDOCKERCMD_QUIET+" pull "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
         print(cmd)
         printitb("Pulling dolmades runtime container...")
         subprocess.call(cmd, shell=True, close_fds=True)
@@ -117,7 +145,7 @@ def INIT(force):
         except:
             pass
 
-        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime "+RUNTIME_IMAGE+":"+VERSION
+        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 

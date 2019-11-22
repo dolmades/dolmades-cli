@@ -13,7 +13,8 @@ from prettyprint import color, printb, printit, printitb, printu, printx
 
 class Ingredient(object):
 
-    def __init__(self, h, fn, dn, u):
+    def __init__(self, p, h, fn, dn, u):
+        self.parent = p
         self.sha256hash = h
         self.displayName = dn
         self.fileName = fn
@@ -33,15 +34,17 @@ class Ingredient(object):
 
         self.urls.append(u)
 
+    def installPath(self):
+        return cfg.INST_PATH+"/"+self.parent
 
     def checklocal(self):
         try:
             sha256 = hashlib.sha256()
             block_size=65536
-            if not os.path.isfile(cfg.INST_PATH + "/" + self.fileName):
+            if not os.path.isfile(self.installPath() + "/" + self.fileName):
                 printitb('File has yet to be retrieved!')
                 return False
-            with open(cfg.INST_PATH + "/" + self.fileName, 'rb') as f:
+            with open(self.installPath() + "/" + self.fileName, 'rb') as f:
                 for block in iter(lambda: f.read(block_size), b''):
                     sha256.update(block)
             if (sha256.hexdigest() != self.sha256hash):
@@ -62,7 +65,7 @@ class Ingredient(object):
         for u in self.local_urls:
             try:
                 printitb("Using local copy of " + self.fileName + " from " + u)
-                shutil.copy(u.replace('file://',''), cfg.INST_PATH + "/" + self.fileName)
+                shutil.copy(u.replace('file://',''), self.installPath() + "/" + self.fileName)
                 if self.checklocal():
                     return True
                 else:
@@ -76,7 +79,7 @@ class Ingredient(object):
             try:
                 printitb("Using a valid GOG account to download " + u + " as " + self.fileName)
                 cmd = cfg.UDOCKERCMD_QUIET+\
-                      " run --user=$(whoami) --bindhome --hostauth -v " + cfg.INST_PATH+\
+                      " run --user=$(whoami) --bindhome --hostauth -v " + self.installPath()+\
                       """/:/wineprefix dolmades-runtime bash -c 'cd /wineprefix && lgogdownloader -o "/wineprefix/"""+self.fileName+\
                       '" --download-file '+u.replace("gog://","")+"'"
                 print(cmd)
@@ -91,8 +94,8 @@ class Ingredient(object):
             try:
                 printitb("Retrieving " + self.fileName + " from " + u)
                 cmd = cfg.UDOCKERCMD_QUIET+\
-                      " run --user=$(whoami) --volume="+cfg.INST_PATH+":/"+cfg.INST_DIR+\
-                      " dolmades-runtime sh -c 'curl -o /"+cfg.INST_DIR+"/\""+self.fileName+"\" -L \""+u+"\"'"
+                      " run --user=$(whoami) --volume="+self.installPath()+":/"+cfg.INST_DIR+\
+                      " dolmades-runtime sh -c 'curl -o \"/"+cfg.INST_DIR+"/"+self.fileName+"\" -L \""+u+"\"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -107,7 +110,7 @@ class Ingredient(object):
         return False
 
 
-class Dolmade(object):
+class Dolma(object):
 
     iconfn = None
     name = None
@@ -131,15 +134,16 @@ class Dolmade(object):
 
     def checkVersion(self, version):
         self.version=''.join(version)
-        if self.version == cfg.VERSION:
-            printitb("Good! The dolmadefile and this script both match version "+self.version)
+        if self.version == cfg.MAJOR_VERSION():
+            printitb("Good! The dolmafile and this script both match major version "+self.version)
         else:
-            printitb("Bad! The dolmadefile is for version "+self.version+", but this script for version "+cfg.VERSION)
+            printitb("Bad! The dolmafile is for major version "+self.version+", but this script for major version "+cfg.MAJOR_VERSION())
             sys.exit(1)
 
-    def setupDolmade(self, cmdp):
-        self.name = ' '.join(cmdp)
-        print(color.BOLD + "Setting Dolmade Name to " + color.END + self.name)
+    def setupDolma(self, cmdp):
+        # FIXME throw exception when these names are being used thus effectively prohibiting them
+        self.name = ' '.join(cmdp).replace(':','-').replace('(','_').replace(')','_').replace('&','_n_')
+        print(color.BOLD + "Setting Dolma Name to " + color.END + self.name)
 
     def setupBase(self, cmdp):
         self.baseImg = ''.join(cmdp)
@@ -150,13 +154,14 @@ class Dolmade(object):
         print(color.BOLD + "Setting Description to " + color.END + self.description)
 
     def setupIngredient(self, cmdp):
+        p = self.name
         h = cmdp[0]
         fn = cmdp[1]
         dn = cmdp[2]
         u = cmdp[3].replace('file://~/','file://'+os.path.expanduser('~')+'/')
 
         sys.stdout.write(color.BOLD + "Adding Ingredient " + color.END + dn + ":" + fn + ":" + h + ":" + u)
-        ingr = Ingredient(h,fn,dn,u)
+        ingr = Ingredient(p,h,fn,dn,u)
         
         for i in range(4,len(cmdp)):
             isInvalid = True
@@ -183,7 +188,7 @@ class Dolmade(object):
         self.runs.append(('root',cmdp))
 
     def icon(self, cmdp):
-        self.iconfn = ''.join(cmdp)
+        self.iconfn=''.join(cmdp)
         print(color.BOLD + "Selecting Icon:" + color.END + self.iconfn)
 
     def setTarget(self, cmdp):
@@ -203,43 +208,50 @@ class Dolmade(object):
         self.targetPrlg = ' '.join(cmdp)
         print(color.BOLD + "Passing the following prologue to the target:" + color.END + self.targetPrlg)
 
-    def path(self):
+    def path(self, named=False):
         if self.sha256:
-            return cfg.DOLMADES_PATH+"/containers/"+self.sha256+"/ROOT/"
+            if named:
+                return cfg.DOLMADES_PATH+"/containers/"+self.name+"/ROOT/"
+            else:
+                return cfg.DOLMADES_PATH+"/containers/"+self.sha256+"/ROOT/"
         else:
-            printitb("Error: Dolmade has not been created yet!")
+            printitb("Error: Dolma has not been created yet!")
             return None
 
-    def metaPath(self):
-        path = self.path()
+    def metaPath(self, named=False):
+        path = self.path(named)
         if path:
-            return self.path()+"/"+cfg.META_DIR
+            return self.path(named)+"/"+cfg.META_DIR
         else:
             return None
 
-    def installPath(self):
-        return self.path()+"/"+cfg.INST_DIR
+    def installPath(self, named=False):
+        if named:
+            return cfg.INST_PATH+"/"+self.name
+        else:
+            return cfg.INST_PATH+"/"+self.sha256
 
     def build(self, options):
-        printitb("Performing the dolmade build...")
+        printitb("Preparing installation path...")
+        cfg.INIT_INSTALL_PATH(self.name)
+
+        printitb("Performing the dolma build...")
         for i in self.ingredients: 
             i.retrieve()
 
-        cmd = cfg.UDOCKERCMD_VERBOSE+" pull "+self.baseImg+cfg.DOLMADE_SUFFIX+":"+self.version
+        cmd = cfg.UDOCKERCMD_VERBOSE+" pull "+self.baseImg+cfg.DOLMA_SUFFIX+":"+self.version
         print cmd
         subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = cfg.UDOCKERCMD_QUIET+" create "+self.baseImg+cfg.DOLMADE_SUFFIX+":"+self.version
+        cmd = cfg.UDOCKERCMD_QUIET+" create "+self.baseImg+cfg.DOLMA_SUFFIX+":"+self.version
         self.sha256 = subprocess.check_output(cmd, shell=True, close_fds=True).strip()
+
+        # prepare installation directory symlink
+        cfg.INIT_INSTALL_PATH(self.name, self.sha256)
 
         # use proot without seccomp filtering
         # which is slower but works everywhere
         cfg.SETUP(self.sha256, "P2")
-
-        if (not os.path.exists(self.metaPath())):
-            os.mkdir(self.metaPath(), 0755)
-        
-        printitb("Installing the sucessfully built dolmade...")
 
         cmd = cfg.UDOCKERCMD_QUIET+" rm "+self.name
         print(cmd)
@@ -252,8 +264,20 @@ class Dolmade(object):
         self.target = None
         self.targetPath = None
 
-        printitb("Initializing wine prefix...")
-        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.name+""" sh -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --init && wineserver -w"'"""
+        printitb("Preparing environment and copying resouces...")
+
+        shutil.copytree("resources/.dolmades", self.metaPath())
+        shutil.copy("resources/targetLauncher", self.path()+"/usr/local/bin/")
+        shutil.copy("resources/taskbarWrapper", self.path()+"/usr/local/bin/")
+
+        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.sha256+\
+                """ sh -c 'echo "source /"""+cfg.META_DIR+"""/start.env" >> /etc/bash.bashrc'"""
+        print(cmd)
+        subprocess.call(cmd, shell=True, close_fds=True)
+
+        printitb("Initializing wine prefix using mono/gecko...")
+        cmd = cfg.UDOCKERCMD_QUIET+" run --user=root "+self.sha256+\
+                """ sh -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --init && wineserver --wait"'"""
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
@@ -261,17 +285,17 @@ class Dolmade(object):
         for r in self.runs:
             (u,c) = r
             if (u == 'root'):
-                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+cfg.INST_PATH+":/install --user=root --hostenv --dri "+\
-                      self.name+" "+"bash -c 'cd /install && "+' '.join(c)+"'"
+                cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+self.installPath()+":/"+cfg.INST_DIR+" --user=root --hostenv --dri "+\
+                      self.sha256+" "+"bash -c 'cd "+cfg.INST_DIR+" && "+' '.join(c)+"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
-                volBinds="--volume="+cfg.INST_PATH+":/install --volume="+os.environ["XDG_CACHE_HOME"]
+                volBinds="--volume="+self.installPath()+":/"+cfg.INST_DIR+" --volume="+os.environ["XDG_CACHE_HOME"]
                 # if ~/.Xauthority is used to authenticate to the X Server then bind it
                 if os.path.exists(cfg.HOME+"/.Xauthority"):
                     volBinds=volBinds+" --volume="+cfg.HOME+"/.Xauthority"
                 cmd = cfg.UDOCKERCMD_QUIET+" run "+volBinds+" --user="+cfg.USER+\
-                      " --hostenv --dri "+self.name+" "+"bash -c 'cd /install && "+' '.join(c)+" && wineserver --wait"+"'"
+                      " --hostenv --dri "+self.sha256+" "+"bash -c 'cd /"+cfg.INST_DIR+" && "+' '.join(c)+" && wineserver --wait"+"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'setTarget'):
@@ -311,8 +335,8 @@ class Dolmade(object):
             printitb("Predefined target is "+self.target+", target path is "+self.targetPath+tgtArgsAppendix)
         else:
             printitb("No target predefined. Target launcher will be used.")
-            self.target="./targetLauncher"
-            self.targetPath="/usr/local/bin"
+            self.target=None
+            self.targetPath=None
 
         with open(self.metaPath()+"/start.env", "a") as env_file:
             for e in self.targetEnvs:
@@ -320,35 +344,57 @@ class Dolmade(object):
 
         iconInContainer = self.metaPath()+"/icon.png"
         open(iconInContainer, 'w+')
-        try:
-            if self.iconfn.startswith('/'):
-                iconAbsPath=cfg.INST_PATH+"/.."+self.iconfn
+        if self.iconfn!=None:
+            name=self.iconfn.split('/')[-1]
+            if not self.iconfn.startswith('/'):
+                self.iconfn=None
+                # case "icon resides somewhere under the installation directory"
+                for root, dirs, files in os.walk(self.installPath()):
+                    if name in files:
+                        print("Found icon under installation directory...")
+                        self.iconfn=os.path.join(root, name)
+                        break
+                # case "icon resides somewhere under drive C"
+                for root, dirs, files in os.walk(self.path()+'/wineprefix/drive_c'):
+                    if name in files:
+                        print("Found icon under drive C...")
+                        self.iconfn=os.path.join(root, name)
+                        break
+                if self.iconfn==None:
+                    printitb("Error: icon file name nowhere found!")
             else:
-                iconAbsPath=cfg.INST_PATH+"/"+self.iconfn
-            cmd = cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" -v=" + cfg.INST_PATH+"/"+self.iconfn+":/"+self.iconfn.split('/')[-1]+\
+                print("Absolute location for icon file given")
+                self.iconfn=self.path()+self.iconfn
+
+            # put icon file directly under installation path
+            if not self.iconfn == self.installPath()+"/"+name:
+                shutil.copy(self.iconfn, self.installPath()+"/"+name)
+            cmd = cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" -v=" + self.installPath()+"/"+name+":/"+name+\
                   " -v="+iconInContainer+":/wineprefix/icon.png dolmades-runtime sh -c 'convert -adaptive-resize 128x128 /"+\
-                  self.iconfn.split('/')[-1] + "[0] " + "/wineprefix/icon.png'"
+                  name+"[0] "+"/wineprefix/icon.png'"
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
-        except:
+            printb("Icon successfully prepared!")
+        else:
+            printb("No icon specified, using default icon")
             shutil.copy(self.metaPath()+"/icons/dolmade.png", iconInContainer)
 
-        shutil.copy(self.inputFileName, self.metaPath()+"/Dolmadefile")
+        shutil.copy(self.inputFileName, self.metaPath()+"/Dolmafile")
         shutil.copy(cfg.DOLMADES_PATH+"/dolmades-bin.tgz", self.metaPath()+"/dolmades-bin.tgz")
 
-        runscriptInContainer = self.metaPath()+"/start.sh"
+        if ( self.targetPath!=None and self.target!=None):
+            runscriptInContainer = self.metaPath()+"/start.sh"
 
-        with open(runscriptInContainer, "w") as f:
-            f.write("#!/bin/bash\n")
-            f.write('cd "'+self.targetPath+'"\n')
-            if self.targetArgs:
-                f.write(self.target+" "+self.targetArgs+"\n")
-            else:
-                f.write(self.target+"\n")
-            f.write("wineserver -w")
+            with open(runscriptInContainer, "w") as f:
+                f.write("#!/bin/bash\n")
+                f.write('cd "'+self.targetPath+'"\n')
+                if self.targetArgs:
+                    f.write(self.target+" "+self.targetArgs+"\n")
+                else:
+                    f.write(self.target+"\n")
 
-        st = os.stat(runscriptInContainer)
-        os.chmod(runscriptInContainer, st.st_mode | stat.S_IEXEC)
+            st = os.stat(runscriptInContainer)
+            os.chmod(runscriptInContainer, st.st_mode | stat.S_IEXEC)
 
         if "--serve" in options:
             cmd = cfg.SELF_PATH+"/dolmades serve '"+self.name+"'"
@@ -359,20 +405,20 @@ class Dolmade(object):
 class Main(object):
     def executeCmd(self, cmdarg):
         """all supported commands"""
-        cmds = { '': self.dolmade.dumpComment,
-                 '#': self.dolmade.dumpComment,
-                 'VERSION': self.dolmade.checkVersion,
-                 'DOLMADE': self.dolmade.setupDolmade, 
-                 'BASE': self.dolmade.setupBase,
-                 'DESCRIPTION': self.dolmade.setupDescription,
-                 'INGREDIENT': self.dolmade.setupIngredient,
-                 'RUNUSER': self.dolmade.runUser,
-                 'RUNROOT': self.dolmade.runRoot,
-                 'ICON': self.dolmade.icon,
-                 'TARGET': self.dolmade.setTarget,
-                 'TARGETARGS': self.dolmade.setTargetArgs,
-                 'TARGETENV': self.dolmade.setTargetEnv,
-                 'TARGETPROLOGUE': self.dolmade.setTargetPrologue}
+        cmds = { '': self.dolma.dumpComment,
+                 '#': self.dolma.dumpComment,
+                 'VERSION': self.dolma.checkVersion,
+                 'DOLMA': self.dolma.setupDolma, 
+                 'BASE': self.dolma.setupBase,
+                 'DESCRIPTION': self.dolma.setupDescription,
+                 'INGREDIENT': self.dolma.setupIngredient,
+                 'RUNUSER': self.dolma.runUser,
+                 'RUNROOT': self.dolma.runRoot,
+                 'ICON': self.dolma.icon,
+                 'TARGET': self.dolma.setTarget,
+                 'TARGETARGS': self.dolma.setTargetArgs,
+                 'TARGETENV': self.dolma.setTargetEnv,
+                 'TARGETPROLOGUE': self.dolma.setTargetPrologue}
 
         if len(cmdarg)<1:
             return
@@ -387,7 +433,7 @@ class Main(object):
 
     def execute(self):
         if (len(sys.argv)<2):
-            print("Usage: cook [--serve|--no-download|--no-validate|--hard-validate] Dolmadefile")
+            print("Usage: cook [--serve|--no-download|--no-validate|--hard-validate] Dolmafile")
             print("       --serve: generates a desktop icon and menu entries")
             print("       --no-download: use only local ingredients [NOT IMPLEMENTED YET]")
             print("       --no-validate: do not validate ingredients using their checksums [NOT IMPLEMENTED YET]")
@@ -402,13 +448,13 @@ class Main(object):
             else:
                 inputFileName = a
         
-        self.dolmade = Dolmade(inputFileName)
+        self.dolma = Dolma(inputFileName)
 
         try:
-            with open(inputFileName, "r") as dolmadeFile:
+            with open(inputFileName, "r") as dolmaFile:
                 cmdarg = list()
                 while True:
-                    line = dolmadeFile.readline();
+                    line = dolmaFile.readline();
                     if line:
                         if line.strip().startswith('#'):
                             continue
@@ -426,7 +472,7 @@ class Main(object):
         except (IOError, OSError):
             print("ERROR: Cannot open " + inputFileName)
 
-        self.dolmade.build(options)
+        self.dolma.build(options)
 
     def start(self):
         """Program start and exception handling"""

@@ -1,0 +1,65 @@
+# Name of the dolmade (very restricted by udocker)
+DOLMA
+    Broken_Sword
+
+# The version of `cook` that must be used for this dolmade
+VERSION
+    1.2
+
+# Docker image to use as a base with VERSION defining its tag
+BASE
+    dolmades/winehq-stable-bionic
+
+# A description of the installed software
+DESCRIPTION
+    George receives a letter with unsettling content and soon finds himself in an adventure with no way out.
+    There be Templars!
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+# At first the ingredient is 
+INGREDIENT
+    110026b9c1f4eaa0ed4f7dfc59519a4df8e1a3eff4616b10b59da4ba04abe4ed
+    bs25setup.zip
+    Broken Sword 2.5 Setup
+    https://dolmades.org/mirror/ingredients/bs25setup.zip
+    http://bf25.digital-extremes.com/bs25setup.zip
+    http://server.c-otto.de/baphometsfluch/bs25setup.zip
+    file://~/Downloads/bs25setup.zip
+
+INGREDIENT
+    3c9dbafcb2a56a64703c1757351dfdaa9fc8f926e02c2aed5ba81e51c4475e21
+    bs25.ahk
+    AutoHotkey Installer Script
+    https://dolmades.org/mirror/ingredients/bs25.ahk
+    file://~/bs25y.ahk
+
+INGREDIENT
+    84934b495a5847244b9be221d96cff12212c72704afdfefff843892b3ae608d4
+    BS25_patch000_multilingual.zip
+    Broken Sword 2.5 MultiLingual Patch
+    https://dolmades.org/mirror/ingredients/BS25_patch000_multilingual.zip
+    http://baphometsfluch25.de/downloads/sonstiges/BS25_patch000_multilingual.zip
+    file://~/Downloads/BS25_patch000_multilingual.zip
+
+# Run a command inside the dolmade
+# PWD is the install folder
+RUNUSER
+    winetricks -q autohotkey 
+
+RUNUSER
+    unzip -o bs25setup.zip &&
+    find /wineprefix -type f -name *.lnk -exec rm -f {} \; &&
+    xvfb-run sh -c "wine /wineprefix/drive_c/Program\ Files/AutoHotkey/AutoHotkey.exe bs25.ahk && wineserver --wait" &&
+    cd "`dirname "$(find /wineprefix/ -name bsengine.exe)"`" && 
+    unzip -o /install/BS25_patch000_multilingual.zip
+
+RUNUSER
+    unzip -o dvd-cover.zip DVD_Label/English/label_bs25.jpg
+
+# Set icon for the Desktop shortcut
+# DVD_Label/English/label_bs25.jpg
+ICON
+    label_bs25.jpg
+
+#SETTARGET
+#    echo "$(find /wineprefix/ -name bsengine.exe)"

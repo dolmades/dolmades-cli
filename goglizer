@@ -225,7 +225,7 @@ class Main(object):
         print(" -u:" + color.ITALIC + " update the GOG game list" + color.END)
         print(" -l=preferredLanguage,fallbackLanguage1,fallbackLanguage2,...:" + color.ITALIC + \
               " use in combination with -d, when omitted installers will default to English (en)" + color.END)
-        print(" -d=gameid:" + color.ITALIC + " generate a Dolmadefile for the game 'gameid' and download its ingredients" + color.END)
+        print(" -d=gameid:" + color.ITALIC + " generate a Dolmafile for the game 'gameid' and download its ingredients" + color.END)
 
     def downloadIngredients(self, i):
         print("Downloading "+i+"...")
@@ -287,7 +287,7 @@ class Main(object):
             return None
 
 
-    def generateDolmadefile(self, gamename):
+    def generateDolmafile(self, gamename):
         try:
             games = GameList()
             games.readList(cfg.DOLMADES_PATH+"/gog.w.lst")
@@ -300,38 +300,40 @@ class Main(object):
 
         game = games.getSelectedGame()
 
-        print("Generating Dolmadefile for "+gamename)
-        
         # FIXME this string should rather match the whatsoever being selected installer language
         #       but this is going to happen later and thus needs refactoring the code of this entire routine!
         preferredLg=self.languageSwitch.replace("-l=","").split(",")[0]
                 
-        dolmadefile = open(game.gamename+":"+preferredLg+":"+cfg.VERSION+".dolmade","w")
-        dolmadefile.write("# Name of the Dolmade\n")
-        dolmadefile.write("DOLMADE\n")
-        dolmadefile.write("    "+game.title.replace(' ','_').replace('&','n')+":"+preferredLg+"\n\n")
+        dolmafn = game.gamename+":"+preferredLg+":"+cfg.MAJOR_VERSION()+".dolma"
+
+        printb("Generating Dolmafile "+dolmafn+" for "+gamename)
         
-        dolmadefile.write("# The version of `cook` that must be used to build this dolmade\n")
-        dolmadefile.write("VERSION\n")
-        dolmadefile.write("    "+cfg.VERSION+"\n\n")
+        dolmafile = open(dolmafn,"w")
+        dolmafile.write("# Name of the Dolma\n")
+        dolmafile.write("DOLMA\n")
+        dolmafile.write("    "+game.title.replace(' ','_').replace('&','n')+":"+preferredLg+"\n\n")
+        
+        dolmafile.write("# The major version of `cook` that must be used to build this dolma\n")
+        dolmafile.write("VERSION\n")
+        dolmafile.write("    "+cfg.MAJOR_VERSION()+"\n\n")
 
-        dolmadefile.write("# Docker image used as a base with VERSION defining its tag\n")
-        dolmadefile.write("BASE\n")
-        dolmadefile.write("    dolmades/winestable\n\n")
+        dolmafile.write("# Docker image used as a base with VERSION defining its tag\n")
+        dolmafile.write("BASE\n")
+        dolmafile.write("    dolmades/winehq-stable-bionic\n\n")
 
-        dolmadefile.write("# A description of the installed software\n")
-        dolmadefile.write("#DESCRIPTION\n")
-        dolmadefile.write("#    TODO: please add a synopsis about the game...\n\n")
+        dolmafile.write("# A description of the installed software\n")
+        dolmafile.write("#DESCRIPTION\n")
+        dolmafile.write("#    TODO: please add a synopsis about the game...\n\n")
 
-        dolmadefile.write("# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...\n")
-        dolmadefile.write("INGREDIENT\n")
+        dolmafile.write("# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...\n")
+        dolmafile.write("INGREDIENT\n")
         cmd = "sh -c 'curl -L -s "+game.icon+"|sha256sum|cut -f 1 -d \" \"'"
         chksum = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
-        dolmadefile.write("    "+chksum)
+        dolmafile.write("    "+chksum)
         icon_fn = game.icon.split("/")[-1]
-        dolmadefile.write("    "+icon_fn+"\n")
-        dolmadefile.write("    Game Icon\n")
-        dolmadefile.write("    "+game.icon+"\n\n")
+        dolmafile.write("    "+icon_fn+"\n")
+        dolmafile.write("    Game Icon\n")
+        dolmafile.write("    "+game.icon+"\n\n")
 
         ingredients=None
         for elem in game.elements:
@@ -361,33 +363,33 @@ class Main(object):
 
         for elem in game.elements:
             if elem.elemId in ingredients:
-                dolmadefile.write("INGREDIENT\n")
+                dolmafile.write("INGREDIENT\n")
                 ingredient=game.gamename+"/"+elem.elemId
                 chksum=self.computeChecksum(cfg.INST_PATH+"/"+elem.path)
-                dolmadefile.write("    "+chksum)
-                dolmadefile.write("    "+elem.path+"\n")
-                dolmadefile.write("    "+elem.name+"\n")
-                dolmadefile.write("    gog://"+game.gamename+"/"+elem.elemId+"\n\n")
+                dolmafile.write("    "+chksum)
+                dolmafile.write("    "+elem.path+"\n")
+                dolmafile.write("    "+elem.name+"\n")
+                dolmafile.write("    gog://"+game.gamename+"/"+elem.elemId+"\n\n")
 
-        dolmadefile.write("# Post-install custom packages like so\n")
-        dolmadefile.write("#RUNROOT\n")
-        dolmadefile.write("#    apt-get update && apt-get -y install custompkg && && apt-get clean && rm -rf /var/lib/apt/lists/*\n\n")
+        dolmafile.write("# Post-install custom packages like so\n")
+        dolmafile.write("#RUNROOT\n")
+        dolmafile.write("#    apt-get update && apt-get -y install custompkg && && apt-get clean && rm -rf /var/lib/apt/lists/*\n\n")
 
-	dolmadefile.write("# Adapt some presets, for instance when a certain windows version must be enforced\n")
-        dolmadefile.write("#RUNUSER\n")
-	dolmadefile.write("#    winetricks winxp\n\n")
+	dolmafile.write("# Adapt some presets, for instance when a certain windows version must be enforced\n")
+        dolmafile.write("#RUNUSER\n")
+	dolmafile.write("#    winetricks winxp\n\n")
 
-        dolmadefile.write("# Perform installation\n")
-        dolmadefile.write("RUNUSER\n")
-        dolmadefile.write("    wine \""+myInstallerFN+"\"\n\n")
+        dolmafile.write("# Perform installation\n")
+        dolmafile.write("RUNUSER\n")
+        dolmafile.write("    wine \""+myInstallerFN+"\"\n\n")
 
-        dolmadefile.write("# Set icon for the Desktop shortcut\n")
-        dolmadefile.write("ICON\n")
-        dolmadefile.write("    "+icon_fn+"\n\n")
+        dolmafile.write("# Set icon for the Desktop shortcut\n")
+        dolmafile.write("ICON\n")
+        dolmafile.write("    "+icon_fn+"\n\n")
 
-        dolmadefile.write("# Set the executable if you know its name. If omitted a target selector will be launched\n")
-        dolmadefile.write("#SETTARGET\n")
-        dolmadefile.write("#    echo \"$(find /wineprefix/ -name BSTSD.exe)\"\n")
+        dolmafile.write("# Set the executable if you know its name. If omitted a target selector will be launched\n")
+        dolmafile.write("#SETTARGET\n")
+        dolmafile.write("#    echo \"$(find /wineprefix/ -name BSTSD.exe)\"\n")
         return True
 
     def start(self):
@@ -409,7 +411,7 @@ class Main(object):
                 self.showHelp = True
             if (arg.startswith('-d=')):
                 self.showGameMetadata = False
-                self.generateDolmade = arg.replace("-d=","")
+                self.generateDolma = arg.replace("-d=","")
 
         if (self.showHelp):
             self.printHelp()
@@ -422,11 +424,11 @@ class Main(object):
             self.showAvailableGames()
             return
 
-        if (self.generateDolmade):
-            if (self.generateDolmadefile(self.generateDolmade)):
-                printb("Dolmadefile successfully generated!")
+        if (self.generateDolma):
+            if (self.generateDolmafile(self.generateDolma)):
+                printb("Dolmafile successfully generated!")
             else:
-                printb("Dolmadefile could not be generated!")
+                printb("Dolmafile could not be generated!")
             return
 
 if __name__ == "__main__":
