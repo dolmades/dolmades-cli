@@ -168,9 +168,9 @@ The dolma can be removed via the corresponding menu entry.
 
 More recipes for dolmades can be downloaded [here](https://github.com/dolmadefiles)
 
-### Generating a GOG dolmade
+### Generating a GOG dolma
 
-For this to work you'll need to be registered at [GOG](https://gog.com). They offer some items for free so you can test `goglizer` without purchasing a game. If you have not done so already obtain the free item "Flight of the Amazon Queen" and verify that it is shown in your personal game collection. Retrieve a list of your games using the script `goglizer`:
+For this to work you'll need to be registered at [GOG](https://gog.com). They offer some items for free so you can actually test `goglizer` without purchasing a game. If you have not done so already obtain the free item "Flight of the Amazon Queen" and verify that it is shown in your personal game collection. Retrieve a list of your games using the script `goglizer`:
 ```
 ./goglizer -u
 ```
@@ -237,7 +237,7 @@ We try to cook it:
 ```
 ./cook edna_harvey_the_breakout:en.dolma
 ```
-The java installation will fail and leave a broken dolmade.
+The java installation will fail and leave a broken dolma.
 First, we need to figure out interactively what needs to be done:
 ```
 ./dolmades debug edna_harvey_the_breakout:en.dolma
