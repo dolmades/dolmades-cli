@@ -25,7 +25,7 @@ The focus of the v1.x release cycle will be put on support for latest vanilla wi
 
 * **Ease of use:** standalone installable on major Linux distros while requiring no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
-* **Mobility:** designed to be executable across various distros and system hardware
+* **Mobility:** designehttps://github.com/id to be executable across various distros and system hardware
 * **Safety:** isolated from each other and from the host system by default to prevent data loss
 
 ## Implementation 
@@ -580,7 +580,7 @@ If the command is omitted or the given file name cannot be found it defaults to 
  * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible. I plan to keep compatibility to major distributions though.
  * Why does the syntax for the recipes change? So that it can evolve! As of now the syntax may change for **every** version. This does not matter since dolmades recipes will work when the `VERSION` of the recipe matches the `dolmades` run script. Exported dolmades will contain all scripts necessary to rebuild and rerun the dolmade.
  * Will the syntax for the recipes be fixed anytime? Probably. But not in the prototypical implementation phase. 
- * How secure is the sandboxing? By default proot is used which is not really secure but more or less save since it prevents to accidentally destroy data on the host system. Later it will be possible to use singularity which is a real chroot environment, and this offers better security.
+ * How secure is the sandboxing? If singularity is installed it will be used after installation by default. This offers real chrooted environments. Otherwise proot is used as a fallback which is not really secure but relatively safe since it prevents accidental destruction of data on the host system. 
  * Will dolmades support ever MacOSX or Windows? Maybe. But not for the foreseeable future.
  * Is it enough to lookup ingredients by SHA256? TODO
 
@@ -600,10 +600,10 @@ I figure some exciting use cases which would become addressable as well, e.g.
 
 ## Troubleshooting
 
-* `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
+* `udocker` requires Python 2.7 and will hopefully receive Python 3 support soon: https://github.com/indigo-dc/udocker/issues/77
 * `udocker` requires tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137) which every recent distro should provide
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
-* wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32-bit windows
+* wine does not work well with pure x86-64 software which is why the installed windows software actually needs to be compatible with 32-bit windows
 * do not report issues to wine directly when `winetricks` has been used in the recipe
 * sometimes `udocker` fails to pull some layers from the docker registry (timeouts) - simply repeating the commands should help.
 * GOG installer errors: many GOG games display error messages at the end of the installation process. I suspect some failing installer script commands are the source. The installed games seem to work anyways! According to [this post](https://wp.xin.at/archives/tag/out-of-global-vars-range) these messages even occur on Windows machines!
