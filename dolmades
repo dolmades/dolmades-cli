@@ -112,7 +112,7 @@ class Main(object):
             subprocess.call(cmd, shell=True, close_fds=True)
 
         if (cmd=='debug-root'):
-            cmd=cfg.UDOCKERCMD_QUIET+" run --user=root '"+sys.argv[2]+"' bash"
+            cmd="UDOCKER_DEFAULT_EXECUTION_MODE=P2 "+cfg.UDOCKERCMD_QUIET+" run --user=root '"+sys.argv[2]+"' bash"
             print(cmd)
             print("HINT: if package installation fails it might not be supported by the execution engine!")
             subprocess.call(cmd, shell=True, close_fds=True)
