@@ -388,7 +388,7 @@ class Main(object):
         dolmafile.write("    "+icon_fn+"\n\n")
 
         dolmafile.write("# Set the executable if you know its name. If omitted a target selector will be launched\n")
-        dolmafile.write("#SETTARGET\n")
+        dolmafile.write("#TARGET\n")
         dolmafile.write("#    echo \"$(find /wineprefix/ -name BSTSD.exe)\"\n")
         return True
 
