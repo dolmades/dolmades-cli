@@ -65,20 +65,26 @@ export UDOCKER_TARBALL="$CURR_DIR/udocker-tarball-1.1.3.tar.gz"
 echo "Installing $DOLMA_NAME into $INST_DIR..."
 
 mkdir -p "$INST_DIR/cli"
-mkdir -p "$INST_DIR/res"
 
 cp -p "$CURR_DIR/cli/dolmades" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/udocker" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/prettyprint.py" "$INST_DIR/cli"
 cp -p "$CURR_DIR/license.txt" "$INST_DIR"
 
-cat "$CURR_DIR/cli/config.py" | sed "s#^DOLMADES_PATH = HOME + '/.dolmades-' + VERSION#DOLMADES_PATH = '"$INST_DIR"/.dolmades'#" > "$INST_DIR/cli/config.py"
+# FIXME implement this more flexible!
+cat "$CURR_DIR/cli/config.py" | sed "s#^DOLMADES_PATH = HOME + '/.dolmades-' + MAJOR_VERSION()#DOLMADES_PATH = '"$INST_DIR"/data'#" > "$INST_DIR/cli/config.py"
 echo >> "$INST_DIR/cli/config.py"
 echo "BOXED_PATH=\'$INST_DIR\'" >> "$INST_DIR/cli/config.py"
 
 cd "$INST_DIR/cli"
-./dolmades import "$CURR_DIR/$DOLMA_FNAME"
+./dolmades import "$CURR_DIR/$DOLMA_FNAME" > /dev/null
 ./dolmades serve $DOLMA_NAME
+
+# make sure we can uninstall later
+chmod -R u+rw "$INST_DIR/data"
+
+# we are done, clean up
+rm -rf "$CURR_DIR"
 
 echo "Installation completed!"
 """
@@ -155,6 +161,7 @@ following licenses:
         shutil.copy(cfg.SELF_PATH+"/udocker","./cli/udocker")
         shutil.copy(cfg.SELF_PATH+"/config.py","./cli/config.py")
         shutil.copy(cfg.SELF_PATH+"/prettyprint.py","./cli/prettyprint.py")
+        shutil.copy(cfg.SELF_PATH+"/resources/udocker-tarball-1.1.3.tar.gz","./udocker-tarball-1.1.3.tar.gz")
         shutil.copy(cfg.SELF_PATH+"/makeself-header.sh", "./makeself-header.sh")
         shutil.copy(cfg.SELF_PATH+"/makeself.sh", "./makeself.sh")
 

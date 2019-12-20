@@ -25,7 +25,7 @@ The focus of the v1.x release cycle will be put on support for latest vanilla wi
 
 * **Ease of use:** standalone installable on major Linux distros while requiring no special permissions
 * **Compatibility:** recipes create functional dolmades across various distros and system hardware
-* **Mobility:** designed to be executable across various distros and system hardware
+* **Mobility:** designehttps://github.com/id to be executable across various distros and system hardware
 * **Safety:** isolated from each other and from the host system by default to prevent data loss
 
 ## Implementation 
@@ -60,11 +60,12 @@ Dolmades make use of the following underlying technologies:
 ### Changelog
 
 v1.2 "Soap-free Cleanser"
- * Refactoring / bug fixing / beautification
+ * Wine 4.0.2 / 4.20
+ * Refactored docker base images: winehq-stable-xenial, winehq-stable-bionic, winehq-staging-bionic
+ * Code cleanup / bug fixing / beautification
  * New `dolmades help` subcommand
  * Fix broken menu entry deinstallation
  * Make `dolmades export` reproducible
- * Updated `winestaging` base image to Wine 4.17
 
 v1.1 "From Blue To Green"
 
@@ -95,13 +96,13 @@ Dolmades makes use of several concepts which will be briefly explained here:
 
 Either download the release tar ball
 ```
-curl -L -o dolmades.tgz https://github.com/dolmades/dolmades-cli/archive/v1.1.tar.gz
+curl -L -o dolmades.tgz https://github.com/dolmades/dolmades-cli/archive/v1.2.tar.gz
 tar -xzf dolmades.tgz
-cd dolmades-cli-1.1/
+cd dolmades-cli-1.2/
 ```
 or simply clone it using git:
 ```
-git clone -b "v1.1" --single-branch --depth 1 https://github.com/dolmades/dolmades-cli.git
+git clone -b "v1.2" --single-branch --depth 1 https://github.com/dolmades/dolmades-cli.git
 cd dolmades-cli
 ```
 
@@ -395,22 +396,36 @@ Initialization does two things:
 ## Advanced
 
 ### Base Images
-`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build are available at https://github.com/dolmades-docker. As of now four images are available:
+`dolmades` pulls its base images from DockerHub. The Dockerfiles specifying the build and the build script are to be found in the `docker` subdirectory. 
 
-* winestable - current wine stable version
-* winestable_i386 - current wine stable version (32 bit)
-* winestaging - current wine staging version: development version + custom patches
-* winestaging_i386 - current wine staging version: development version + custom patches (32  bit)
+* winehq-stable-xenial - current wine stable version with mesa 18
+* winehq-stable-bionic - current wine stable version with mesa 19
+* winehq-staging-bionic - current wine staging version: development version + custom patches with mesa 19
 
-The images for releases will be tagged accordingly and not being rebuilt in future. 
-Images with the `latest` tag are occasionally being rebuild, may break and are therefore reserved for internal development.
+As of dolmades 1.2 all immages are for 64-bit linux only. If you need a 32-bit image you can modify the Dockerfiles and easily build them yourself.
+These images for releases will be tagged accordingly and not being rebuilt in future. 
 This is what all images have in common:
 
-* Ubuntu LTS 18.04 base with wine PPA
-* Wine installation under `/wineprefix` with 32-bit prefix
+* Ubuntu LTS base with wine PPA
+* Wine installation under `$WINEPREFIX` with 32-bit prefix
 * `targetLauncher` GUI script under `/usr/local/bin`
 * `yad` required by `targetLauncher`
-* `wget curl less vim` for convenience 
+* `wget curl less vim` for convenience
+
+The following environment variables are available in a dolma (these are example values):
+```
+DOLMADES_BUILDDATE=2019-11-20
+DOLMADES_GECKOVERSION=2.47
+DOLMADES_WINEVERSION=4.0.2
+DOLMADES_WINEBRANCH=stable
+DOLMADES_VERSION=1.2
+DOLMADES_UBUNTUVERSION=bionic
+DOLMADES_MONOVERSION=4.7.5
+LC_ALL=en_US.UTF-8
+LANG=en_US.UTF-8
+WINEARCH=win32
+WINEPREFIX=/wineprefix
+```
 
 It is possible to create custom docker images on DockerHub as base for recipes which e.g. offer legacy wine, pba or Proton support.
 
@@ -467,7 +482,7 @@ This command is optional. It defines the tag of the base image pulled by the rec
 
 ```
 BASE
- dolmades/winestable
+ dolmades/winehq-stable-bionic
 ```
 
 This command is mandatory. It defines the DockerHub repository to be used. The tag of the image used is defined by `VERSION`.
@@ -565,7 +580,7 @@ If the command is omitted or the given file name cannot be found it defaults to 
  * Will dolmades focus on a particular distribution? I develop under Linux Mint, so Ubuntu and Debian-based distros might be most compatible. I plan to keep compatibility to major distributions though.
  * Why does the syntax for the recipes change? So that it can evolve! As of now the syntax may change for **every** version. This does not matter since dolmades recipes will work when the `VERSION` of the recipe matches the `dolmades` run script. Exported dolmades will contain all scripts necessary to rebuild and rerun the dolmade.
  * Will the syntax for the recipes be fixed anytime? Probably. But not in the prototypical implementation phase. 
- * How secure is the sandboxing? By default proot is used which is not really secure but more or less save since it prevents to accidentally destroy data on the host system. Later it will be possible to use singularity which is a real chroot environment, and this offers better security.
+ * How secure is the sandboxing? If singularity is installed it will be used after installation by default. This offers real chrooted environments. Otherwise proot is used as a fallback which is not really secure but relatively safe since it prevents accidental destruction of data on the host system. 
  * Will dolmades support ever MacOSX or Windows? Maybe. But not for the foreseeable future.
  * Is it enough to lookup ingredients by SHA256? TODO
 
@@ -585,10 +600,10 @@ I figure some exciting use cases which would become addressable as well, e.g.
 
 ## Troubleshooting
 
-* `udocker` requires Python 2.7 and will hopefully receive Python 3 support: https://github.com/indigo-dc/udocker/issues/77
+* `udocker` requires Python 2.7 and will hopefully receive Python 3 support soon: https://github.com/indigo-dc/udocker/issues/77
 * `udocker` requires tar with support of `-delay-directory-restore` (see https://github.com/indigo-dc/udocker/pull/137) which every recent distro should provide
 * `dolmades` will be written to support Python 2.7 and bearing in mind Python 3 compatibility for later when udocker starts supporting it, too.
-* wine does not work well with pure x86-64 software which is why the installed windows software actually has to support 32-bit windows
+* wine does not work well with pure x86-64 software which is why the installed windows software actually needs to be compatible with 32-bit windows
 * do not report issues to wine directly when `winetricks` has been used in the recipe
 * sometimes `udocker` fails to pull some layers from the docker registry (timeouts) - simply repeating the commands should help.
 * GOG installer errors: many GOG games display error messages at the end of the installation process. I suspect some failing installer script commands are the source. The installed games seem to work anyways! According to [this post](https://wp.xin.at/archives/tag/out-of-global-vars-range) these messages even occur on Windows machines!
