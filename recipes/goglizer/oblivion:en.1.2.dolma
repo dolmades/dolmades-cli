@@ -1,0 +1,60 @@
+# Name of the Dolma
+DOLMA
+    Oblivion
+
+# The major version of `cook` that must be used to build this dolma
+VERSION
+    1.2
+
+# Docker image used as a base with VERSION defining its tag
+BASE
+    dolmades/winehq-stable-bionic
+
+# A description of the installed software
+#DESCRIPTION
+#    TODO: please add a synopsis about the game...
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+    ac44138ccee8ed320ec8e06f8510eee14a06359e18cf95e99a93e4e8c838c85b
+    b203e0e1a99b6b7127bd455ffce27a4b48a3f6efb0a3de2d47115ff7aea304b4.png
+    Game Icon
+    https://images-1.gog.com/b203e0e1a99b6b7127bd455ffce27a4b48a3f6efb0a3de2d47115ff7aea304b4.png
+
+INGREDIENT
+    83a153fa6b1e8c72badf3fe5d1b00f0f8387e61ef69784f88cc3c352d91d0457
+    setup_oblivion_1.2.0416_cs_(12788).exe
+    Elder Scrolls IV: Oblivion - Game of the Year Edition Deluxe, The
+    gog://elder_scrolls_iv_oblivion_game_of_the_year_edition_deluxe_the_game/en1installer0
+
+INGREDIENT
+    b1861e16a33661ba5dd8a55648edcd50dc8bef7528266671b39d08360ad276a7
+    setup_oblivion_1.2.0416_cs_(12788)-1.bin
+    Elder Scrolls IV: Oblivion - Game of the Year Edition Deluxe, The
+    gog://elder_scrolls_iv_oblivion_game_of_the_year_edition_deluxe_the_game/en1installer1
+
+INGREDIENT
+    f945a72f1a2aa67c9531d04c15eca49ccd7a3ab754ca27ab3a59d9d62b7f0507
+    setup_oblivion_1.2.0416_cs_(12788)-2.bin
+    Elder Scrolls IV: Oblivion - Game of the Year Edition Deluxe, The
+    gog://elder_scrolls_iv_oblivion_game_of_the_year_edition_deluxe_the_game/en1installer2
+
+# Post-install custom packages like so
+#RUNROOT
+#    apt-get update && apt-get -y install custompkg && && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Adapt some presets, for instance when a certain windows version must be enforced
+#RUNUSER
+#    winetricks winxp
+
+# Perform installation
+RUNUSER
+    wine "setup_oblivion_1.2.0416_cs_(12788).exe"
+
+# Set icon for the Desktop shortcut
+ICON
+    b203e0e1a99b6b7127bd455ffce27a4b48a3f6efb0a3de2d47115ff7aea304b4.png
+
+# Set the executable if you know its name. If omitted a target selector will be launched
+TARGET
+    echo "$(find /wineprefix/ -name OblivionLauncher.exe)"
