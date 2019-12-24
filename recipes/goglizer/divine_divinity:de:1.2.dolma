@@ -1,0 +1,48 @@
+# Name of the Dolma
+DOLMA
+    Divine_Divinity:de
+
+# The major version of `cook` that must be used to build this dolma
+VERSION
+    1.2
+
+# Docker image used as a base with VERSION defining its tag
+BASE
+    dolmades/winehq-stable-bionic
+
+# A description of the installed software
+#DESCRIPTION
+#    TODO: please add a synopsis about the game...
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+    b463b8f3402602007324a2d6fe34d164d119e34afff7ec71a7a0f58353c0a91a
+    b5239e1906f3a77f7acfb63d95d539252f5a4f5a4a6305353a397037e32784ef.png
+    Game Icon
+    https://images-3.gog.com/b5239e1906f3a77f7acfb63d95d539252f5a4f5a4a6305353a397037e32784ef.png
+
+INGREDIENT
+    3d004ad1f0c36bb678bddb681294e1f55f8530f700c2801c980f18ce4dfef615
+    setup_divine_divinity_german_2.0.0.21.exe
+    Divine Divinity
+    gog://divine_divinity/de1installer1
+
+# Post-install custom packages like so
+#RUNROOT
+#    apt-get update && apt-get -y install custompkg && && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Adapt some presets, for instance when a certain windows version must be enforced
+#RUNUSER
+#    winetricks winxp
+
+# Perform installation
+RUNUSER
+    wine "setup_divine_divinity_german_2.0.0.21.exe"
+
+# Set icon for the Desktop shortcut
+ICON
+    b5239e1906f3a77f7acfb63d95d539252f5a4f5a4a6305353a397037e32784ef.png
+
+# Set the executable if you know its name. If omitted a target selector will be launched
+#TARGET
+#    echo "$(find /wineprefix/ -name BSTSD.exe)"
