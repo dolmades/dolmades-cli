@@ -253,7 +253,7 @@ class Dolma(object):
         # which is slower but works everywhere
         cfg.SETUP(self.sha256, "P2")
 
-        cmd = cfg.UDOCKERCMD_QUIET+" rm "+self.name
+        cmd = cfg.UDOCKERCMD_QUIET+" rm "+self.name+" > /dev/null 2>& 1"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
 
