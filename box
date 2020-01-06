@@ -77,6 +77,7 @@ echo >> "$INST_DIR/cli/config.py"
 echo "BOXED_PATH=\'$INST_DIR\'" >> "$INST_DIR/cli/config.py"
 
 cd "$INST_DIR/cli"
+./dolmades init
 ./dolmades import "$CURR_DIR/$DOLMA_FNAME" > /dev/null
 ./dolmades serve $DOLMA_NAME
 
