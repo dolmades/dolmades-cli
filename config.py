@@ -13,7 +13,7 @@ from prettyprint import printx
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 
 def MAJOR_VERSION():
     return '.'.join(VERSION.split('.')[0:2])
