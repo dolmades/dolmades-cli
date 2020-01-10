@@ -286,7 +286,7 @@ class Dolma(object):
             (u,c) = r
             if (u == 'root'):
                 cmd = cfg.UDOCKERCMD_QUIET+" run --volume="+self.installPath()+":/"+cfg.INST_DIR+" --user=root --hostenv --dri "+\
-                      self.sha256+" "+"bash -c 'cd "+cfg.INST_DIR+" && "+' '.join(c)+"'"
+                      self.sha256+" "+"bash -c 'cd /"+cfg.INST_DIR+" && "+' '.join(c)+"'"
                 print(cmd)
                 subprocess.call(cmd, shell=True, close_fds=True)
             if (u == 'user'):
