@@ -141,6 +141,11 @@ class Main(object):
             fn=sys.argv[2]
             path=os.path.realpath(cfg.DOLMADES_PATH+"/containers/"+fn)
 
+            # needed e.g. for file binds in S1 mode
+            cmd=cfg.UDOCKERCMD_QUIET+" setup --purge "+fn
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+
             gzipper="gz"
             try:
                 subprocess.call(["pigz","--version"])
