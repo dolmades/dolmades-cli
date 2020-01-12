@@ -321,7 +321,7 @@ class Main(object):
             if cmd=="export":
                 print("export DOLMANAME DOLMA.DMA : exports a cooked dolma image")
             if cmd=="bind":
-                print("bind DOLMANAME bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:~/Documents/'")
+                print("bind DOLMANAME bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:'$HOME'/Documents/'")
             if cmd=="binds":
                 print("binds DOLMANAME : list active binds")
             if cmd=="serve":
