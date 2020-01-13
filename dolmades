@@ -133,6 +133,28 @@ class Main(object):
             # set to a supported engine
             cfg.SETUP(uuid)
 
+            # set up binds
+            dolmafile=path+"/ROOT/.dolmades/Dolmafile"
+
+            try:
+                binds=''
+                with open(dolmafile, "r") as recipe:
+                    line = recipe.readline()
+                    if line.strip().startswith('BINDS'):
+                        line = recipe.readline()
+                        while line.startswith('#') or line.startswith((' ','\t')) and not line.strip() == "":
+                            if not line.startswith('#'):
+                                binds+=' '+line.strip()
+
+                if binds != '':
+                    printitb("Setting binds.")
+                    cmd = cfg.SELF_PATH+"/dolmades bind '"+sys_argv[2]+"' "+cfg.GET_BINDS(binds)
+                    print(cmd)
+                    subprocess.call(cmd, shell=True, close_fds=True)
+
+            except (IOError, OSError):
+                print("ERROR: Cannot open " + inputFileName)
+
             cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" --hostenv '"+dn+"""' bash -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --update && wineserver -w"'"""
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)

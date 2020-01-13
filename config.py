@@ -159,19 +159,28 @@ def INIT(force):
     if (not os.path.exists(INGREDIENTS_PATH)):
         os.mkdir(INGREDIENTS_PATH, 0755)
 
-try:
-    DESK_PATH = subprocess.check_output(['xdg-user-dir', 'DESKTOP']).strip()
-except:
-    DESK_PATH = HOME + "/Desktop"
 
-try:
-    DL_PATH = subprocess.check_output(['xdg-user-dir', 'DOWNLOAD']).strip()
-except:
-    DL_PATH = HOME + "/Downloads"
+# preservable binds
+import bind
 
-try:
-    DOC_PATH = subprocess.check_output(['xdg-user-dir', 'DOCUMENTS']).strip()
-except:
-    DOC_PATH = HOME + "/Documents"
+def FIND_BIND(bindName):
+    for att in dir(bind):
+        if att.endswith('_'+bindName):
+            return getattr(bind,att).strip()
+    printx("ERROR: bind "+bindName+"not available!")
+    return None
 
-# TODO check if dirs exist and create them if neccessary!
+def GET_BINDS(cmdp):
+    binds="'"
+    for c in cmdp:
+        binds+=FIND_BIND(c)+"' '"
+        TEST_BIND(c)
+    return binds[:-2]
+
+def TEST_BIND(bindName):
+    for att in dir(bind):
+        if att == 'BIND_'+bindName:
+            src=getattr(bind, att).split(':')[-1]
+            if (not os.path.exists(src)):
+                printx("ERROR: "+src+" does not exist or is not accessible!")
+

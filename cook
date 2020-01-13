@@ -208,6 +208,10 @@ class Dolma(object):
         self.targetPrlg = ' '.join(cmdp)
         print(color.BOLD + "Passing the following prologue to the target:" + color.END + self.targetPrlg)
 
+    def setBinds(self, cmdp):
+        self.binds=cfg.GET_BINDS(cmdp)
+        print(color.BOLD + "Passing the following default binds to the dolma:" + color.END + self.binds)
+
     def path(self, named=False):
         if self.sha256:
             if named:
@@ -401,6 +405,12 @@ class Dolma(object):
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
+        if not "--nobinds" in options:
+            printitb("Setting binds.")
+            cmd = cfg.SELF_PATH+"/dolmades bind '"+self.name+"' "+self.binds 
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
+
 
 class Main(object):
     def executeCmd(self, cmdarg):
@@ -418,7 +428,8 @@ class Main(object):
                  'TARGET': self.dolma.setTarget,
                  'TARGETARGS': self.dolma.setTargetArgs,
                  'TARGETENV': self.dolma.setTargetEnv,
-                 'TARGETPROLOGUE': self.dolma.setTargetPrologue}
+                 'TARGETPROLOGUE': self.dolma.setTargetPrologue,
+                 'BINDS': self.dolma.setBinds}
 
         if len(cmdarg)<1:
             return
