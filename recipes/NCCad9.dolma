@@ -33,3 +33,7 @@ ICON
 
 TARGET
     echo "$(find /wineprefix -name nccad9.exe)"
+
+BINDS
+   DOCUMENT
+   COM1 
