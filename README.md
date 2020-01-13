@@ -335,10 +335,16 @@ If `name-of-base` is given as argument a temporary dolma is being created and de
 
 ### Binding
 
-It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolma is being launched but not when it is being debugged.
+It is possible to make files or directories of the host file system accessible from within the container by defining so-called binds. These will apply just when a dolma is being launched but not when it is being debugged. Usually it is sufficient to use the predefined default binds in the recipe.
 
 ```
-./dolmades binds name-of-dolmade
+./dolmades rebind name-of-dolma
+# reset the binds as defined in the recipe
+# this command is performed during the cooking procedure
+```
+
+```
+./dolmades binds name-of-dolma
 # listing the currently configured binds
 ```
 
@@ -346,13 +352,17 @@ It is possible to make files or directories of the host file system accessible f
 ./dolmades bind name-of-dolma bind1 bind2 ...
 ```
 
-A bind is defined as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/dolmadedir/:/hostdir/`
+A bind is defined using absolute path names as follows: `/dolmadedir/dolmadefile:/hostdir/hostfile` or `/dolmadedir/:/hostdir/`
+Use this way to set binds just for tests as they are temporary and will not persist when a dolma is being exported and imported subsequently.
+Generally define the binds in your recipe where they will persist over imports/exports.
 
 *Notes* 
-* This will create an empty file/directory in the dolma if those do not exist already.
-* The created files/directories in the dolma persist even after the corresponding binds have been removed.
-* As of now there is no possibility to bind raw devices such as `/dev/cdrom` to a wine drive!
-* In wine the C and the Z drive are predefined. Utilize `/wineprefix/drive_x:/my/hostdir/` to bind to drive X.
+* In wine the C and the Z drive are predefined. Utilize `/wineprefix/drive_e:/my/hostdir/` to bind to drive E.
+* `config.py` predefines a certain set of binds which can be enabled by default. These will allocate some more driver letters starting from Y in reverse.
+* The output of `dolmades export` will not change depending on configured binds whereas the output of `box` will!
+* `config.py` predefines a certain set of binds which can be enabled by default 
+  * DOC
+* It is possible to use 
 
 ### Migration
 
