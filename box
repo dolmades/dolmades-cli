@@ -22,6 +22,7 @@ class Main(object):
 
     requirementsScript="""#!/usr/bin/env python2
 
+
 import os
 import sys
 
@@ -68,6 +69,7 @@ mkdir -p "$INST_DIR/cli"
 
 cp -p "$CURR_DIR/cli/dolmades" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/udocker" "$INST_DIR/cli"
+cp -p "$CURR_DIR/cli/bind.py" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/prettyprint.py" "$INST_DIR/cli"
 cp -p "$CURR_DIR/license.txt" "$INST_DIR"
 
@@ -161,12 +163,15 @@ following licenses:
         shutil.copy(cfg.SELF_PATH+"/dolmades","./cli/dolmades")
         shutil.copy(cfg.SELF_PATH+"/udocker","./cli/udocker")
         shutil.copy(cfg.SELF_PATH+"/config.py","./cli/config.py")
+        shutil.copy(cfg.SELF_PATH+"/bind.py","./cli/bind.py")
         shutil.copy(cfg.SELF_PATH+"/prettyprint.py","./cli/prettyprint.py")
         shutil.copy(cfg.SELF_PATH+"/resources/udocker-tarball.tar.gz","./udocker-tarball.tar.gz")
         shutil.copy(cfg.SELF_PATH+"/makeself-header.sh", "./makeself-header.sh")
         shutil.copy(cfg.SELF_PATH+"/makeself.sh", "./makeself.sh")
 
-        metaDir=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmaName)+"/ROOT/.dolmades/"
+        containerPath=cfg.DOLMADES_PATH+"/containers/"+os.readlink(cfg.DOLMADES_PATH+'/containers/'+dolmaName)
+        metaDir=containerPath+"/ROOT/.dolmades/"
+
         cmd=cfg.SELF_PATH+"/dolmades export '"+dolmaName+"'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
