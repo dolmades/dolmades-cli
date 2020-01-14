@@ -133,28 +133,6 @@ class Main(object):
             # set to a supported engine
             cfg.SETUP(uuid)
 
-            # set up binds
-            dolmafile=path+"/ROOT/.dolmades/Dolmafile"
-
-            try:
-                binds=''
-                with open(dolmafile, "r") as recipe:
-                    line = recipe.readline()
-                    if line.strip().startswith('BINDS'):
-                        line = recipe.readline()
-                        while line.startswith('#') or line.startswith((' ','\t')) and not line.strip() == "":
-                            if not line.startswith('#'):
-                                binds+=' '+line.strip()
-
-                if binds != '':
-                    printitb("Setting binds.")
-                    cmd = cfg.SELF_PATH+"/dolmades bind '"+sys_argv[2]+"' "+cfg.GET_BINDS(binds)
-                    print(cmd)
-                    subprocess.call(cmd, shell=True, close_fds=True)
-
-            except (IOError, OSError):
-                print("ERROR: Cannot open " + inputFileName)
-
             cmd=cfg.UDOCKERCMD_QUIET+" run --user="+cfg.USER+" --hostenv '"+dn+"""' bash -c 'mkdir -p /data; HOME=/data xvfb-run sh -c "wineboot --update && wineserver -w"'"""
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
@@ -192,46 +170,76 @@ class Main(object):
 
 
         if (cmd=='bind'):
-            binds=sys.argv[3:]
             containerPath=cfg.DOLMADES_PATH+"/containers/"+sys.argv[2]
-            fn=containerPath+"/configuredBinds"
+            
+            if (len(sys.argv)==3):
+                # set up binds
+                dolmafile=containerPath+"/ROOT/.dolmades/Dolmafile"
 
-            # remove all wine drives except c: and z:
-            for drvletter in ['a','b','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y']:
-                p=containerPath+"/ROOT/wineprefix/drive_"+drvletter
-                if os.path.exists(p):
-                    os.rmdir(p)
-                pl=containerPath+"/ROOT/wineprefix/dosdevices/"+drvletter+":"
-                if os.path.islink(pl):
-                    os.remove(pl)
+                try:
+                    binds=[]
+                    with open(dolmafile, "r") as recipe:
+                        line = recipe.readline()
+                        while not line.strip().startswith('BINDS'):
+                            line = recipe.readline()
 
-            f = open(fn,'w')
-            for bind in binds:
-                if cfg.DOLMADES_PATH.startswith(''.join(bind.split(':')[1:])):
-                    print("You can reach DOLMADES_PATH using the bind "+bind+"! This is insecure and not allowed!")
-                    return
-                f.write(bind+"\n")
-                bind=bind.strip()
-                src=''.join(bind.split(':')[1:])
-                dst=bind.split(':')[0]
-                # create the destdir for wine drives
-                if dst.startswith('/wineprefix/drive_'):
-                    os.mkdir(containerPath+"/ROOT/"+dst)
+                        line = recipe.readline()
+                        while line.startswith('#') or line.startswith((' ','\t')) and not line.strip() == "":
+                            if not line.startswith('#'):
+                                binds.append(line.strip())
+                            line = recipe.readline()
 
-            if (binds):
-                f.seek(-1,os.SEEK_END)
-                f.truncate()
+                    print(cfg.GET_BINDS(binds))
 
-            f.close
+                    if binds != '':
+                        printitb("Setting binds.")
+                        cmd = cfg.SELF_PATH+"/dolmades bind '"+sys.argv[2]+"' "+cfg.GET_BINDS(binds)
+                        print(cmd)
+                        subprocess.call(cmd, shell=True, close_fds=True)
 
-            # recreate proper symlinks for created wine drives
-            for drvletter in ['a','b','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y']:
-                p=containerPath+"/ROOT/wineprefix/drive_"+drvletter
-                pl=containerPath+"/ROOT/wineprefix/dosdevices/"+drvletter+":"
-                if os.path.exists(p):
+                except (IOError, OSError):
+                    print("ERROR: Cannot open " + inputFileName)
+
+            else:
+                binds=sys.argv[3:]
+                fn=containerPath+"/configuredBinds"
+
+                # remove all wine drives except c: and z:
+                for drvletter in ['a','b','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y']:
+                    p=containerPath+"/ROOT/wineprefix/drive_"+drvletter
+                    if os.path.exists(p):
+                        os.rmdir(p)
+                    pl=containerPath+"/ROOT/wineprefix/dosdevices/"+drvletter+":"
                     if os.path.islink(pl):
                         os.remove(pl)
-                    os.symlink("../drive_"+drvletter,pl)
+
+                f = open(fn,'w')
+                for bind in binds:
+                    if cfg.DOLMADES_PATH.startswith(''.join(bind.split(':')[1:])):
+                        print("You can reach DOLMADES_PATH using the bind "+bind+"! This is insecure and not allowed!")
+                        return
+                    f.write(bind+"\n")
+                    bind=bind.strip()
+                    src=''.join(bind.split(':')[1:])
+                    dst=bind.split(':')[0]
+                    # create the destdir for wine drives
+                    if dst.startswith('/wineprefix/drive_'):
+                        os.mkdir(containerPath+"/ROOT/"+dst)
+
+                if (binds):
+                    f.seek(-1,os.SEEK_END)
+                    f.truncate()
+
+                f.close
+
+                # recreate proper symlinks for created wine drives
+                for drvletter in ['a','b','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y']:
+                    p=containerPath+"/ROOT/wineprefix/drive_"+drvletter
+                    pl=containerPath+"/ROOT/wineprefix/dosdevices/"+drvletter+":"
+                    if os.path.exists(p):
+                        if os.path.islink(pl):
+                            os.remove(pl)
+                        os.symlink("../drive_"+drvletter,pl)
 
         if (cmd=="serve" or cmd=="clearaway" or cmd=="del"):
             # TODO create temporary files inside a temporary directory
@@ -343,7 +351,8 @@ class Main(object):
             if cmd=="export":
                 print("export DOLMANAME DOLMA.DMA : exports a cooked dolma image")
             if cmd=="bind":
-                print("bind DOLMANAME bind1 bind2 ... : set bind1 bind2. To make your document folder available use '/wineprefix/drive_n:'$HOME'/Documents/'")
+                print("bind DOLMANAME : set binds according to recipe")
+                print("bind DOLMANAME bind1 bind2 ... : set custom binds e.g. to make your document folder available use '/wineprefix/drive_n:'$HOME'/Documents/'")
             if cmd=="binds":
                 print("binds DOLMANAME : list active binds")
             if cmd=="serve":

@@ -85,6 +85,7 @@ cd "$INST_DIR/cli"
 ./dolmades init
 ./dolmades import "$CURR_DIR/$DOLMA_FNAME" > /dev/null
 ./dolmades serve $DOLMA_NAME
+./dolmades bind $DOLMA_NAME
 
 # make sure we can uninstall later
 chmod -R u+rw "$INST_DIR/data"
