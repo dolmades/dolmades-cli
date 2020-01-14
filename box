@@ -71,6 +71,9 @@ cp -p "$CURR_DIR/cli/dolmades" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/udocker" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/bind.py" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/prettyprint.py" "$INST_DIR/cli"
+cp -p "$CURR_DIR/cli/cook" "$INST_DIR/cli"
+cp -p "$CURR_DIR/cli/box" "$INST_DIR/cli"
+cp -p "$CURR_DIR/cli/goglizer" "$INST_DIR/cli"
 cp -p "$CURR_DIR/license.txt" "$INST_DIR"
 
 # FIXME implement this more flexible!
@@ -164,6 +167,9 @@ following licenses:
         shutil.copy(cfg.SELF_PATH+"/udocker","./cli/udocker")
         shutil.copy(cfg.SELF_PATH+"/config.py","./cli/config.py")
         shutil.copy(cfg.SELF_PATH+"/bind.py","./cli/bind.py")
+        shutil.copy(cfg.SELF_PATH+"/box","./cli/box")
+        shutil.copy(cfg.SELF_PATH+"/cook","./cli/cook")
+        shutil.copy(cfg.SELF_PATH+"/goglizer","./cli/goglizer")
         shutil.copy(cfg.SELF_PATH+"/prettyprint.py","./cli/prettyprint.py")
         shutil.copy(cfg.SELF_PATH+"/resources/udocker-tarball.tar.gz","./udocker-tarball.tar.gz")
         shutil.copy(cfg.SELF_PATH+"/makeself-header.sh", "./makeself-header.sh")

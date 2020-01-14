@@ -118,7 +118,7 @@ def INIT(force):
         os.mkdir(INST_PATH, 0755)
 
     printitb("Storing dolmades python runscripts...")
-    cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" dolmades udocker cook goglizer config.py prettyprint.py box"
+    cmd = "tar --exclude-vcs -czpf "+DOLMADES_PATH+"/dolmades-bin.tgz -C "+SELF_PATH+" dolmades udocker cook goglizer config.py prettyprint.py bind.py box"
     subprocess.call(cmd, shell=True, close_fds=True)
 
     force_runtime_rebuild=False
