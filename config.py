@@ -10,6 +10,9 @@ from prettyprint import printitb
 from platform import architecture
 from prettyprint import printx
 
+# preservable binds
+import bind
+
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 
@@ -159,9 +162,6 @@ def INIT(force):
     if (not os.path.exists(INGREDIENTS_PATH)):
         os.mkdir(INGREDIENTS_PATH, 0755)
 
-
-# preservable binds
-import bind
 
 def FIND_BIND(bindName):
     for att in dir(bind):
