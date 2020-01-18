@@ -577,6 +577,28 @@ This command is optional. It specifies the icon file to be used for the desktop 
 If an absolute path is ommitted the `/install` and `/wineprefix/drive_c` directories will be browsed and the first occurrence of the given icon file name will be used. 
 If the command is omitted or the given file name cannot be found it defaults to the dolma icon.
 
+```
+BINDS
+ DirDeviceOnHost
+```
+
+This command is optional. It is possible to make certain locations or devices of the host system available by keywords predefined in `bind.py`.
+These binds are kept as setting and will be preserved when a container is being boxed, exported and imported again.
+Currently predefined binds are:
+
+ * DOWNLOAD
+ * DOCUMENT
+ * PICTURES
+ * MUSIC
+ * VIDEOS
+ * HOME
+ * COM1
+ * COM2
+ * LPT1
+ * LPT2
+ * CDROM
+ * FLOPPY
+
 **FINAL NOTES**
 
 * There has to be an empty line in between subsequent commands
