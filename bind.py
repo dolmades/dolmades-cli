@@ -17,5 +17,7 @@ except:
 
 BIND_COM1   = "/dev/ttyS0:/dev/ttyS0"
 BIND_COM2   = "/dev/ttyS1:/dev/ttyS1"
+BIND_LPT1   = "/dev/lp0:/dev/lp0"
+BIND_LPT2   = "/dev/lp1:/dev/lp1"
 BIND_CDROM  = "/dev/sr0:/dev/sr0"
 BIND_FLOPPY = "/dev/fd0:/dev/fd0"
