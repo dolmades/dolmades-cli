@@ -37,7 +37,7 @@ UDOCKER = SELF_PATH+"/udocker"
 UDOCKERCMD_VERBOSE = UDOCKER
 UDOCKERCMD_QUIET = UDOCKER+" --quiet"
 
-UDOCKER_ENGINE="auto" # valid options: auto/S1/P1/P2
+UDOCKER_ENGINE="auto" # valid options: auto/P1/P2
 UDOCKER_ENGINE_PREFERENCE=['P1','P2']
 
 os.environ["UDOCKER_DIR"]=DOLMADES_PATH
