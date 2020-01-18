@@ -75,6 +75,7 @@ cp -p "$CURR_DIR/cli/cook" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/box" "$INST_DIR/cli"
 cp -p "$CURR_DIR/cli/goglizer" "$INST_DIR/cli"
 cp -p "$CURR_DIR/license.txt" "$INST_DIR"
+cp -p "$CURR_DIR/dolmades-runtime.tar" "$INST_DIR/cli"
 
 # FIXME implement this more flexible!
 cat "$CURR_DIR/cli/config.py" | sed "s#^DOLMADES_PATH = HOME + '/.dolmades-' + MAJOR_VERSION()#DOLMADES_PATH = '"$INST_DIR"/data'#" > "$INST_DIR/cli/config.py"
@@ -83,6 +84,7 @@ echo "BOXED_PATH=\'$INST_DIR\'" >> "$INST_DIR/cli/config.py"
 
 cd "$INST_DIR/cli"
 ./dolmades init
+rm dolmades-runtime.tar
 ./dolmades import "$CURR_DIR/$DOLMA_FNAME" > /dev/null
 ./dolmades serve $DOLMA_NAME
 ./dolmades bind $DOLMA_NAME
@@ -182,6 +184,11 @@ following licenses:
         cmd=cfg.SELF_PATH+"/dolmades export '"+dolmaName+"'"
         print(cmd)
         subprocess.call(cmd, shell=True, close_fds=True)
+
+        cmd=cfg.SELF_PATH+"/udocker export --clone -o "+cfg.SELF_PATH+"/dolmades-runtime.tar dolmades-runtime"
+        print(cmd)
+        subprocess.call(cmd, shell=True, close_fds=True)
+        shutil.copy(cfg.SELF_PATH+"/dolmades-runtime.tar","./dolmades-runtime.tar")
 
         self.writeFile(self.dolmaLicense, "./license.txt")
         self.writeFile(self.requirementsScript, "./check_requirements", True)

@@ -95,9 +95,9 @@ def SETUP(dolmaname, mode=None):
                 proc=subprocess.Popen(safe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 out, err = proc.communicate()
                 if (proc.returncode==0):
-                   mode=engine
-                   print("Success using "+mode)
-                   return
+                    mode=engine
+                    print("Success using "+mode)
+                    return
             raise Exception("None of the available container engines is usable")
         if mode not in enginePreference:
             raise Exception("Unsupported container engine: " + mode)
@@ -135,24 +135,31 @@ def INIT(force):
 
     if force_runtime_rebuild or force:
         printitb("Rebuilding dolmades runtime...")
-        cmd = UDOCKERCMD_QUIET+" pull "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
-        print(cmd)
-        printitb("Pulling dolmades runtime container...")
-        subprocess.call(cmd, shell=True, close_fds=True)
+        if (os.path.exists("./dolmades-runtime.tar")):
+            cmd = UDOCKERCMD_QUIET+" import --tocontainer --clone --name=dolmades-runtime ./dolmades-runtime.tar dolmades-runtime"
+            print(cmd)
+            printitb("Importing dolmades runtime container...")
+            subprocess.call(cmd, shell=True, close_fds=True)
+        else:
+            cmd = UDOCKERCMD_QUIET+" pull "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
+            print(cmd)
+            printitb("Pulling dolmades runtime container...")
+        
+            subprocess.call(cmd, shell=True, close_fds=True)
 
-        cmd = UDOCKERCMD_QUIET+" inspect dolmades-runtime"
-        try:
-            outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
-            if (outp != ""):
-                cmd = UDOCKERCMD_QUIET+" rm dolmades-runtime"
-                print(cmd)
-                subprocess.call(cmd, shell=True, close_fds=True)
-        except:
-            pass
+            cmd = UDOCKERCMD_QUIET+" inspect dolmades-runtime"
+            try:
+                outp = subprocess.check_output(cmd, shell=True, close_fds=True, stderr=subprocess.STDOUT)
+                if (outp != ""):
+                    cmd = UDOCKERCMD_QUIET+" rm dolmades-runtime"
+                    print(cmd)
+                    subprocess.call(cmd, shell=True, close_fds=True)
+            except:
+                pass
 
-        cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
-        print(cmd)
-        subprocess.call(cmd, shell=True, close_fds=True)
+            cmd = UDOCKERCMD_QUIET+" create --name=dolmades-runtime "+RUNTIME_IMAGE+":"+MAJOR_VERSION()
+            print(cmd)
+            subprocess.call(cmd, shell=True, close_fds=True)
 
         SETUP("dolmades-runtime")
 
