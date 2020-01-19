@@ -59,6 +59,12 @@ Dolmades make use of the following underlying technologies:
 
 ### Changelog
 
+v1.2.1
+ * Possibility to define file/directory/device binds in recipes
+ * Create boxed dolmas as offline standalone installable
+ * Fixes for singularity, and if installed dolmas do not use it by default any longer
+ * Updated docs and lots of bug fixes
+
 v1.2 "Soap-free Cleanser"
  * Wine 4.0.2 / 4.20
  * Refactored docker base images: winehq-stable-xenial, winehq-stable-bionic, winehq-staging-bionic
