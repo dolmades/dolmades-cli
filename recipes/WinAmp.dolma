@@ -1,0 +1,47 @@
+# Name of the dolmade (very restricted by udocker)
+DOLMA
+    WinAmp
+
+# Docker image to use as a base
+BASE
+    dolmades/winehq-stable-bionic
+
+# Use this version
+VERSION
+    1.2
+
+# Describing this Dolmade
+DESCRIPTION
+    Popular music player
+
+# Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
+INGREDIENT
+    115ad6a4be58320c98f992b1dae26e162976158c3cced251584a2b78f059b822
+    SetupWinAmp.exe
+    Installer for WinAmp Beta
+    file://~/Downloads/winamp58_3660_beta_full_en-us.exe
+    https://download.nullsoft.com/winamp/client/winamp58_3660_beta_full_en-us.exe
+
+INGREDIENT
+    0503b530ce071ef4632e3eae60dcc5607f5953ddd47405c84aec2055524704f2
+    WinAmp.png
+    Icon for WinAmp
+    https://cdn2.iconfinder.com/data/icons/3d-softwarefx/256/Winamp.png
+
+#    79013fd4261b9210e6b4d677d159b59870c11bfc541fc28e27b4a081c68f10e5
+#    http://www.max-computer.de/files/MAX/Mill/nccad9profi/Setup_nccad9_9_29_68_06_profi_191009.exe
+
+# Run a command inside the dolmade
+# PWD is the install folder
+RUNUSER
+    wine SetupWinAmp.exe && winetricks -q d3dcompiler_47 d3dx9_36 d3dx9_42
+
+# Set icon for the Desktop shortcut
+ICON
+    WinAmp.png
+
+TARGET
+    echo "$(find /wineprefix -name winamp.exe)"
+
+BINDS
+   MUSIC
