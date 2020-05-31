@@ -1,4 +1,4 @@
-# Dolmades v1.2 - "Soap-free Cleanser"
+# Dolmades v1.3 - "Sun Launched"
 
 ## Introduction
 
@@ -58,6 +58,11 @@ Dolmades make use of the following underlying technologies:
  * **makeself:** for creating standalone installers
 
 ### Changelog
+
+v1.3 "Sun-Launched"
+ * Updated base images to Wine 5.0.0 / 5.9
+ * Added Mesa 20
+ * Fixed graphical bugs in NCCad9
 
 v1.2.1
  * Possibility to define file/directory/device binds in recipes
