@@ -26,14 +26,16 @@ ENV DOLMADES_MONOVERSION=$MONO_VERSION
 ENV DOLMADES_GECKOVERSION=$GECKO_VERSION
 
 # install wine & winetricks & old yad & mono & gecko
-# winehq-staging requires faudio from PPA
-RUN if [ $DOLMADES_WINEBRANCH = "staging" ]; then apt-add-repository -y ppa:cybermax-dexter/sdl2-backport; fi && \
+# winehq requires faudio from PPA beginning from version 5
+RUN apt-add-repository -y ppa:cybermax-dexter/sdl2-backport && \
     apt-get update && apt-get install -y winehq-${WINE_BRANCH}=${WINE_VERSION}~${DOLMADES_UBUNTUVERSION} && \
     dpkg -i /deb/*.deb && winetricks --self-update && \ 
     mkdir -p /opt/wine-${WINE_BRANCH}/share/wine/mono && \
-    wget http://dl.winehq.org/wine/wine-mono/$MONO_VERSION/wine-mono-$MONO_VERSION.msi \
-    -O /opt/wine-${WINE_BRANCH}/share/wine/mono/wine-mono-$MONO_VERSION.msi && \
+    ( wget http://dl.winehq.org/wine/wine-mono/$MONO_VERSION/wine-mono-$MONO_VERSION.msi \
+      -O /opt/wine-${WINE_BRANCH}/share/wine/mono/wine-mono-$MONO_VERSION.msi || \
+      wget http://dl.winehq.org/wine/wine-mono/$MONO_VERSION/wine-mono-$MONO_VERSION-x86.msi \
+      -O /opt/wine-${WINE_BRANCH}/share/wine/mono/wine-mono-$MONO_VERSION-x86.msi ) && \
     mkdir -p /opt/wine-${WINE_BRANCH}/share/wine/gecko && cd /opt/wine-${WINE_BRANCH}/share/wine/gecko && \
-    wget http://dl.winehq.org/wine/wine-gecko/$GECKO_VERSION/wine_gecko-${GECKO_VERSION}-x86.msi && \
-    wget http://dl.winehq.org/wine/wine-gecko/$GECKO_VERSION/wine_gecko-${GECKO_VERSION}-x86_64.msi && \
+    wget http://dl.winehq.org/wine/wine-gecko/$GECKO_VERSION/wine-gecko-${GECKO_VERSION}-x86.msi && \
+    wget http://dl.winehq.org/wine/wine-gecko/$GECKO_VERSION/wine-gecko-${GECKO_VERSION}-x86_64.msi && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
