@@ -16,7 +16,7 @@ import bind
 # Python version major.minor
 PY_VER = "%d.%d" % (sys.version_info[0], sys.version_info[1])
 
-VERSION = "1.2.1"
+VERSION = "1.3.0"
 
 def MAJOR_VERSION():
     return '.'.join(VERSION.split('.')[0:2])
