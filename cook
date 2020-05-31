@@ -405,7 +405,7 @@ class Dolma(object):
             print(cmd)
             subprocess.call(cmd, shell=True, close_fds=True)
 
-        if not "--nobinds" in options:
+        if not "--nobinds" in options and hasattr(self,'binds'):
             printitb("Setting binds.")
             cmd = cfg.SELF_PATH+"/dolmades bind '"+self.name+"' "+self.binds 
             print(cmd)
