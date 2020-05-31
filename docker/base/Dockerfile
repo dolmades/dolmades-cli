@@ -25,10 +25,11 @@ COPY deb/ /deb
 # we need win 32bit application support
 # base installation (Xorg / mesa / tools)
 # PPAs: winehq / faudio for winehq-staging
-RUN dpkg --add-architecture i386 && apt-get update && \
-    apt-get -y install yad wget less vim \
-      software-properties-common python3-software-properties apt-transport-https \
-      winbind xvfb x11-xserver-utils wmctrl xvfb xosd-bin language-pack-en-base \
+RUN dpkg --add-architecture i386 && apt update && \
+    apt -y install yad wget less vim \
+      software-properties-common python3-software-properties apt-transport-https && \
+      add-apt-repository -y ppa:kisak/kisak-mesa && \
+    apt -y install winbind xvfb x11-xserver-utils wmctrl xvfb xosd-bin language-pack-en-base \
       binutils cabextract p7zip p7zip-full unzip icoutils && \
     wget https://dl.winehq.org/wine-builds/winehq.key && \
       apt-key add winehq.key && \
