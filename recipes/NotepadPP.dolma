@@ -8,7 +8,7 @@ BASE
 
 # Use this version
 VERSION
-  1.2
+  1.3
 
 # Ingredients: sha256 / file name / display name / URL #1 / URL #2 / ...
 INGREDIENT
