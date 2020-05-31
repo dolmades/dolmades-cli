@@ -18,8 +18,9 @@ fi
 
 exit
 
+winehq_stable=5.0.0 mono=4.9.4 gecko=2.47.1
 winehq_stable=4.0.2 mono=4.7.5 gecko=2.47
 winehq_stable=4.0.1 mono=4.7.5 gecko=2.47
 winehq_stable=4.0 mono=4.7.5 gecko=2.47
 winehq_staging=4.20 mono=4.9.4 gecko=2.47
-
+winehq_staging=5.9 mono=5.0.0 gecko=2.47.1

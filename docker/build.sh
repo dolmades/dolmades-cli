@@ -6,8 +6,9 @@ else
     DOCKEROPTS=""
 fi
 
-IMAGES="bionic,stable,4.0.2 xenial,stable,4.0.2 bionic,staging,4.20"
+#IMAGES="bionic,stable,4.0.2 xenial,stable,4.0.2 bionic,staging,4.20"
 #IMAGES="bionic,stable,4.0.2 bionic,staging,4.20"
+IMAGES="bionic,stable,5.0.0 bionic,staging,5.9"
 DISTROIMAGES=$(for i in $IMAGES; do IFS=',' read dist x y <<< $i; echo $dist; done | sort -u)
 # read from `config.py`
 DOLMADES_VERSION=$(
@@ -53,7 +54,7 @@ for image in $IMAGES; do
              --build-arg WINE_VERSION=$WINE_VERSION \
 	     --build-arg MONO_VERSION=$MONO_VERSION \
 	     --build-arg GECKO_VERSION=$GECKO_VERSION \
-       . -t dolmades/winehq-$WINE_BRANCH-$WINE_VERSION-$UBUNTU_VERSION:$DOLMADES_VERSION
+       . -t dolmades/winehq-$WINE_BRANCH-$UBUNTU_VERSION:$DOLMADES_VERSION
 
     docker build $DOCKEROPTS --build-arg DISTRO_SUFFIX="${UBUNTU_VERSION}:${DOLMADES_VERSION}" \
 	     --build-arg BUILD_DATE="$(date -I)" \
